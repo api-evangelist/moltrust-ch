@@ -1,0 +1,104 @@
+generated: '2026-09-19'
+method: derived
+format: fastapi-json
+rfc9457: false
+source: >-
+  Derived from the 4xx/5xx responses declared in openapi/moltrust-ch-openapi.yml (FastAPI, 186 operations:
+  only 422 HTTPValidationError is declared, on 135 operations) and openapi/moltrust-ch-moltguard-openapi.yml
+  (Hono, 71 operations: 400/402/404/429/500 with Error, InvalidAddressError, RateLimitError and
+  PaymentRequired schemas), enriched with error bodies OBSERVED LIVE on 2026-09-19 (401, 400, 404, 405, 406,
+  422-header-missing) because the main spec declares none of its runtime errors.
+envelopes:
+- surface: MolTrust API (api.moltrust.ch)
+  media_type: application/json
+  default_shape: '{ "detail": string | [ { "loc": [...], "msg": string, "type": string, "input": any, "ctx": object } ] }'
+  note: >-
+    Standard FastAPI envelope. `detail` is a plain string on runtime errors (401/400/404/405) and a
+    ValidationError[] array on 422. No error code field, no type URI, no request id.
+- surface: MoltGuard sub-API (api.moltrust.ch/guard)
+  media_type: application/json
+  default_shape: '{ "error": string (short code), "message": string }'
+  note: Hono service; `error` is a machine code (e.g. invalid_address, not_found) and `message` the human text. RateLimitError carries only `message`.
+- surface: MCP (api.moltrust.ch/mcp)
+  media_type: application/json | text/event-stream
+  default_shape: 'JSON-RPC 2.0 {"error": {"code": -32600|-32601|..., "message": string}}'
+  note: 'Observed: POST without mcp-session-id -> HTTP 400 {"jsonrpc":"2.0","id":"server-error","error":{"code":-32600,"message":"Bad Request: Missing session ID"}}; GET -> HTTP 406.'
+validation_error_shape:
+  schema: HTTPValidationError
+  item_schema: ValidationError
+  fields:
+  - {name: loc, type: 'array<string|integer>', required: true, description: 'Location path, e.g. ["body","email"] or ["header","X-API-Key"].'}
+  - {name: msg, type: string, required: true, description: Human-readable message ("Field required").}
+  - {name: type, type: string, required: true, description: Machine error type ("missing").}
+  - {name: input, type: any, required: false, description: The rejected input.}
+  - {name: ctx, type: object, required: false, description: Extra context.}
+problems:
+- status: 422
+  title: Unprocessable Entity (validation error)
+  media_type: application/json
+  schema: HTTPValidationError
+  declared_on: 135 of 186 MolTrust API operations
+  observed: 'POST /auth/signup with {} -> 422 {"detail":[{"type":"missing","loc":["body","email"],"msg":"Field required","input":{}}]}'
+  meaning: A required body field, path/query parameter OR REQUIRED HEADER is missing or malformed. Because X-API-Key is declared as a required header parameter on 49 operations, a MISSING API KEY surfaces as 422 (loc ["header","X-API-Key"]), not 401.
+  remediation: Read detail[].loc; if it names header X-API-Key, authenticate; otherwise fix the field and retry.
+  source_operation: openapi/moltrust-ch-openapi.yml#signup_for_api_key_auth_signup_post
+- status: 401
+  title: Authentication required
+  media_type: application/json
+  declared: false
+  observed: 'GET /extendedAgentCard -> 401 {"detail":"Authentication required: provide X-API-Key OR X-MolTrust-DID header"}'
+  meaning: Endpoints that accept either credential enforce presence at runtime and return 401 rather than the 422 of the header-parameter path.
+  remediation: Send X-API-Key or X-MolTrust-DID.
+  source_operation: openapi/moltrust-ch-openapi.yml#extended_agent_card_extendedAgentCard_get
+- status: 400
+  title: Bad request (invalid identifier)
+  media_type: application/json
+  declared: on 4 MoltGuard operations (InvalidAddressError); undeclared on the main API
+  observed: 'GET /identity/delegations/did:moltrust:0000 -> 400 {"detail":"Invalid DID format"}; GET /a2a/agent-card/did:web:api.moltrust.ch -> 400 {"detail":"Invalid DID format"}'
+  meaning: Malformed DID or non-0x address. MoltGuard returns {"error":"invalid_address","message":...}.
+  remediation: Validate the DID / address shape client-side before calling; the DID must be a did:moltrust identifier for per-agent endpoints.
+  source_operation: openapi/moltrust-ch-moltguard-openapi.yml#getAgentScorePaid
+- status: 402
+  title: Payment Required (x402 challenge)
+  media_type: application/json
+  schema: PaymentRequired
+  declared_on: 11 MoltGuard operations (getAgentScorePaid, getAgentDetailPaid, getSybilScan, getMarketCheckPaid, issueCredential, issueSkillVC, issueBuyerAgentVC, issueTravelAgentVC, getPredictionIntegrity, getRadarMarketPaid, issuePredictionVC)
+  meaning: 'Not an error to retry - a quote. Body x402.accepts[] gives scheme "exact", network "base", maxAmountRequired {asset USDC, amount in 6-decimal base units} and payTo. Prices are also published in advance at /.well-known/x402.json.'
+  remediation: Pay on Base and retry with header X-PAYMENT "x402 <base64 receipt>". Enforce a client-side spend cap first.
+  source_operation: openapi/moltrust-ch-moltguard-openapi.yml#getSybilScan
+- status: 404
+  title: Not found
+  media_type: application/json
+  declared: on 4 MoltGuard operations (Error)
+  observed: 'GET https://api.moltrust.ch/ -> 404 {"detail":"Not Found"}; GET /proof/openapi.json -> 404'
+  meaning: Unknown route or resource. MoltGuard returns {"error":"not_found","message":"Unknown endpoint. See /api/info for available routes."}.
+  source_operation: openapi/moltrust-ch-moltguard-openapi.yml#getTransparencyLatest
+- status: 405
+  title: Method not allowed
+  declared: false
+  observed: 'POST /skill/trust-score/{did} -> 405 {"detail":"Method Not Allowed"}'
+  meaning: FastAPI default for a known path with the wrong verb.
+- status: 429
+  title: Rate limit exceeded
+  media_type: application/json
+  schema: RateLimitError
+  declared_on: getAgentScoreFree, getMarketCheckFree, getSkillAudit, registerHackathon (MoltGuard); undeclared on the main API although /skill/trust-score, /swarm/graph and /caep/pending state limits in prose
+  meaning: 'Body example from the spec: {"message":"Free tier: max 1 request(s) per 10 minutes. Use x402 paid endpoints for unlimited access."}. No Retry-After or RateLimit-* headers are declared or were observed.'
+  remediation: Back off exponentially (the free windows are 10 minutes / 1 hour); or move to the paid x402 variant of the same endpoint.
+  source_operation: openapi/moltrust-ch-moltguard-openapi.yml#getAgentScoreFree
+- status: 500
+  title: Internal error
+  media_type: application/json
+  schema: Error
+  declared_on: getTransparencyLatest ("Parse error on stored proof")
+  source_operation: openapi/moltrust-ch-moltguard-openapi.yml#getTransparencyLatest
+- status: 406
+  title: Not Acceptable (MCP transport)
+  declared: false
+  observed: GET https://api.moltrust.ch/mcp -> 406
+  meaning: The streamable-HTTP MCP endpoint requires POST with Accept application/json, text/event-stream.
+undeclared_runtime_errors_note: >-
+  The main OpenAPI declares no 400, 401, 403, 404, 429 or 5xx on any operation - every runtime error is
+  invisible to a client generated from the spec. The observed bodies above are the only public record of
+  those shapes.
+decline_codes: not-applicable - the provider is a payment CONSUMER (x402/USDC, Stripe subscriptions) not a card-authorization provider; no decline-code reference exists.

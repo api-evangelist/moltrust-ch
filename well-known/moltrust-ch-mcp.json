@@ -1,0 +1,1 @@
+{"name":"MolTrust","description":"Trust Layer for the Agent Economy. Verify agent identities, check reputation, issue and verify W3C Verifiable Credentials.","protocol":"mcp","transport":"streamable-http","endpoint":"https://api.moltrust.ch/mcp","documentation":"https://moltrust.ch","provider":{"name":"CryptoKRI GmbH","url":"https://moltrust.ch"}}

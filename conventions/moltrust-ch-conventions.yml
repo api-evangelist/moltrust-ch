@@ -1,0 +1,158 @@
+generated: '2026-09-19'
+method: searched
+source: https://moltrust.ch/developers.html + https://moltrust.ch/docs/caep.html + https://moltrust.ch/terms.html
+  + https://moltrust.ch/pricing.html + a2a/moltrust-ch-agent-card.json (securitySchemes) + openapi/moltrust-ch-openapi.yml
+  + openapi/moltrust-ch-moltguard-openapi.yml + live responses on api.moltrust.ch 2026-09-19
+summary: Cross-cutting semantics for the MolTrust REST API, the MoltGuard sub-API and the hosted MCP server. Header-key
+  auth (X-API-Key) or agent self-identification (X-MolTrust-DID); per-call credit metering plus x402 USDC micropayments
+  on Base; FastAPI {"detail"} error envelope; offset/limit pagination on a few reads and an event-id cursor on the
+  CAEP channel; NO idempotency key anywhere; signed responses (Ed25519 over JCS) on trust scores; no request-id
+  header observed.
+authentication:
+  styles:
+  - api_key_header
+  - agent_did_header
+  - x402_payment_header
+  - bearer_jws_declared
+  api_key_header: X-API-Key
+  agent_did_header: X-MolTrust-DID
+  payment_header: X-PAYMENT (MoltGuard, x402 v2 receipt)
+  bearer_declared: 'Authorization: Bearer <AAE-JWS> - declared in the agent card as "implementation in progress";
+    not usable today'
+  admin_header: X-Admin-Key (violation/*, music revoke - described in operation prose, never declared as a parameter)
+  see: authentication/moltrust-ch-authentication.yml
+idempotency:
+  coverage: none
+  documented: false
+  header: null
+  scope: []
+  notes: Zero matches for "idempoten" or "Idempotency-Key" in either OpenAPI (257 operations) and in the public
+    docs; the spec declares no idempotency parameter on any write. The provider's GitHub repo carries an internal
+    design spec (docs/specs/2026-05-18_credit-middleware-idempotency-SPEC.md) for idempotent credit charging, but
+    nothing is published as a client contract. No Idempotency pointer is emitted.
+  agent_risk: Registration, credential issuance, delegation minting, credit transfer, compliance declaration and
+    every VC issue in MoltGuard are non-idempotent POSTs that cost credits or USDC. A timed-out call must be reconciled
+    by a read (GET /credits/transactions/{did}, GET /identity/verify/{did}, GET /vc/ipr/agent/{did}) before any
+    retry.
+dry_run_mode:
+  supported: partial
+  notes: MoltGuard ships mock sample endpoints (GET /guard/api/agent/sample, GET /guard/api/market/sample, no auth,
+    canned data) and every verify/resolve read is free, but there is no dry-run flag on any write. See sandbox/moltrust-ch-sandbox.yml.
+reversibility:
+  grade: documented
+  coverage: partial
+  notes: Reversal paths exist for identity revocation and violation records, and none of them states a time window.
+    Credit purchases are explicitly irreversible. Grade is therefore documented (paths, no windows), never verified.
+  write_surfaces:
+  - surface: agent identity
+    forward: revoke_agent_identity_revoke__did__post (POST /identity/revoke/{did}, cascade up to 8 hops, emits CAEP
+      events)
+    reversal: unrevoke_agent_identity_unrevoke__did__post (POST /identity/unrevoke/{did}) - "Reinstate a revoked
+      agent. Admin only."
+    window: null
+    window_source: null
+    note: Reversal is admin-only, not self-service.
+  - surface: violation record
+    forward: create_violation_record_violation_record_post (POST /violation/record, X-Admin-Key)
+    reversal: reverse_violation_violation__record_id__reverse_post (POST /violation/{record_id}/reverse, ViolationReversalRequest
+      {adjudicator_reference, reversal_date})
+    window: null
+    window_source: null
+  - surface: music credential
+    forward: issue_music_credential_music_credential_issue_post
+    reversal: revoke_music_credential_music_credential__credential_id__revoke_post (POST /music/credential/{credential_id}/revoke,
+      X-Admin-Key) - revocation only, no un-revoke
+    window: null
+  - surface: SPIFFE binding
+    forward: spiffe_bind_identity_spiffe_bind_post
+    reversal: spiffe_unbind_identity_spiffe_bind__spiffe_uri__delete (DELETE, admin only)
+    window: null
+  - surface: enforcement record
+    forward: enforce_check_endpoint_enforce_check_post
+    reversal: none - enforce_ratify_endpoint_enforce_ratify_post APPENDS a ratifying record; "Der Vorgaenger wird
+      NICHT veraendert" (append-only history by design)
+    window: null
+  - surface: credits purchase / deposit / transfer
+    forward: credits_deposit_credits_deposit_post, credits_transfer_credits_transfer_post, create_checkout_billing_checkout_post
+    reversal: none
+    window: null
+    window_source: 'https://moltrust.ch/terms.html section 2: "All purchases are final and non-refundable unless
+      required by applicable law."'
+  - surface: credential issuance (VC), delegation (UCAN), compliance declaration, IPR submit, anchors batch
+    forward: issue_vc_credentials_issue_post, delegation_create_delegation_create_post, compliance_declaration_compliance_declaration_post,
+      ipr_submit_vc_ipr_submit_post, anchors_batch_anchors_batch_post
+    reversal: 'none published; VALIDITY block expiry and revocation status (GET /identity/revocation-status/{did})
+      are the lifecycle controls. On-chain anchors are immutable by design (Privacy Notice: only hashes are anchored).'
+    window: null
+  - surface: sports predictions / fantasy lineups
+    forward: sports_predict_commit_sports_predictions_commit_post, fantasy_lineup_commit_sports_fantasy_lineups_commit_post
+    reversal: none - commitments are hash-anchored before the event so they cannot be withdrawn; settlement is a
+      separate admin PATCH
+    window: null
+pagination:
+  style: offset-limit (reads) + event-id cursor (CAEP)
+  params:
+    offset: query, 3 operations
+    limit: query, 5 operations (max unstated)
+    since: query on GET /caep/pending/{did} - the last event_id seen
+  response_fields: not declared (the spec ships no response models); /caep docs show a plain list
+  link_headers: false
+  notes: GET /vc/ipr/agent/{did} is described as "Paginated" in the developers page; A2A ListTasksRequest declares
+    page_size/page_token but the JSON-RPC method is not implemented.
+field_selection:
+  supported: false
+request_tracing:
+  supported: false
+  headers: []
+  notes: No X-Request-Id / Request-Id header on any observed response (200, 400, 401, 404, 422). Nothing to quote
+    to support.
+versioning:
+  scheme: unversioned-path
+  header: null
+  current: 2.5 (info.version = /health version)
+  see: lifecycle/moltrust-ch-lifecycle.yml
+error_envelope:
+  rest: '{"detail": string | ValidationError[]} (FastAPI)'
+  moltguard: '{"error": code, "message": text} (Hono)'
+  mcp: JSON-RPC 2.0 error object
+  rfc9457: false
+  see: errors/moltrust-ch-problem-types.yml
+rate_limit_signaling:
+  status: 429
+  headers: []
+  retry_after: false
+  body: RateLimitError {message}
+  see: rate-limits/moltrust-ch-rate-limits.yml
+payment_signaling:
+  status: 402
+  body: 'PaymentRequired {x402: {version 2, accepts[{scheme exact, network base, maxAmountRequired {asset USDC,
+    amount base units}, payTo}]}}'
+  request_header: 'X-PAYMENT: x402 <base64 receipt>'
+  price_list: /.well-known/x402.json (well-known/moltrust-ch-x402.json) + x-moltrust-pricing per operation
+  credits_alternative: 'GET /credits/pricing (plans/moltrust-ch-credits-pricing.json): 0 / 1 / 2 credits per call,
+    debited against the X-API-Key owner'
+signed_responses:
+  supported: true
+  where: 'GET /skill/trust-score/{did} -> registry_signature = Ed25519(JCS({did, trust_score, computed_at, valid_until,
+    policy_version})); MoltRadar /guard/radar/* and MoltProof verdicts are EdDSA-signed (kid did:web:moltrust.ch#moltguard-key-1
+    / #moltproof-key-1)'
+  keys: /.well-known/registry-key.json, /.well-known/jwks.json, /.well-known/did.json (both hosts)
+  canonicalization: JCS (RFC 8785) per docs/caep.html
+caching:
+  trust_score: 1h server cache; response carries cache_valid_until / valid_until and consistency_level L1
+  registry_key: 'Cache-Control: max-age=3600'
+  agent_card: 'Cache-Control: public, max-age=3600 (apex host)'
+cors:
+  agent_card: 'Access-Control-Allow-Origin: * observed on moltrust.ch/.well-known/agent-card.json'
+security_headers_observed:
+- 'strict-transport-security: max-age=31536000; includeSubDomains'
+- 'x-content-type-options: nosniff'
+- 'x-frame-options: DENY'
+- 'referrer-policy: strict-origin-when-cross-origin'
+- 'permissions-policy: geolocation=(), microphone=()'
+cross_links:
+  errors: errors/moltrust-ch-problem-types.yml
+  lifecycle: lifecycle/moltrust-ch-lifecycle.yml
+  authentication: authentication/moltrust-ch-authentication.yml
+  rate_limits: rate-limits/moltrust-ch-rate-limits.yml
+  plans: plans/moltrust-ch-plans-pricing.yml

@@ -1,0 +1,97 @@
+{
+  "version": "2",
+  "provider": "MolTrust",
+  "description": "MoltGuard agent-trust API — x402 paid endpoints. Prices in USDC on Base.",
+  "baseUrl": "https://api.moltrust.ch",
+  "network": "eip155:8453",
+  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+  "assetName": "USDC",
+  "currency": "USDC",
+  "payTo": "0x380238347e58435f40B4da1F1A045A271D5838F5",
+  "facilitator": "https://x402.org/facilitator",
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/guard/api/agent/score/{address}",
+      "price": "0.05",
+      "currency": "USDC"
+    },
+    {
+      "method": "GET",
+      "path": "/guard/api/agent/detail/{address}",
+      "price": "0.05",
+      "currency": "USDC"
+    },
+    {
+      "method": "GET",
+      "path": "/guard/api/sybil/scan/{address}",
+      "price": "0.10",
+      "currency": "USDC"
+    },
+    {
+      "method": "GET",
+      "path": "/guard/api/market/check/{marketId}",
+      "price": "0.05",
+      "currency": "USDC"
+    },
+    {
+      "method": "POST",
+      "path": "/guard/api/credential/issue",
+      "price": "0.10",
+      "currency": "USDC"
+    },
+    {
+      "method": "GET",
+      "path": "/guard/prediction/integrity/{market_id}",
+      "price": "0.10",
+      "currency": "USDC"
+    },
+    {
+      "method": "GET",
+      "path": "/guard/radar/market/{id}",
+      "price": "0.05",
+      "currency": "USDC"
+    },
+    {
+      "method": "POST",
+      "path": "/guard/vc/skill/issue",
+      "price": "5.00",
+      "currency": "USDC"
+    },
+    {
+      "method": "POST",
+      "path": "/guard/vc/prediction/issue",
+      "price": "5.00",
+      "currency": "USDC"
+    },
+    {
+      "method": "POST",
+      "path": "/guard/vc/buyer-agent/issue",
+      "price": "5.00",
+      "currency": "USDC"
+    },
+    {
+      "method": "POST",
+      "path": "/guard/vc/travel-agent/issue",
+      "price": "5.00",
+      "currency": "USDC"
+    }
+  ],
+  "free": [
+    {
+      "method": "GET",
+      "path": "/guard/api/market/feed",
+      "note": "Early Access — free during launch"
+    },
+    {
+      "method": "GET",
+      "path": "/guard/api/agent/score-free/{address}",
+      "note": "Free limited agent score"
+    },
+    {
+      "method": "GET",
+      "path": "/guard/api/market/check-free/{marketId}",
+      "note": "Free limited market check"
+    }
+  ]
+}

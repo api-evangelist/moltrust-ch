@@ -1,0 +1,189 @@
+generated: '2026-09-19'
+method: searched
+source: registry.npmjs.org, pypi.org/pypi/<pkg>/json, GitHub repos listing for MoltyCel (2026-09-19) + https://moltrust.ch/developers.html
+  ("What each package gives you") + https://moltrust.ch/llms.txt
+summary:
+  first_party_sdk_count: 12
+  registries:
+  - npm
+  - pypi
+  github_organization: https://github.com/MoltyCel
+  note: 'A broad first-party client surface for a company this size: a Node SDK with Express/Hono/Fastify middleware,
+    an offline verifier, payment middlewares for x402 and MPP, an AAE schema library, an OpenClaw plugin, a Python
+    SDK, an MCP server, framework middlewares for LangChain / CrewAI / Google ADK, and an enforcement client. Currency
+    is uneven: the npm packages last shipped in March-April 2026 while the API has moved to 2.5 and the hosted MCP
+    server to 1.28.1.'
+github_organization:
+  found: true
+  url: https://github.com/MoltyCel
+  checked: '2026-09-19'
+  note: The GitHub API returns no org object for MoltyCel (the account is a user, not an organization), but its
+    repos listing shows 50 repos including moltrust-api, moltguard, moltrust-sdk, moltrust-mcp-server and the packages
+    below. Roughly half the repos are forks of awesome-lists and third-party projects (x402, servers, universal-resolver,
+    did-extensions).
+packages:
+- language: javascript
+  registry: npm
+  name: '@moltrust/sdk'
+  url: https://www.npmjs.com/package/@moltrust/sdk
+  install: npm install @moltrust/sdk
+  official: true
+  version: 1.1.0
+  published: '2026-03-27'
+  repository: https://github.com/MoltyCel/moltrust-sdk
+  description: MolTrust Agent Verification - verify AI agents in 3 lines of code; Express / Hono / Fastify middleware
+    (AgentTrust.verify({minScore})); pulls in @moltrust/aae.
+  source: https://registry.npmjs.org/@moltrust/sdk
+- language: javascript
+  registry: npm
+  name: '@moltrust/aae'
+  url: https://www.npmjs.com/package/@moltrust/aae
+  install: npm install @moltrust/aae
+  official: true
+  version: 1.1.0
+  published: '2026-03-26'
+  repository: https://github.com/MoltyCel/moltrust-aae
+  description: Agent Authorization Envelope (AAE) - schema + runtime validator, MolTrust Protocol v0.5.
+  source: https://registry.npmjs.org/@moltrust/aae
+- language: javascript
+  registry: npm
+  name: '@moltrust/x402'
+  url: https://www.npmjs.com/package/@moltrust/x402
+  install: npm install @moltrust/x402
+  official: true
+  version: 1.0.1
+  published: '2026-04-10'
+  repository: https://github.com/MoltyCel/moltrust-x402
+  description: Trust-score middleware for x402-paid endpoints (requireScore({minScore})); 403 + registration link
+    below threshold.
+  source: https://registry.npmjs.org/@moltrust/x402
+- language: javascript
+  registry: npm
+  name: '@moltrust/mpp'
+  url: https://www.npmjs.com/package/@moltrust/mpp
+  install: npm install @moltrust/mpp
+  official: true
+  version: 1.0.3
+  published: '2026-04-10'
+  repository: https://github.com/MoltyCel/moltrust-mpp
+  description: Same requireScore() shape for MPP (Machine Payments Protocol - Stripe / Tempo / Visa) endpoints.
+  source: https://registry.npmjs.org/@moltrust/mpp
+- language: javascript
+  registry: npm
+  name: '@moltrust/openclaw'
+  url: https://www.npmjs.com/package/@moltrust/openclaw
+  install: openclaw plugins install @moltrust/openclaw
+  official: true
+  version: 1.0.1
+  published: '2026-04-11'
+  repository: https://github.com/MoltyCel/moltrust-openclaw
+  description: Trust-verification plugin for the OpenClaw agent runtime - DID identity, reputation scoring, VC verification.
+  source: https://registry.npmjs.org/@moltrust/openclaw
+- language: javascript
+  registry: npm
+  name: '@moltrust/verify'
+  url: https://www.npmjs.com/package/@moltrust/verify
+  install: npm install @moltrust/verify
+  official: true
+  version: null
+  published: null
+  repository: https://github.com/MoltyCel/moltrust-verify
+  description: Offline W3C VC + IPR verification against Base L2 - no MolTrust API key. Named on the developers
+    page and in the API README (v1.1.0); registry metadata NOT queried this pass, so version recorded as null rather
+    than copied from prose.
+  source: https://moltrust.ch/developers.html
+- language: javascript
+  registry: npm
+  name: '@moltrust/agent-firewall'
+  url: https://www.npmjs.com/package/@moltrust/agent-firewall
+  install: npm install @moltrust/agent-firewall
+  official: true
+  version: null
+  published: null
+  repository: https://github.com/MoltyCel/moltrust-agent-firewall
+  description: CAEP Profile v1 event-reactive consumer library (polling + signed-score verification). Registry not
+    queried this pass; version null.
+  source: https://moltrust.ch/developers.html
+- language: python
+  registry: pypi
+  name: moltrust-mcp-server
+  url: https://pypi.org/project/moltrust-mcp-server/
+  install: pip install moltrust-mcp-server  |  uvx moltrust-mcp-server
+  official: true
+  version: 1.2.2
+  published: '2026-07-28'
+  repository: https://github.com/MoltyCel/moltrust-mcp-server
+  description: MCP server for MolTrust (53 tools, streamable HTTP / stdio); the same code runs hosted at https://api.moltrust.ch/mcp
+    (which reports 1.28.1).
+  source: https://pypi.org/pypi/moltrust-mcp-server/json
+- language: python
+  registry: pypi
+  name: moltrust
+  url: https://pypi.org/project/moltrust/
+  install: pip install moltrust
+  official: true
+  version: 0.2.0
+  published: '2026-04-25'
+  repository: https://github.com/MoltyCel/moltrust-sdk
+  description: Python SDK - MolTrust / AsyncMolTrust clients and a DID resolver (MolTrustResolver) for did:moltrust
+    and did:web.
+  changelog: https://github.com/MoltyCel/moltrust-sdk/blob/main/CHANGELOG.md
+  source: https://pypi.org/pypi/moltrust/json
+- language: python
+  registry: pypi
+  name: moltrust-langchain
+  url: https://pypi.org/project/moltrust-langchain/
+  install: pip install moltrust-langchain
+  official: true
+  version: null
+  published: null
+  repository: https://github.com/MoltyCel/moltrust-langchain
+  description: MolTrustMiddleware for LangChain 1.x create_agent - gate tool calls by trust score. Registry not
+    queried this pass; version null.
+  source: https://moltrust.ch/developers.html
+- language: python
+  registry: pypi
+  name: moltrust-crewai
+  url: https://pypi.org/project/moltrust-crewai/
+  install: pip install moltrust-crewai
+  official: true
+  version: null
+  published: null
+  repository: https://github.com/MoltyCel/moltrust-crewai
+  description: MolTrustGuardrail before_tool_call hook for CrewAI. Registry not queried this pass; version null.
+  source: https://moltrust.ch/developers.html
+- language: python
+  registry: pypi
+  name: moltrust-adk
+  url: https://pypi.org/project/moltrust-adk/
+  install: pip install moltrust-adk
+  official: true
+  version: null
+  published: null
+  repository: https://github.com/MoltyCel/moltrust-adk
+  description: Request interceptor for Google ADK A2A remote agents (marked Experimental by the provider). Registry
+    not queried this pass; version null.
+  source: https://moltrust.ch/developers.html
+- language: python
+  registry: pypi
+  name: moltrust-enforce
+  url: https://pypi.org/project/moltrust-enforce/
+  install: pip install moltrust-enforce
+  official: true
+  version: null
+  published: null
+  repository: null
+  description: EnforceClient.check()/verify() - POST /enforce/check verdicts recomputed locally (Python 3.10+).
+    Registry not queried this pass; version null.
+  source: https://moltrust.ch/developers.html
+negative_probes:
+- registry: pypi
+  names:
+  - moltrust-sdk
+  result: '404'
+abandonment_signal:
+  assessment: mixed
+  note: 'Newest first-party release: moltrust-mcp-server 1.2.2 (2026-07-28). The npm middleware family has not shipped
+    since 2026-04-11 while the API advanced to 2.5 (compliance, delegation, enforcement endpoints landed July-August
+    2026) - the Node SDKs predate a third of the current surface. The Python SDK (0.2.0, 2026-04-25) likewise predates
+    the compliance API.'

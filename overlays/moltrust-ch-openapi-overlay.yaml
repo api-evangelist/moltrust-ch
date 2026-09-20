@@ -1,0 +1,74 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist overlay for the MolTrust API
+  version: 1.0.0
+extends: openapi/_original/moltrust-ch-openapi.json
+x-generated: '2026-09-19'
+x-method: generated
+x-source: openapi/_original/moltrust-ch-openapi.json + a2a/moltrust-ch-agent-card.json (securitySchemes) + https://moltrust.ch/terms.html
+x-rationale: The served openapi.json is FastAPI-generated with no servers[], no securitySchemes, no info.description/contact/termsOfService
+  and 132 of 186 operations untagged. This overlay adds the base URL and the three schemes the provider itself declares
+  in its agent card WITHOUT mutating the original. Apply with any Overlay 1.0.0 processor against openapi/_original/moltrust-ch-openapi.json.
+actions:
+- target: $.info
+  description: Add description, contact and terms from the provider site.
+  update:
+    description: MolTrust trust registry for autonomous AI agents - W3C DIDs, Verifiable Credentials, Agent Authorization
+      Envelopes, trust scores, UCAN delegation, EU AI Act compliance endpoints, credits and x402 payments. Operated
+      by CryptoKRI GmbH, Zurich.
+    contact:
+      name: CryptoKRI GmbH
+      url: https://moltrust.ch/contact.html
+      email: info@moltrust.ch
+    termsOfService: https://moltrust.ch/terms.html
+- target: $
+  description: Add the production server (stated on https://moltrust.ch/developers.html and in did.json service
+    endpoints).
+  update:
+    servers:
+    - url: https://api.moltrust.ch
+      description: Production
+    externalDocs:
+      url: https://moltrust.ch/developers.html
+      description: Developer quickstart
+- target: $.components
+  description: Add the security schemes the provider declares in its A2A agent card.
+  update:
+    securitySchemes:
+      apiKey:
+        type: apiKey
+        in: header
+        name: X-API-Key
+        description: API key from POST /auth/signup (email) or POST /auth/signup-did (Ed25519 proof of possession).
+          See authentication/moltrust-ch-authentication.yml.
+      moltrustDid:
+        type: apiKey
+        in: header
+        name: X-MolTrust-DID
+        description: Agent DID for self-identification on trust-gated endpoints.
+      aaeEnvelope:
+        type: http
+        scheme: bearer
+        bearerFormat: AAE-JWS
+        description: Agent Authorization Envelope as JWS bearer - declared by the provider as "implementation in
+          progress".
+- target: $.tags
+  description: Declare the tags the spec uses but never declares.
+  update:
+  - name: Identity
+  - name: Compliance
+  - name: Delegation
+  - name: Reputation
+  - name: Anchoring
+  - name: AAE Enforcement
+  - name: Output Provenance
+  - name: Output Provenance Admin
+  - name: Admin
+  - name: billing
+  - name: AWS Marketplace
+  - name: billing-admin
+  - name: reseller
+  - name: reseller-admin
+  - name: caep
+  - name: Test Harness
+  - name: 'A2A: JSON-RPC'

@@ -1,0 +1,147 @@
+generated: '2026-09-19'
+method: searched
+probe: true
+source: https://moltrust.ch/privacy.html (v1.1, 2026-06-04) + https://moltrust.ch/terms.html (effective 2026-02-23)
+  + https://moltrust.ch/compliance.html + https://moltrust.ch/impressum.html + conventional-path probes 2026-09-19
+signals:
+  data_subject_request:
+    url: https://moltrust.ch/privacy.html
+    section: Your rights
+    channel: https://moltrust.ch/contact.html with subject line "Privacy - [right name]"
+    stated_sla: Response within one month.
+    rights_named:
+    - access (Art. 15)
+    - rectification (Art. 16)
+    - erasure (Art. 17) - off-chain data only; on-chain anchors carry no personal data
+    - restriction (Art. 18)
+    - portability (Art. 20) - "JSON export available"
+    - objection (Art. 21)
+    - complaint to the Swiss FDPIC or an EU supervisory authority
+    evidence:
+    - source: https://moltrust.ch/privacy.html
+      http_status: 200
+      fetched: '2026-09-19'
+      quote: '"Right of access (Art. 15) - Request a copy of personal data MolTrust holds about you. Response within
+        one month." ... "How to exercise - Via /contact with subject line \"Privacy - [right name]\". Identity verification
+        may be requested to prevent unauthorized disclosure."'
+    note: A documented process with a channel and a stated response period; a section of the privacy notice, not
+      a dedicated intake page (/privacy/requests 404). No API endpoint.
+  subprocessors:
+    url: https://moltrust.ch/privacy.html
+    section: Third-country transfers
+    dated: '2026-06-04'
+    entries:
+    - vendor: Hetzner
+      purpose: primary hosting / data centre, Nuremberg backup
+      location: Switzerland / Germany
+    - vendor: Amazon Web Services (KMS)
+      purpose: root signing key management
+      location: eu-central-1 Frankfurt, SCCs via AWS DPA
+    - vendor: Coinbase Inc. (Base L2)
+      purpose: public-ledger anchoring of non-personal hashes
+      location: United States
+    evidence:
+    - source: https://moltrust.ch/privacy.html
+      http_status: 200
+      fetched: '2026-09-19'
+      quote: '"MolTrust operates primarily within Switzerland (Hetzner data centre, Nuremberg backup) and the EU."
+        ... "AWS KMS (Frankfurt, eu-central-1) ... SCCs in place via AWS Data Processing Addendum." ... "Other sub-processors
+        - A current list of sub-processors with their roles and location is maintained and available on request
+        from the controller contact above."'
+    note: Three processors are named with role and location inside a dated privacy notice; the FULL list is explicitly
+      "available on request", not published. No standalone table (/legal/subprocessors, /subprocessors 404). Recorded
+      as partial.
+  data_residency:
+    url: https://moltrust.ch/terms.html
+    section: 6. Privacy & Compliance - Data Location
+    evidence:
+    - source: https://moltrust.ch/terms.html
+      http_status: 200
+      fetched: '2026-09-19'
+      quote: '"Data Location - All data is processed and stored on infrastructure located in Switzerland, subject
+        to Swiss data protection law."'
+    - source: https://moltrust.ch/privacy.html
+      http_status: 200
+      fetched: '2026-09-19'
+      quote: '"No personal data leaves Switzerland or the EEA in identifiable form."'
+    note: A contractual residency statement (Switzerland) plus the privacy notice's regional detail (Nuremberg backup,
+      Frankfurt KMS). No per-customer region selection is offered; /docs/data-residency 404.
+probed_absent:
+- signal: sbom
+  urls:
+  - url: https://moltrust.ch/security/sbom
+    status: 404
+  - url: https://moltrust.ch/sbom
+    status: 404
+  note: No bill of materials published. Never derived - search only. (The GitHub repo mentions pip-audit floors
+    and an ADR on dependency pinning, which is not an SBOM.)
+- signal: support_lifetime
+  urls:
+  - url: https://moltrust.ch/changelog
+    status: 404
+  note: No stated support period for any API version; see lifecycle/.
+- signal: accessibility_conformance
+  urls:
+  - url: https://moltrust.ch/accessibility
+    status: 404
+  - url: https://moltrust.ch/accessibility/vpat
+    status: 404
+  - url: https://moltrust.ch/accessibility.html
+    status: 404
+- signal: training_data_summary
+  urls:
+  - url: https://moltrust.ch/ai/transparency
+    status: 404
+  note: The provider does not train or serve a model.
+- signal: ai_transparency
+  urls:
+  - url: https://moltrust.ch/ai/transparency
+    status: 404
+  note: compliance.html and the EU AI Act fact-sheet PDF describe how the product supports CUSTOMERS' Article 12/50
+    obligations; no statement about MolTrust's own use of AI in the service was found, so the signal is not recorded.
+- signal: global_privacy_control
+  urls:
+  - url: https://moltrust.ch/privacy.html
+    status: 200
+  note: No GPC / Do-Not-Sell statement in the privacy notice; not tested by sending a header (rule 2).
+- signal: incident_notification
+  urls:
+  - url: https://moltrust.ch/privacy.html
+    status: 200
+  note: No customer breach-notification commitment or window published. The GitHub repo holds an internal incident
+    write-up (docs/incidents/2026-05-22_test-key-exposure.md) but no policy.
+- signal: age_assurance
+  urls:
+  - url: https://moltrust.ch/terms.html
+    status: 200
+  note: B2B / agent service; no age statement.
+- signal: notice_and_action
+  urls:
+  - url: https://moltrust.ch/legal/report-content
+    status: 404
+- signal: transparency_report
+  urls:
+  - url: https://moltrust.ch/transparency-report
+    status: 404
+  - url: https://moltrust.ch/transparency.html
+    status: 200
+  note: /transparency.html is "Verify Agent Trust" (a product verifier) and /guard/transparency/* publishes hash-verifiable
+    TrustProofs - neither is a legal-requests transparency report.
+- signal: exit_assistance
+  urls:
+  - url: https://moltrust.ch/terms.html
+    status: 200
+  note: Only the Art. 20 JSON export of personal data; no service-exit / data-export commitment for customer records.
+    Credentials are verifiable offline (@moltrust/verify) which is a form of portability the provider documents
+    on the developers page, but not as an exit commitment.
+legal_entity:
+  name: CryptoKRI GmbH
+  register: Handelsregisteramt des Kantons Zurich, CHE-115.481.407
+  address: Auf der Mauer 2, 8001 Zurich, Switzerland
+  managing_director: Lars Kersten Kroehl
+  source: https://moltrust.ch/impressum.html
+eu_representative:
+  status: being designated
+  source: 'Privacy Notice v1.1: "An EU-based representative under Article 27 GDPR is being designated. Designation
+    expected to be completed within 30 days of this notice."'
+  note: Notice dated 2026-06-04; still the published text on 2026-09-19.

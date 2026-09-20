@@ -1,0 +1,24 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist overlay for the MoltGuard sub-API
+  version: 1.0.0
+extends: openapi/_original/moltrust-ch-moltguard-openapi.json
+x-generated: '2026-09-19'
+x-method: generated
+x-source: openapi/_original/moltrust-ch-moltguard-openapi.json + https://moltrust.ch/terms.html + well-known/moltrust-ch-x402.json
+x-rationale: The MoltGuard spec already carries servers[], an x402 securityScheme, tags and a license. This overlay
+  only adds terms/externalDocs links and a pointer from the x402 scheme to the provider's published discovery document.
+actions:
+- target: $.info
+  update:
+    termsOfService: https://moltrust.ch/terms.html
+- target: $
+  update:
+    externalDocs:
+      url: https://api.moltrust.ch/guard/api/info
+      description: Live self-documentation and pricing inventory
+- target: $.components.securitySchemes.x402
+  update:
+    description: 'x402 v2 payment receipt header (X-PAYMENT: x402 <base64 receipt>). Prices per endpoint are published
+      in advance at https://api.moltrust.ch/.well-known/x402.json; a request without the header receives 402 with
+      a PaymentRequired body.'

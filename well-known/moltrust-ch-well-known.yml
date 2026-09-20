@@ -1,0 +1,182 @@
+generated: '2026-09-19'
+method: probed
+source: live probes of /.well-known/ on every MolTrust host, 2026-09-19 (curl, browser User-Agent)
+summary: >-
+  A genuine WellKnown hit, earned on the API host. api.moltrust.ch serves an A2A agent card at BOTH the
+  canonical /.well-known/agent-card.json and the legacy /.well-known/agent.json (identical 13,075-byte
+  signed bodies), a W3C did:web DID Document, an RFC 7517 JWKS, an ERC-8004 agent-registration file, an
+  x402 v2 discovery document, an MCP discovery stub and the CAEP registry key; the apex host moltrust.ch
+  mirrors the agent card, did.json, jwks.json and x402.json. NOTHING in the OAuth / OIDC family is served
+  anywhere (no oauth-authorization-server, no oauth-protected-resource, no openid-configuration) - the API
+  authenticates with X-API-Key / X-MolTrust-DID / x402, not OAuth - and there is no security.txt on any
+  host, so NO SecurityTxt pointer is emitted. No api-catalog, ai-plugin.json, apis.json, ucp.json, acp.json
+  or aauth-resource.json.
+pointer_basis: >-
+  WellKnown pointer emitted on the strength of the served agent card (both paths, both hosts) plus did.json,
+  jwks.json, x402.json, agent-registration.json, mcp.json and registry-key.json. SecurityTxt NOT emitted -
+  RFC 9116 is unimplemented on every host (moltrust.ch, www, api, uresolver, status).
+false_positive_watch: >-
+  Neither host is an SPA catch-all: moltrust.ch returns a real nginx 404 (564-byte HTML) for unknown
+  /.well-known/* paths and api.moltrust.ch returns FastAPI's 22-byte JSON {"detail":"Not Found"}. The 200s
+  below carry parseable JSON documents with the expected shape. api.moltrust.ch/.well-known/x402 (no
+  extension) is a 301 to /.well-known/x402.json, which the provider's own OpenAPI documents as a legacy
+  alias.
+hosts:
+- host: https://api.moltrust.ch
+  role: API host, MCP host (https://api.moltrust.ch/mcp), A2A host (https://api.moltrust.ch/a2a), MoltGuard sub-API (/guard)
+  documents:
+  - path: /.well-known/agent-card.json
+    status: 200
+    content_type: application/json
+    bytes: 13075
+    file: ../a2a/moltrust-ch-agent-card.json
+    note: A2A 1.0.0-shaped AgentCard, JWS-signed (kid moltrust-registry-2026-v1, present in jwks.json). Graded in a2a/moltrust-ch-a2a.yml.
+  - path: /.well-known/agent.json
+    status: 200
+    content_type: application/json
+    bytes: 13075
+    note: Legacy pre-0.3 path; byte-identical to agent-card.json (FastAPI operationId well_known_agent_json_alias). Not saved twice.
+  - path: /.well-known/did.json
+    status: 200
+    content_type: application/json
+    file: moltrust-ch-did.json
+    note: W3C DID Document for did:web:api.moltrust.ch - two Ed25519VerificationKey2020 methods, services TrustLayer / AgentIdentity / ReputationService.
+  - path: /.well-known/jwks.json
+    status: 200
+    content_type: application/json
+    file: moltrust-ch-jwks.json
+    note: RFC 7517 JWK Set, four Ed25519 (OKP, EdDSA) signing keys - gateway, moltguard, registry and did:web:api.moltrust.ch#key-1.
+  - path: /.well-known/agent-registration.json
+    status: 200
+    content_type: application/json
+    file: moltrust-ch-agent-registration.json
+    note: ERC-8004 domain-verification file; registrations[0].agentId 21023 on eip155:8453:0x8004A169FB4a3325136EB29fA0ceB6D2e539a432. NB the agent card's erc8004 extension names agentId 33553 - two different on-chain ids are published.
+  - path: /.well-known/x402.json
+    status: 200
+    content_type: application/json
+    file: moltrust-ch-x402.json
+    note: x402 v2 discovery document - 11 paid endpoints priced in USDC on Base (0.05 to 5.00), payTo wallet, facilitator https://x402.org/facilitator, 3 free endpoints.
+  - path: /.well-known/x402
+    status: 301
+    note: Redirects to /.well-known/x402.json (documented legacy alias in the OpenAPI).
+  - path: /.well-known/mcp.json
+    status: 200
+    content_type: application/json
+    file: moltrust-ch-mcp.json
+    note: MCP discovery stub naming transport streamable-http and endpoint https://api.moltrust.ch/mcp.
+  - path: /.well-known/registry-key.json
+    status: 200
+    content_type: application/json
+    file: moltrust-ch-registry-key.json
+    note: Single Ed25519 JWK (kid moltrust-registry-2026-v1) used to sign trust scores and the agent card (docs/caep.html).
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+    note: The MCP endpoint at https://api.moltrust.ch/mcp answers initialize and tools/list anonymously, so there is no RFC 9728 resource metadata to publish; OAuth is not part of this provider's model.
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/apis.json
+    status: 404
+  - path: /apis.json
+    status: 404
+  - path: /apis.yml
+    status: 404
+  - path: /.well-known/ucp.json
+    status: 404
+  - path: /.well-known/acp.json
+    status: 404
+  - path: /.well-known/aauth-resource.json
+    status: 404
+- host: https://moltrust.ch
+  role: registrable domain / marketing + docs site (nginx static)
+  documents:
+  - path: /.well-known/agent-card.json
+    status: 200
+    content_type: application/json
+    bytes: 13075
+    note: Byte-identical mirror of the api.moltrust.ch card (cmp verified). Last-Modified Sat, 11 Jul 2026 20:46:46 GMT.
+  - path: /.well-known/agent.json
+    status: 200
+    content_type: application/json
+    bytes: 13075
+    note: Same mirror on the legacy path.
+  - path: /.well-known/did.json
+    status: 200
+    content_type: application/json
+    file: moltrust-ch-root-did.json
+    note: DID Document for did:web:moltrust.ch (JsonWebKey2020) carrying the moltguard-key-1 and moltproof-key-1 signing keys.
+  - path: /.well-known/jwks.json
+    status: 200
+    content_type: application/json
+    note: Same four-key JWK Set as the API host (not saved twice).
+  - path: /.well-known/x402.json
+    status: 200
+    content_type: application/json
+    note: Same x402 discovery document as the API host (linked from https://moltrust.ch/pricing.html).
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/api-catalog.json
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/apis.json
+    status: 404
+  - path: /apis.json
+    status: 404
+  - path: /apis.yml
+    status: 404
+  - path: /.well-known/ucp.json
+    status: 404
+  - path: /.well-known/acp.json
+    status: 404
+  - path: /.well-known/aauth-resource.json
+    status: 404
+  - path: /security.txt
+    status: 404
+- host: https://www.moltrust.ch
+  documents:
+  - path: /.well-known/agent-card.json
+    status: 301
+    note: Every path on www 301s to the apex host.
+  - path: /.well-known/agent.json
+    status: 301
+- host: https://uresolver.moltrust.ch
+  role: DIF Universal Resolver (did:moltrust driver); named in the agent card trust-score extension
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+  note: Express-style HTML 404s for every path; GET /1.0/identifiers/did:web:api.moltrust.ch returns 400 JSON (the driver resolves did:moltrust, not did:web).
+- host: https://status.moltrust.ch
+  role: Upptime status page (GitHub Pages)
+  documents:
+  - path: /.well-known/security.txt
+    status: 404

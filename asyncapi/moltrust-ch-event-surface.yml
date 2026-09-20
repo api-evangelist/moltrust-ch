@@ -1,0 +1,70 @@
+generated: '2026-09-19'
+method: searched
+source: https://moltrust.ch/docs/caep.html + openapi/moltrust-ch-openapi.yml (caep tag, webhooks/billing receivers)
+  + a2a/moltrust-ch-agent-card.json (capabilities.pushNotifications false, caep extension) + probes 2026-09-19
+checked: '2026-09-19'
+summary: 'MolTrust has a real, documented trust-change EVENT surface but no delivery channel to the consumer and
+  no AsyncAPI. Events are pulled: GET /caep/pending/{did} (30 s default poll, event-id cursor) and acknowledged
+  with POST /caep/acknowledge/{event_id}. The provider does not offer customer-registerable webhooks - the three
+  webhook-shaped operations in the spec (POST /webhooks/payment, POST /billing/webhook with stripe-signature, POST
+  /aws/fulfillment) are INBOUND receivers for MolTrust''s own payment providers. No Webhooks or AsyncAPI pointer
+  is emitted: an integrator cannot register an endpoint to be called.'
+asyncapi:
+  present: false
+  probed:
+  - url: https://api.moltrust.ch/asyncapi.yaml
+    status: not probed - no reference anywhere in docs, llms.txt or either spec; both specs have no webhooks/callbacks
+      blocks
+  note: Never fabricated.
+webhooks:
+  customer_registerable: false
+  openapi_webhooks_block: false
+  openapi_callbacks: false
+  inbound_receivers:
+  - operation: payment_webhook_webhooks_payment_post
+    path: POST /webhooks/payment
+    direction: inbound (payment provider -> MolTrust)
+  - operation: stripe_webhook_billing_webhook_post
+    path: POST /billing/webhook
+    direction: inbound (Stripe -> MolTrust; header stripe-signature)
+  - operation: aws_fulfillment_aws_fulfillment_post
+    path: POST /aws/fulfillment
+    direction: inbound (AWS Marketplace -> MolTrust)
+  a2a_notifications: 'AgentCard capabilities.pushNotifications: false; TaskPushNotificationConfig schemas are declared
+    but the JSON-RPC methods are not implemented.'
+polling_event_channel:
+  name: MolTrust CAEP Profile v1 (Phase 0)
+  self_description: '"a proprietary event protocol whose name was inspired by OpenID-CAEP. This is not a SET / RFC
+    8417 implementation."'
+  endpoints:
+  - operation: caep_pending_caep_pending__did__get
+    path: GET /caep/pending/{did}
+    params: limit, since=<event_id>
+    auth: free during Early Access
+    limit: 120/h per DID
+    default_poll_interval: 30 s
+  - operation: caep_acknowledge_caep_acknowledge__event_id__post
+    path: POST /caep/acknowledge/{event_id}
+    auth: X-API-Key (only the DID the event was raised for)
+    retention: soft-ack; hard-deleted after 90 days
+  event_types:
+  - type: trust_score_change
+    status: live (Phase 0)
+    trigger: cached score changes by >= 10 points
+    payload: '{old_score, new_score, delta, reason, computed_at}'
+  - type: flag_added
+    status: schema present, emitter staged (Phase 0.5)
+    examples:
+    - young_endorser_cluster
+    - repetitive_endorsements
+  - type: flag_removed
+    status: schema present, emitter staged (Phase 0.5)
+  - type: did_revoked
+    status: schema present, emitter staged; POST /identity/revoke/{did} "Emits CAEP events"
+  signed_state: Every /skill/trust-score/{did} response carries registry_signature (Ed25519 over JCS payload) and
+    valid_until so a verifier can cache and prove what the registry said.
+  consumer_library: '@moltrust/agent-firewall (npm) - "CAEP Profile v1 event-reactive layer" (developers page);
+    https://github.com/MoltyCel/moltrust-agent-firewall'
+  roadmap: XMTP-based delivery channel "Q2/Q3 2026" (docs/caep.html); not shipped as of 2026-09-19.
+pointer_decision: No Webhooks pointer, no AsyncAPI pointer. The event surface is captured here as data; emitting
+  Webhooks would advertise a subscription mechanism the provider does not offer.

@@ -1,23 +1,274 @@
 aid: moltrust-ch
 name: CryptoKRI GmbH
-description: 'CryptoKRI GmbH is a company surfaced via the API Evangelist harvest backlog (source: a2a-registry)
-  and added to the network as a stub for full-pipeline profiling.'
+description: 'CryptoKRI GmbH (Zurich, CHE-115.481.407) operates MolTrust, a trust registry for autonomous AI agents:
+  W3C DID identity (did:moltrust, did:web), W3C Verifiable Credential issuance and verification, Agent Authorization
+  Envelopes (AAE, an IETF Internet-Draft) with UCAN delegation and stateless mandate enforcement, behavioural trust
+  scores signed with Ed25519, EU AI Act compliance endpoints (risk classification, Annex V declarations as VCs,
+  Article 73 incidents), ERC-8004 on-chain registration and Merkle-batched evidence anchoring on Base L2. The MoltGuard
+  sub-API adds wallet trust scoring, sybil detection, prediction-market integrity and vertical credentials (shopping,
+  travel, skills, music, sports, brand provenance) paid per call in USDC via x402. Published surfaces: two OpenAPI
+  3.1 documents, a signed A2A agent card, a hosted MCP server with 53 tools, llms.txt on both hosts, JWKS / DID
+  documents / x402 discovery under /.well-known, npm and PyPI SDKs, and an Upptime status page.'
+image: https://moltrust.ch/img/moltrust-logo.png
 url: https://raw.githubusercontent.com/api-evangelist/moltrust-ch/refs/heads/main/apis.yml
 x-type: company
 x-source: harvest:a2a-registry
-x-tier: stub
-x-tier-reason: harvest
+x-tier: enriched
+x-tier-reason: enrichment-pipeline
 specificationVersion: '0.20'
 created: '2026-09-19'
 modified: '2026-09-19'
-tags:
-- Company
-apis: []
+tags: &id001
+- AI Agents
+- Agent Identity
+- Decentralized Identity
+- Verifiable Credentials
+- Trust & Safety
+- Agent Authorization
+- Compliance
+- Blockchain
+- A2A
+- MCP
+- x402
+- agent-native
+tags_raw: &id002
+- ai-agents
+- agent-identity
+- decentralized-identity
+- verifiable-credentials
+- trust-and-safety
+- agent-authorization
+- compliance
+- blockchain
+- a2a
+- mcp
+- x402
+- agent-native
+apis:
+- name: MolTrust API
+  description: 'REST trust-registry API (FastAPI, v2.5, 186 operations): agent registration and DID resolution,
+    W3C VC issue/verify, AAE delegation configuration, UCAN 0.10.0 delegation create/verify, stateless /enforce/check
+    verdicts, Ed25519-signed trust scores, endorsements and swarm graph, EU AI Act compliance endpoints, credits
+    and USDC deposits, ERC-8004 cross-links, CAEP polling events, interaction proof records and vertical credentials
+    (sports, music). Auth by X-API-Key or X-MolTrust-DID; per-call credit metering.'
+  image: https://moltrust.ch/img/moltrust-logo.png
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags: *id001
+  tags_raw: *id002
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-openapi.yml
+  - type: OpenAPI
+    name: Provider-hosted OpenAPI 3.1 (source)
+    url: https://api.moltrust.ch/openapi.json
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    name: Provider-hosted llms.txt (API host)
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Overlay
+    url: overlays/moltrust-ch-openapi-overlay.yaml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+- name: MoltGuard API
+  description: 'Trust and integrity sub-API of MolTrust (Hono/Node, v1.5.0, 71 operations across 14 capability clusters):
+    Base wallet risk scoring and sybil-cluster detection, Polymarket market-integrity checks and MoltRadar operator
+    clustering, SKILL.md security audits with ten CWE-mapped checks, VerifiedSkill / BuyerAgent / TravelAgent /
+    PredictionTrack credential issuance, MT Salesguard brand and reseller provenance, AAE evaluation, endorsement-graph
+    queries and hash-verifiable TrustProof transparency records. Free reads are rate-limited; paid endpoints are
+    priced per call in USDC on Base via x402 (X-PAYMENT header).'
+  image: https://moltrust.ch/img/moltrust-logo.png
+  humanURL: https://api.moltrust.ch/guard/api/info
+  baseURL: https://api.moltrust.ch/guard
+  tags:
+  - AI Agents
+  - Trust & Safety
+  - Wallet Risk Scoring
+  - Sybil Detection
+  - Prediction Markets
+  - x402
+  - Verifiable Credentials
+  - agent-native
+  tags_raw:
+  - ai-agents
+  - trust-and-safety
+  - wallet-risk-scoring
+  - sybil-detection
+  - prediction-markets
+  - x402
+  - verifiable-credentials
+  - agent-native
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-moltguard-openapi.yml
+  - type: OpenAPI
+    name: Provider-hosted OpenAPI 3.1 (source)
+    url: https://api.moltrust.ch/guard/openapi.json
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: Overlay
+    url: overlays/moltrust-ch-moltguard-overlay.yaml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- name: MolTrust MCP Server
+  description: Hosted streamable-HTTP Model Context Protocol server (serverInfo moltrust 1.28.1, protocol 2025-06-18)
+    exposing 53 tools over the MolTrust and MoltGuard APIs - identity and credentials, MoltGuard scoring, MoltProof
+    mandate conformance, swarm intelligence, badges, shopping, travel, skills, prediction markets, fantasy sports,
+    music provenance and Salesguard. tools/list answers anonymously; tool calls carry MOLTRUST_API_KEY. Also distributed
+    as the PyPI package moltrust-mcp-server for local stdio use.
+  image: https://moltrust.ch/img/moltrust-logo.png
+  humanURL: https://github.com/MoltyCel/moltrust-mcp-server
+  baseURL: https://api.moltrust.ch/mcp
+  tags:
+  - MCP
+  - AI Agents
+  - Agent Identity
+  - agent-native
+  tags_raw:
+  - mcp
+  - ai-agents
+  - agent-identity
+  - agent-native
+  properties:
+  - type: MCPServer
+    url: mcp/moltrust-ch-mcp.yml
+  - type: MCPServer
+    name: Live endpoint
+    url: https://api.moltrust.ch/mcp
+  - type: ToolCrosswalk
+    url: mcp/moltrust-ch-tool-crosswalk.yml
+  - type: Documentation
+    url: https://github.com/MoltyCel/moltrust-mcp-server
+  - type: Packages
+    url: https://pypi.org/project/moltrust-mcp-server/
+- name: MolTrust DID Universal Resolver
+  description: 'DIF Universal Resolver deployment for the did:moltrust method (and bridged did:moltrust:ext_* identifiers),
+    returning W3C DID Documents at the standard /1.0/identifiers/{did} path. The did:moltrust method specification
+    is published on moltrust.ch and a driver was contributed to the DIF universal-resolver project (PR #540).'
+  image: https://moltrust.ch/img/moltrust-logo.png
+  humanURL: https://moltrust.ch/did-method-spec.html
+  baseURL: https://uresolver.moltrust.ch/1.0
+  tags:
+  - Decentralized Identity
+  - DID Resolution
+  - W3C
+  tags_raw:
+  - decentralized-identity
+  - did-resolution
+  - w3c
+  properties:
+  - type: Documentation
+    url: https://moltrust.ch/did-method-spec.html
+  - type: SourceCode
+    url: https://github.com/MoltyCel/uni-resolver-driver-did-moltrust
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: AgenticAccess
+  url: agentic-access/moltrust-ch-agentic-access.yml
+- type: DomainSecurity
+  url: security/moltrust-ch-domain-security.yml
 - type: Website
   url: https://moltrust.ch/
+- type: DeveloperPortal
+  url: https://moltrust.ch/developers.html
+- type: Documentation
+  url: https://api.moltrust.ch/docs
+- type: APIReference
+  url: https://api.moltrust.ch/redoc
+- type: GettingStarted
+  url: https://moltrust.ch/developers.html
+- type: Support
+  url: https://moltrust.ch/contact.html
+- type: Blog
+  url: https://moltrust.ch/blog/
+- type: GitHubOrganization
+  url: https://github.com/MoltyCel
+- type: Pricing
+  url: https://moltrust.ch/pricing.html
+- type: SignUp
+  url: https://moltrust.ch/developers.html
+- type: TermsOfService
+  url: https://moltrust.ch/terms.html
+- type: PrivacyPolicy
+  url: https://moltrust.ch/privacy.html
+- type: StatusPage
+  url: https://status.moltrust.ch/
+- type: Compliance
+  url: https://moltrust.ch/compliance.html
+- type: AgentCard
+  url: a2a/moltrust-ch-a2a.yml
+- type: MCPServer
+  url: mcp/moltrust-ch-mcp.yml
+- type: ToolCrosswalk
+  url: mcp/moltrust-ch-tool-crosswalk.yml
+- type: LLMsTxt
+  url: llms/moltrust-ch-llms.txt
+- type: LLMsTxt
+  name: Provider-hosted llms.txt
+  url: https://moltrust.ch/llms.txt
+- type: WellKnown
+  url: well-known/moltrust-ch-well-known.yml
+- type: Packages
+  url: packages/moltrust-ch-packages.yml
+- type: SDKs
+  url: packages/moltrust-ch-packages.yml
+- type: Conventions
+  url: conventions/moltrust-ch-conventions.yml
+- type: Conformance
+  url: conformance/moltrust-ch-conformance.yml
+- type: ErrorCatalog
+  url: errors/moltrust-ch-problem-types.yml
+- type: Lifecycle
+  url: lifecycle/moltrust-ch-lifecycle.yml
+- type: ChangeLog
+  url: changelog/moltrust-ch-changelog.yml
+- type: Plans
+  url: plans/moltrust-ch-plans-pricing.yml
+- type: RateLimits
+  url: rate-limits/moltrust-ch-rate-limits.yml
+- type: Sandbox
+  url: sandbox/moltrust-ch-sandbox.yml
+- type: Components
+  url: components/moltrust-ch-components.yml
+- type: DataModel
+  url: data-model/moltrust-ch-data-model.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: DataSubjectRequest
+  url: regulatory/moltrust-ch-regulatory-posture.yml
+- type: Subprocessors
+  url: regulatory/moltrust-ch-regulatory-posture.yml
+- type: DataResidency
+  url: regulatory/moltrust-ch-regulatory-posture.yml
+- type: VulnerabilityDisclosure
+  url: security/moltrust-ch-vulnerability-disclosure.yml
+- type: Security
+  url: security/moltrust-ch-vulnerability-disclosure.yml
+x-enrichment:
+  date: '2026-09-19'
+  status: enriched
+  artifacts_added: 47
+  pass: local-v3

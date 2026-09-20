@@ -1,0 +1,339 @@
+generated: '2026-09-19'
+method: derived
+source: Derived from openapi/moltrust-ch-openapi.yml (73 components.schemas, all request bodies - the FastAPI spec
+  declares no response models) and openapi/moltrust-ch-moltguard-openapi.yml (69 schemas), plus the identifier grammar
+  visible in the agent card, did.json and the live /stats, /proof/registry and /credits/pricing responses. Relationships
+  come from DID-reference fields on the request schemas (from_did/to_did, delegator_did/audience_did, operator_did/agent_did,
+  agent_did/principal_did, endorsed_did + evidence_hash) and from path parameters.
+docs: https://moltrust.ch/developers.html
+notation: Every first-class entity is addressed by a W3C DID; the platform itself is did:web:api.moltrust.ch and
+  did:web:moltrust.ch. Relationships use has_one / has_many / belongs_to with the referencing field in `via`; direction
+  is from the entity that owns the reference. Because the spec ships request schemas only, response shapes are recorded
+  from live public responses where one was observed.
+identifier_grammar:
+- kind: agent DID
+  pattern: did:moltrust:<hex>
+  example: did:moltrust:d34ed796a4dc4698 (developers page quickstart)
+  note: W3C DID method did:moltrust (method spec https://moltrust.ch/did-method-spec.html), anchored on Base L2.
+    Bridged external DIDs take the form did:moltrust:ext_* (SDK changelog 0.2.0).
+- kind: platform DID
+  pattern: did:web:<host>
+  example: did:web:api.moltrust.ch, did:web:moltrust.ch
+  note: Served at /.well-known/did.json on both hosts (well-known/).
+- kind: wallet
+  pattern: 0x + 40 hex (EVM)
+  example: 0xD35AE5C22C117Cf1b9EF870697AB0034314A59e2 (live /proof/registry)
+  note: Base (eip155:8453) is the default chain; MoltProof also lists ethereum, arbitrum, optimism, polygon, hyperliquid,
+    solana (beta).
+- kind: ERC-8004 agent id
+  pattern: integer + registry CAIP-10
+  example: agentId 33553 on eip155:8453:0x8004A169FB4a3325136EB29fA0ceB6D2e539a432 (agent card extension)
+  note: Cross-linked from a DID via GET /agents/{did}/erc8004 and resolved back via GET /resolve/erc8004/{agent_id}.
+- kind: CAEP event id
+  pattern: evt_<16 alnum>
+  example: evt_a1b2c3d4e5f6g7h8 (docs/caep.html)
+  note: Also the `since` cursor for GET /caep/pending/{did}.
+- kind: commitment hash
+  pattern: sha256 hex
+  note: Sports predictions and fantasy lineups are addressed by the SHA-256 of the committed payload (path {commitment_hash}).
+- kind: IPR id
+  pattern: '{ipr_id}'
+  note: Interaction Proof Record identifier returned by POST /vc/ipr/submit; Merkle-batched and anchored on Base.
+- kind: SPIFFE ID
+  pattern: spiffe://<trust-domain>/<path>
+  note: Bound to a DID via POST /identity/spiffe/bind.
+- kind: skill hash
+  pattern: sha256 hex over a canonicalised SKILL.md
+  note: Canonical Skill Hash Specification https://moltrust.ch/skill-hash-spec.html; path {skillHash} in MoltGuard.
+entities:
+- name: Agent
+  id: did:moltrust:*
+  schemas:
+  - RegisterRequest
+  - PopRegisterRequest
+  - AgentClassRequest
+  domain: identity
+  description: 'A registered AI agent: DID, Ed25519 public key (anchored on Base), display_name, platform, agent_class
+    (orchestrator / autonomous / human_initiated / copilot), revocation status, optional ERC-8004 registration and
+    wallet binding.'
+- name: ApiKey
+  schemas:
+  - SignupRequest
+  - DidSignupRequest
+  domain: identity
+  description: A key minted by email (one per email) or by Ed25519 proof of possession; carries an owner_did and
+    a credit balance.
+- name: DIDDocument
+  id: did:moltrust:* | did:web:*
+  domain: identity
+  description: W3C DID Core document with Ed25519VerificationKey2020 / JsonWebKey2020 verification methods and service
+    endpoints (TrustLayer, AgentIdentity, ReputationService) - observed live at /.well-known/did.json.
+- name: VerifiableCredential
+  schemas:
+  - IssueVCRequest
+  - VerifyVCRequest
+  - DelegationChainRequest
+  domain: credentials
+  description: W3C VC (Data Model v2 @context) issued by did:web:api.moltrust.ch; typed variants AgentTrustCredential,
+    MolTrustConformityDeclaration, VerifiedMusicCredential, BuyerAgentCredential, TravelAgentCredential, VerifiedSkillCredential,
+    PredictionTrackCredential, SkillEndorsementCredential, FantasyLineupCredential, ProductProvenanceCredential,
+    AuthorizedResellerCredential.
+- name: AgentAuthorizationEnvelope
+  aliases:
+  - AAE
+  - mandate
+  domain: authorization
+  description: Signed MANDATE / CONSTRAINTS / VALIDITY blocks configured via POST /delegation/configure and submitted
+    as a compact JWS via POST /vc/aae/submit; evaluated by /enforce/check and /vc/aae/evaluate. IETF draft-kroehl-agentic-trust-aae-00.
+- name: Delegation
+  schemas:
+  - DelegationCreateRequest
+  - DelegationVerifyRequest
+  domain: authorization
+  description: UCAN 0.10.0 JWT from delegator_did to audience_did with capabilities, ttl_seconds and proofs[] (attenuation
+    chain).
+- name: Rating
+  schemas:
+  - RateRequest
+  - ReputationBatchRequest
+  domain: reputation
+  description: A 1-5 star rating from one agent to another; aggregated into the reputation score.
+- name: Endorsement
+  schemas:
+  - EndorseRequest
+  - InteractionProofRequest
+  - TestHarnessEndorseRequest
+  domain: trust-score
+  description: A SkillEndorsementCredential for a skill + vertical, backed by an interaction-proof evidence_hash;
+    forms the Swarm Intelligence graph read by /swarm/graph/{did}.
+- name: TrustScore
+  domain: trust-score
+  description: Phase-2 score 0-100 with breakdown (direct, propagated, cross-vertical, sybil penalty, violation
+    penalty, agent-class modifier), grade S-F, flags[], valid_until and an Ed25519 registry_signature - observed
+    live at /skill/trust-score/{did}.
+- name: ViolationRecord
+  schemas:
+  - ViolationRecordRequest
+  - ViolationReversalRequest
+  domain: trust-score
+  description: An adjudicated protocol violation by agent_did against principal_did (Tech Spec 2.7); reversible
+    via POST /violation/{record_id}/reverse.
+- name: InteractionProofRecord
+  aliases:
+  - IPR
+  - MoltProof
+  domain: provenance
+  description: SHA-256 output hash + agent_did + confidence, Merkle-batched and anchored on Base L2 (POST /vc/ipr/submit,
+    GET /vc/ipr/{ipr_id}).
+- name: AnchorBatch
+  schemas:
+  - AnchorsBatchRequest
+  domain: provenance
+  description: A set of evidence hashes Merkle-batched into one root with per-leaf proof paths (POST /anchors/batch).
+- name: CreditBalance
+  schemas:
+  - CreditTransferRequest
+  - DepositRequest
+  domain: billing
+  description: 'Per-DID credit pool: 100 on registration, 30/month floor on free, top-ups by USDC deposit on Base
+    (tx_hash) or subscription; transfers between DIDs.'
+- name: BudgetCap
+  schemas:
+  - BudgetCapRequest
+  - ClaimOperatorRequest
+  domain: billing
+  description: monthly_cap_chf + warning_threshold set by an operator DID on an agent DID.
+- name: Plan
+  schemas:
+  - CheckoutRequest
+  - PortalRequest
+  domain: billing
+  description: Stripe-backed subscription tiers (free / base / scale / slot) - live at GET /billing/plans.
+- name: WalletBinding
+  schemas:
+  - WalletBindRequest
+  - DIDBridgeRequest
+  - SimpleBridgeRequest
+  - ScoreImportRequest
+  domain: identity
+  description: A signed binding of an EVM wallet (chain) to a DID, or a bridge from an external DID method; imported
+    external scores attach here.
+- name: SpiffeBinding
+  schemas:
+  - SpiffeBindRequest
+  domain: identity
+  description: A SPIFFE URI bound to a DID.
+- name: ComplianceAssessment
+  schemas:
+  - ComplianceAssessRequest
+  - ComplianceDeclarationRequest
+  - ComplianceIncidentRequest
+  - NotifiedBodyInput
+  domain: compliance
+  description: EU AI Act risk classification, Annex V declaration (VC) and Article 73 incident with computed reporting
+    deadline.
+- name: CAEPEvent
+  id: evt_*
+  domain: events
+  description: trust_score_change / flag_added / flag_removed / did_revoked events pending per DID, acknowledged
+    by event_id.
+- name: MusicCredential
+  schemas:
+  - MusicCredentialRequest
+  - MusicRevokeRequest
+  domain: verticals
+  description: 'VerifiedMusicCredential: tool, human_oversight, rights, track_title, isrc; revocable.'
+- name: PredictionCommitment
+  schemas:
+  - PredictionCommitRequest
+  - ManualSettleRequest
+  domain: verticals
+  description: A prediction committed before event_start and settled after; addressed by commitment_hash.
+- name: FantasyLineup
+  schemas:
+  - FantasyLineupCommitRequest
+  - FantasySettleRequest
+  domain: verticals
+  description: A fantasy lineup hashed and anchored before contest_start_iso, settled with actual_score/rank/prize.
+- name: SignalProvider
+  schemas:
+  - SignalProviderRegisterRequest
+  domain: verticals
+  description: A sports signal provider agent with sport_focus[], verified and ranked on a leaderboard.
+- name: Brand / Product / Reseller
+  spec: openapi/moltrust-ch-moltguard-openapi.yml
+  domain: salesguard
+  description: 'MT Salesguard provenance graph: a Brand registers Products (ProductProvenanceCredential) and authorizes
+    Resellers (AuthorizedResellerCredential).'
+- name: WalletTrustScore
+  spec: openapi/moltrust-ch-moltguard-openapi.yml
+  domain: moltguard
+  description: MoltGuard wallet score with breakdown (walletAge, txCount, counterparties, usdcBalance, erc8004Registration,
+    erc8004Reputation, sybilPenalty, credentialBonus) - shape observed live at /guard/api/agent/sample.
+- name: AnomalyFlag
+  spec: openapi/moltrust-ch-moltguard-openapi.yml
+  domain: moltguard
+  description: A recorded anomaly flag with a track record (open vs resolved).
+- name: TrustProof
+  spec: openapi/moltrust-ch-moltguard-openapi.yml
+  domain: moltguard
+  description: A published, hash-verifiable transparency proof (GET /guard/transparency/latest|history|verify/{hash}).
+relationships:
+- from: Agent
+  rel: has_one
+  to: DIDDocument
+  via: did
+- from: Agent
+  rel: has_one
+  to: ApiKey
+  via: owner_did
+- from: Agent
+  rel: has_many
+  to: VerifiableCredential
+  via: subject_did
+- from: Agent
+  rel: has_one
+  to: AgentAuthorizationEnvelope
+  via: X-MolTrust-DID / delegation/configure
+- from: Delegation
+  rel: belongs_to
+  to: Agent
+  via: delegator_did
+- from: Delegation
+  rel: belongs_to
+  to: Agent
+  via: audience_did
+- from: Rating
+  rel: belongs_to
+  to: Agent
+  via: from_did / to_did
+- from: Endorsement
+  rel: belongs_to
+  to: Agent
+  via: endorsed_did (endorser identified by api_key owner)
+- from: Endorsement
+  rel: has_one
+  to: InteractionProofRecord
+  via: evidence_hash
+- from: Agent
+  rel: has_one
+  to: TrustScore
+  via: did (computed from Endorsement graph + ViolationRecord + WalletBinding)
+- from: ViolationRecord
+  rel: belongs_to
+  to: Agent
+  via: agent_did / principal_did
+- from: ViolationRecord
+  rel: has_one
+  to: InteractionProofRecord
+  via: interaction_proof_id
+- from: Agent
+  rel: has_one
+  to: CreditBalance
+  via: did
+- from: CreditBalance
+  rel: has_many
+  to: CreditBalance
+  via: from_did -> to_did (transfer)
+- from: BudgetCap
+  rel: belongs_to
+  to: Agent
+  via: operator_did -> agent_did
+- from: Agent
+  rel: has_many
+  to: WalletBinding
+  via: did / wallet_address
+- from: WalletBinding
+  rel: has_one
+  to: WalletTrustScore
+  via: address (MoltGuard)
+- from: Agent
+  rel: has_one
+  to: ERC-8004 registration
+  via: agents/{did}/erc8004 -> agentId
+- from: Agent
+  rel: has_many
+  to: SpiffeBinding
+  via: did
+- from: Agent
+  rel: has_many
+  to: ComplianceAssessment
+  via: did / subject_did
+- from: Agent
+  rel: has_many
+  to: CAEPEvent
+  via: caep/pending/{did}
+- from: Agent
+  rel: has_many
+  to: InteractionProofRecord
+  via: agent_did
+- from: InteractionProofRecord
+  rel: belongs_to
+  to: AnchorBatch
+  via: Merkle proof path
+- from: Agent
+  rel: has_many
+  to: MusicCredential
+  via: agent_did
+- from: Agent
+  rel: has_many
+  to: PredictionCommitment
+  via: agent_did
+- from: Agent
+  rel: has_many
+  to: FantasyLineup
+  via: agent_did
+- from: SignalProvider
+  rel: belongs_to
+  to: Agent
+  via: agent_did
+- from: Brand / Product / Reseller
+  rel: has_many
+  to: VerifiableCredential
+  via: product_id / reseller_did
+a2a_task_model:
+  note: The main spec also carries the A2A JSON-RPC request schemas (A2ARequest, SendMessageRequest, Message, Part,
+    GetTaskRequest, ListTasksRequest, CancelTaskRequest, TaskPushNotificationConfig, SubscribeToTaskRequest, GetExtendedAgentCardRequest)
+    for POST /a2a. They are declared, but tasks/get and agent/getAuthenticatedExtendedCard both returned JSON-RPC
+    -32601 Method not found on 2026-09-19 - see a2a/moltrust-ch-a2a.yml.
+render: null

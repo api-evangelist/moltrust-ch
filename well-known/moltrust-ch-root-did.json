@@ -1,0 +1,43 @@
+{
+  "@context": [
+    "https://www.w3.org/ns/did/v1",
+    "https://w3id.org/security/suites/jws-2020/v1"
+  ],
+  "id": "did:web:moltrust.ch",
+  "controller": "did:web:moltrust.ch",
+  "verificationMethod": [
+    {
+      "id": "did:web:moltrust.ch#moltguard-key-1",
+      "type": "JsonWebKey2020",
+      "controller": "did:web:moltrust.ch",
+      "publicKeyJwk": {
+        "kty": "OKP",
+        "crv": "Ed25519",
+        "x": "wP2bZU8N6aWSjYBXVSD7x3IUgdl3VdGWi1j2lcg1r38",
+        "alg": "EdDSA",
+        "use": "sig",
+        "kid": "did:web:moltrust.ch#moltguard-key-1"
+      }
+    },
+    {
+      "id": "did:web:moltrust.ch#moltproof-key-1",
+      "type": "JsonWebKey2020",
+      "controller": "did:web:moltrust.ch",
+      "publicKeyJwk": {
+        "kty": "OKP",
+        "crv": "Ed25519",
+        "x": "02bSnQtbpH0KYDN_FURZq6TQaiMfP4D6bB4Ef1u9S2I",
+        "alg": "EdDSA",
+        "use": "sig",
+        "kid": "did:web:moltrust.ch#moltproof-key-1"
+      }
+    }
+  ],
+  "assertionMethod": [
+    "did:web:moltrust.ch#moltguard-key-1",
+    "did:web:moltrust.ch#moltproof-key-1"
+  ],
+  "authentication": [
+    "did:web:moltrust.ch#moltguard-key-1"
+  ]
+}

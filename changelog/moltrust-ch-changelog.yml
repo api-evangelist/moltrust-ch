@@ -1,0 +1,185 @@
+generated: '2026-09-19'
+method: searched
+source: https://moltrust.ch/blog/ (dated posts) + https://github.com/MoltyCel/moltrust-sdk/blob/main/CHANGELOG.md
+  + GitHub releases of moltrust-mcp-server + registry metadata (npm/PyPI) + both OpenAPIs
+checked: '2026-09-19'
+summary: MolTrust publishes no changelog page (/changelog, /changelog.html 404) and no feed. Change history is spread
+  across dated blog posts (68 since 2026-02-23), a Keep-a-Changelog file in the Python SDK repo, two GitHub releases
+  on the MCP server and the version numbers in the served specs. The recent window below is assembled from those.
+scheme:
+  api_versioning: unversioned-path; info.version tracks the deployment (2.5 = /health version)
+  sdk_versioning: 'SemVer (moltrust-sdk CHANGELOG: "adheres to Semantic Versioning")'
+  binding_versioning: URI-versioned /v1 (Trust Registry Binding, published 2026-05-09)
+current_version:
+  moltrust_api: '2.5'
+  moltguard_api: 1.5.0
+  mcp_hosted: 1.28.1
+  mcp_pypi: 1.2.2 (2026-07-28)
+  sdk_pypi: moltrust 0.2.0 (2026-04-25)
+  sdk_npm: '@moltrust/sdk 1.1.0 (2026-03-27)'
+  agent_card: 1.0.1 (Last-Modified 2026-07-11)
+  auditor: 1.2.0 (GET /guard/audit/version, 10 checks)
+feeds:
+  rss: null
+  atom: null
+  json: null
+  probed:
+  - url: https://moltrust.ch/changelog
+    status: 404
+  - url: https://moltrust.ch/changelog.html
+    status: 404
+  - url: https://raw.githubusercontent.com/MoltyCel/moltrust-mcp-server/main/CHANGELOG.md
+    status: 404
+entries:
+- date: '2026-09-13'
+  source: https://moltrust.ch/blog/what-should-we-be-worried-about.html
+  kind: opinion
+  breaking: false
+  highlights:
+  - AAE revision 02 submitted at the IETF (draft states an agent mandate so a third party can recompute whether
+    an action was inside it)
+- date: '2026-08-24'
+  source: https://moltrust.ch/blog/enforcement-you-can-recompute.html
+  kind: release
+  breaking: false
+  highlights:
+  - 'moltrust-enforce Python client: POST /enforce/check verdicts PERMIT / DENY / PENDING recomputable locally with
+    verify()'
+  - /enforce/ratify append-only ratification records
+- date: '2026-08-02'
+  source: https://moltrust.ch/blog/reconstructed-or-recomputed.html
+  kind: analysis
+  breaking: false
+  highlights:
+  - 'MoltProof worked example: BREACHED verdict citing a Base tx, four verdict states incl. forced NEEDS_REVIEW'
+- date: '2026-07-28'
+  source: https://pypi.org/project/moltrust-mcp-server/1.2.2/
+  kind: release
+  breaking: false
+  highlights:
+  - 'moltrust-mcp-server 1.2.2 on PyPI (README: 53 tools across 12 areas)'
+- date: '2026-07-11'
+  source: https://moltrust.ch/blog/compliance-as-an-api.html
+  kind: release
+  breaking: false
+  highlights:
+  - 'EU AI Act compliance API live: POST /compliance/assess, /compliance/declaration (Annex V as VC), GET /compliance/report/{did},
+    POST /compliance/incident (Art 73 deadlines)'
+  - UCAN 0.10.0 delegation endpoints, /reputation/batch-sync (500 agents), /anchors/batch
+  - Agent card 1.0.1 published (Last-Modified 2026-07-11) with the four compliance skills
+- date: '2026-07-08'
+  source: https://moltrust.ch/blog/moltproof-announcement.html
+  kind: release
+  breaking: false
+  highlights:
+  - MoltProof read-only mandate verifier at /proof/ (verdict / mandate / evidence / verify / registry) and five
+    moltproof_* MCP tools
+- date: '2026-05-21'
+  source: https://moltrust.ch/blog/moltrust-joins-agentic-trust-framework.html
+  kind: ecosystem
+  breaking: false
+  highlights:
+  - Listed in the Agent Trust Framework ecosystem registry
+- date: '2026-05-09'
+  source: https://moltrust.ch/bindings/trust-registry/v1.html
+  kind: spec
+  breaking: false
+  highlights:
+  - Trust Registry Binding v1 published as an A2A v1.0 custom protocol binding; extended agent card at GET /extendedAgentCard
+- date: '2026-04-25'
+  source: https://github.com/MoltyCel/moltrust-sdk/blob/main/CHANGELOG.md
+  kind: release
+  version: moltrust 0.2.0 (PyPI)
+  breaking: false
+  highlights:
+  - MolTrustResolver / AsyncMolTrustResolver for DID resolution
+  - did:moltrust:ext_* bridged DIDs (requires API Phase-2 deploy 2026-04-25; earlier API versions return HTTP 400)
+  - httpx minimum bumped to >=0.27.0
+- date: '2026-04-16'
+  source: https://github.com/MoltyCel/moltrust-mcp-server/releases
+  kind: release
+  version: mcp-server v1.1.0
+  breaking: false
+  highlights:
+  - '"MoltID v1.0.0 - Agent Identity & Governance" release (agent classes, governance tiers; blog 2026-04-15)'
+- date: '2026-04-11'
+  source: https://moltrust.ch/blog/a2a-v03-conformance.html
+  kind: release
+  breaking: false
+  highlights:
+  - A2A v0.3 conformance announced (card later re-shaped to 1.0.0 supportedInterfaces[])
+  - '@moltrust/openclaw 1.0.1 on npm (2026-04-11)'
+- date: '2026-04-10'
+  source: https://github.com/MoltyCel/moltrust-mcp-server/releases
+  kind: release
+  version: mcp-server v0.8.0
+  breaking: false
+  highlights:
+  - '"Protocol-Agnostic Trust Layer (x402 + MPP)"; @moltrust/x402 1.0.1 and @moltrust/mpp 1.0.3 published to npm
+    the same day'
+- date: '2026-03-31'
+  source: https://moltrust.ch/blog/techspec-v06-multichain-vcone.html
+  kind: spec
+  breaking: false
+  highlights:
+  - 'TechSpec v0.6: multi-chain identity, DID bridging, first verified agent'
+- date: '2026-03-29'
+  source: https://moltrust.ch/blog/sprint-march-2026.html
+  kind: release
+  breaking: false
+  highlights:
+  - IPR (Interaction Proof Records) endpoints, public API, full offline verification (@moltrust/verify)
+- date: '2026-03-27'
+  source: https://registry.npmjs.org/@moltrust/sdk
+  kind: release
+  version: '@moltrust/sdk 1.1.0'
+  breaking: false
+  highlights:
+  - Express / Hono / Fastify verification middleware; depends on @moltrust/aae 1.1.0 (2026-03-26)
+- date: '2026-03-26'
+  source: https://moltrust.ch/blog/hardening-the-moltrust-trust-stack.html
+  kind: security
+  breaking: false
+  highlights:
+  - Trust-stack hardening post
+- date: '2026-03-03'
+  source: https://moltrust.ch/blog/moltguard-v2-announcement.html
+  kind: release
+  version: MoltGuard v2
+  breaking: false
+  highlights:
+  - MoltGuard v2 sub-API with x402 paid endpoints
+- date: '2026-02-23'
+  source: https://moltrust.ch/terms.html
+  kind: legal
+  breaking: false
+  highlights:
+  - Terms of Service effective date
+- date: '2026-02-19'
+  source: https://github.com/MoltyCel/moltrust-sdk/blob/main/CHANGELOG.md
+  kind: release
+  version: moltrust 0.1.0 (PyPI)
+  breaking: false
+  highlights:
+  - 'Initial Python SDK: register, verify, resolve, get_reputation, rate, issue_credential, verify_credential, did_document,
+    health'
+version_skew_observed:
+- field: MCP server version
+  hosted: 1.28.1 (serverInfo from initialize)
+  pypi: 1.2.2
+  llms_txt: '"v1.2.0 (40 MCP tools)"'
+  tools_live: 53
+  note: Three different numbers for one server; the hosted build is well ahead of the published package.
+- field: pricing tiers
+  agent_card: Professional/Scale/Enterprise, 100 requests/day
+  llms_txt: Professional $99 = 10,000 credits
+  pricing_page_and_billing_plans: Free / Base $19 / Scale $299, 60 calls/hour
+  note: The card and llms.txt lag the live pricing.
+- field: MCP tool count
+  readme: 53
+  developers_page: 44 tools
+  api_readme: 48 tools
+  llms_txt: 40
+entries_note: Dates are the provider's own (blog post dates read from each post's published date, registry upload
+  timestamps, GitHub release dates). Nothing here is a spec-diff observation because this is the first capture of
+  the MolTrust specs.

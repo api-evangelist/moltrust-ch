@@ -1,0 +1,38 @@
+generated: '2026-09-19'
+method: searched
+source: openapi/moltrust-ch-openapi.yml (badge SVG operations) + openapi/moltrust-ch-moltguard-openapi.yml + https://moltrust.ch/developers.html
+  (public /wallet/{address} page)
+summary: MolTrust ships no JavaScript UI component library or embeddable widget SDK. What it does publish are hosted,
+  embeddable IMAGE badges (SVG) rendered per DID / signal provider, and a public wallet-profile page - the only
+  client-side surfaces distinct from the server-side SDKs in packages/.
+families:
+- family: Verified-by-MolTrust badges
+  kind: hosted SVG image embeds
+  loader: null
+  components:
+  - name: Identity badge (SVG)
+    url_template: https://api.moltrust.ch/identity/badge/{did}.svg
+    operation: get_identity_badge_identity_badge__did__svg_get
+    embed: <img src="https://api.moltrust.ch/identity/badge/{did}.svg">
+    data_variant: GET /identity/badge/{did} (get_identity_badge_identity_badge__did__get) returns the badge as JSON
+      (tier, score, grade, issue/expiry) and GET /badge/{did} (get_trust_badge_badge__did__get) the trust badge
+  - name: Signal-provider badge (SVG)
+    url_template: https://api.moltrust.ch/sports/signals/badge/{provider_id}.svg
+    operation: signal_provider_badge_sports_signals_badge__provider_id__svg_get
+- family: Public profile pages
+  kind: hosted HTML
+  components:
+  - name: Wallet trust profile
+    url_template: https://moltrust.ch/wallet/{address}
+    api: GET https://api.moltrust.ch/wallet/{address} (wallet_shadow_score_wallet__address__get)
+    source: 'https://moltrust.ch/developers.html: "Every x402 wallet also gets an automatic Wallet Trust Profile
+      ... public page /wallet/{address}"'
+  - name: Compliance report (HTML)
+    url_template: https://api.moltrust.ch/compliance/report/{did}
+    operation: compliance_report_compliance_report__did__get
+    note: Server-rendered HTML report; requires X-API-Key.
+not_present:
+- web components
+- React/Vue element libraries
+- hosted checkout or onboarding widgets (Stripe Checkout is used server-side via POST /billing/checkout)
+- embedded dashboards (the admin dashboard endpoints are operator-only)

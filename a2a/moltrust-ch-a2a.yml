@@ -1,0 +1,179 @@
+generated: '2026-09-19'
+method: probed
+source: https://api.moltrust.ch/.well-known/agent-card.json
+card:
+  file: a2a/moltrust-ch-agent-card.json
+discovery:
+  path: /.well-known/agent-card.json
+  canonical: true
+  host: api.moltrust.ch
+  also_served:
+  - https://api.moltrust.ch/.well-known/agent.json
+  - https://moltrust.ch/.well-known/agent-card.json
+  - https://moltrust.ch/.well-known/agent.json
+  note: >-
+    Served at the canonical RFC 8615 path AND the legacy pre-0.3 path on both the API host and the apex
+    host; all four bodies are byte-identical (13,075 bytes, cmp verified). Ownership is not in question:
+    provider.organization is "CryptoKRI GmbH" with provider.url https://moltrust.ch, the Impressum names
+    CryptoKRI GmbH (CHE-115.481.407, Zurich) as operator of moltrust.ch, the OpenAPI on the same host is
+    titled "MolTrust API" and /health reports the same version 2.5, and the card is JWS-signed with kid
+    moltrust-registry-2026-v1 - a key published in the same host's /.well-known/jwks.json. Neither host is
+    an SPA catch-all (unknown /.well-known/* paths return real 404s). The registry listing on
+    a2aregistry.org (author "CryptoKRI GmbH", 1 agent, fetched 2026-09-19) was the lead; the card was
+    fetched directly from the provider's hosts.
+x-evidence:
+  fetched: '2026-09-19'
+  url: https://api.moltrust.ch/.well-known/agent-card.json
+  http_status: 200
+  content_type: application/json
+  body_bytes: 13075
+  body_parses_as: JSON object with AgentCard shape (name, description, version, supportedInterfaces, provider, documentationUrl, iconUrl, capabilities, securitySchemes, securityRequirements, defaultInputModes, defaultOutputModes, skills, signatures)
+  corroborating_probes:
+  - url: https://api.moltrust.ch/.well-known/agent.json
+    http_status: 200
+    note: Identical body (FastAPI operationId well_known_agent_json_alias).
+  - url: https://moltrust.ch/.well-known/agent-card.json
+    http_status: 200
+    note: Identical body; nginx static file, Last-Modified 2026-07-11.
+  - url: https://www.moltrust.ch/.well-known/agent-card.json
+    http_status: 301
+    note: Redirects to the apex host.
+  - url: https://api.moltrust.ch/a2a
+    method: GET
+    http_status: 200
+    response: '{"transport":"jsonrpc-2.0","method":"POST","agentCard":"https://api.moltrust.ch/.well-known/agent-card.json","documentation":"https://moltrust.ch"}'
+    note: A discovery hint on the declared interface URL (OpenAPI operationId a2a_discovery_hint_a2a_head).
+  - url: https://api.moltrust.ch/a2a
+    method: POST
+    body: '{"jsonrpc":"2.0","id":1,"method":"tasks/get","params":{"id":"apievangelist-nonexistent-probe"}}'
+    http_status: 200
+    response: '{"error":{"code":-32601,"message":"Method not found"},"id":1,"jsonrpc":"2.0"}'
+    note: >-
+      A JSON-RPC 2.0 responder is live on the declared interface, but tasks/get is not implemented
+      (-32601 Method not found, where an A2A task server would answer -32001 TaskNotFound). No message was
+      sent and nothing was purchased.
+  - url: https://api.moltrust.ch/a2a
+    method: POST
+    body: '{"jsonrpc":"2.0","id":1,"method":"agent/getAuthenticatedExtendedCard"}'
+    http_status: 200
+    response: '{"error":{"code":-32601,"message":"Method not found"},"id":1,"jsonrpc":"2.0"}'
+    note: The extended card is instead served over REST at GET /extendedAgentCard (401 without X-API-Key or X-MolTrust-DID - probed).
+  - url: https://api.moltrust.ch/extendedAgentCard
+    http_status: 401
+    response: '{"detail":"Authentication required: provide X-API-Key OR X-MolTrust-DID header"}'
+  - url: https://api.moltrust.ch/.well-known/jwks.json
+    http_status: 200
+    note: Contains kid moltrust-registry-2026-v1 (OKP/Ed25519/EdDSA), the key named in the card's signatures[0].protected header ({"alg":"EdDSA","kid":"moltrust-registry-2026-v1","typ":"a2a-card+jws"}).
+agent_card:
+  name: MolTrust Trust Registry
+  description: >-
+    Production trust infrastructure for autonomous AI agents. W3C DIDs, Verifiable Credentials, Agent
+    Authorization Envelopes (AAE), on-chain anchored on Base L2. Reference implementation of the Trust
+    Registry Binding for A2A v1.0.
+  version: 1.0.1
+  supported_interfaces:
+  - url: https://api.moltrust.ch/a2a
+    protocol_binding: JSONRPC
+    protocol_version: '1.0'
+  provider:
+    organization: CryptoKRI GmbH
+    url: https://moltrust.ch
+  documentation_url: https://api.moltrust.ch/docs
+  icon_url: https://moltrust.ch/img/moltrust-logo.png
+  capabilities:
+    streaming: false
+    push_notifications: false
+    extended_agent_card: true
+    extensions:
+    - {uri: 'https://moltrust.ch/extensions/trust-score/v1', required: false}
+    - {uri: 'https://moltrust.ch/extensions/aae/v1', required: false}
+    - {uri: 'https://moltrust.ch/extensions/erc8004/v1', required: false}
+    - {uri: 'https://moltrust.ch/extensions/x402-payment/v1', required: false}
+    - {uri: 'https://moltrust.ch/extensions/discovery-surfaces/v1', required: false}
+    - {uri: 'https://moltrust.ch/extensions/caep/v1', required: false}
+  security_schemes:
+    apiKey: {type: apiKey, in: header, name: X-API-Key}
+    moltrust-did: {type: apiKey, in: header, name: X-MolTrust-DID}
+    aae-envelope: {type: http, scheme: bearer, bearerFormat: AAE-JWS, note: 'Declared; the card itself says "HTTP-auth-layer implementation in progress".'}
+  default_input_modes: [text]
+  default_output_modes: [text, data]
+  signatures: 1
+  skill_count: 13
+  skills:
+  - {id: trust-score, name: Agent Trust Score, tags: [trust, identity, verification, did, w3c, score]}
+  - {id: did-resolution, name: DID Resolution, tags: [did, identity, w3c, resolution, dif]}
+  - {id: credential-verification, name: Verifiable Credential Verification, tags: [vc, credential, aae, delegation, w3c]}
+  - {id: wallet-binding, name: Wallet Binding Verification, tags: [wallet, payment, base, solana, x402, erc8004]}
+  - {id: sybil-detection, name: Sybil & Anomaly Detection, tags: [security, sybil, anomaly, fraud-detection, moltguard]}
+  - {id: compliance-assess, name: EU AI Act risk classification, tags: [compliance, eu-ai-act, risk, classification, annex-iii]}
+  - {id: compliance-declaration, name: EU declaration of conformity (Annex V), tags: [compliance, annex-v, declaration, verifiable-credential]}
+  - {id: compliance-report, name: Compliance report, tags: [compliance, report, audit]}
+  - {id: compliance-incident, name: Article 73 serious-incident recording, tags: [compliance, incident, article-73, deadline]}
+  - {id: delegation-create, name: UCAN delegation minting, tags: [delegation, ucan, authorization, capabilities]}
+  - {id: delegation-verify, name: UCAN delegation verification, tags: [delegation, ucan, verification]}
+  - {id: reputation-batch-sync, name: Batch reputation, tags: [reputation, batch, score]}
+  - {id: anchors-batch, name: Merkle batch anchoring, tags: [anchoring, merkle, evidence, provenance]}
+  skill_invocation: >-
+    Skills are not invoked through A2A task methods. The card's extensions name the REST endpoints behind
+    each skill (trust_score_endpoint https://api.moltrust.ch/skill/trust-score/{did}, did_resolution
+    https://uresolver.moltrust.ch/1.0/identifiers/{did}, delegation_lookup, delegation_configure ...), and
+    the provider's published "Trust Registry Binding v1" (https://moltrust.ch/bindings/trust-registry/v1.html)
+    defines exactly that: a custom binding in which each skill maps to HTTPS endpoints rather than
+    SendMessage/GetTask. The same skills are reachable as MCP tools (mcp/moltrust-ch-tool-crosswalk.yml).
+conformance:
+  spec: A2A 1.0.0
+  grade: conformant
+  protocol_version: '1.0'
+  preferred_transport: JSONRPC
+  hard_checks:
+    capabilities_is_object: true
+    protocol_version_present: true
+    skills_is_array: true
+  optional_fields:
+    default_input_modes: true
+    default_output_modes: true
+    preferred_transport: true
+  grade_basis: >-
+    Graded against the A2A 1.0.0 hard checks. capabilities is an OBJECT (pass) with streaming,
+    pushNotifications, extendedAgentCard and a six-entry extensions[] array. protocolVersion is present
+    (pass) in the A2A 1.0.0 location - supportedInterfaces[0].protocolVersion "1.0" - there is no top-level
+    protocolVersion, because this is a 1.0.0-shaped card (supportedInterfaces[] carries url,
+    protocolBinding and protocolVersion together) rather than the 0.3.0 top-level triple. skills is an
+    ARRAY (pass) of thirteen skills each with id, name, description, tags, examples, inputModes and
+    outputModes. All optional discriminators are present: defaultInputModes ["text"], defaultOutputModes
+    ["text","data"], and the transport declaration (protocolBinding JSONRPC on the interface). The card is
+    additionally JWS-signed, with the signing key resolvable from the same host's JWKS - rarer than
+    conformance itself in this catalog.
+  deviations:
+  - field: securityRequirements
+    observed: key named securityRequirements (value []) instead of the specification's `security`
+    note: >-
+      A reader looking for AgentCard.security finds nothing; securitySchemes is populated but no requirement
+      binds a scheme to the card or to any skill (skills[].security absent), so which scheme gates which
+      skill has to be read from the extensions and the binding document.
+  - field: supportedInterfaces[0].protocolBinding
+    observed: JSONRPC, yet tasks/get and agent/getAuthenticatedExtendedCard return -32601 Method not found
+    note: >-
+      The card declares the standard JSONRPC binding, but the live endpoint implements none of the A2A task
+      methods probed; the provider's own binding page says the skills are served over a custom "Trust
+      Registry Binding" of HTTPS endpoints. A client that reads protocolBinding JSONRPC and calls
+      message/send will not get an A2A task back. The provider's llms.txt describes the card as "A2A v1.0
+      conformant, references custom protocol binding", which is closer to the truth than the field value.
+  - field: capabilities.extensions[erc8004].params.agentId vs /.well-known/agent-registration.json
+    observed: 33553 in the card, 21023 in the registration file
+    note: Two different ERC-8004 agent ids are published for the platform identity.
+  - field: securitySchemes.apiKey.description
+    observed: '"Free tier is 100 requests/day" and "Paid tiers (Professional/Scale/Enterprise)"'
+    note: >-
+      The pricing page (2026-09-19) states 60 calls/hour and tiers Free / Base / Scale; the card text is
+      stale relative to /billing/plans. Recorded in rate-limits/ and plans/.
+  - field: capabilities.extensions[caep]
+    observed: proprietary polling protocol self-described as "NOT SET/RFC 8417 compliant"
+    note: Honest self-labelling by the provider; recorded so nobody reads "CAEP" as OpenID Shared Signals.
+surface_relationship:
+  note: >-
+    MolTrust publishes four agent surfaces on one host and they are projections of the same trust core, not
+    of one another. A2A: 13 card skills served over the custom binding. MCP: 53 tools at
+    https://api.moltrust.ch/mcp (tools/list open). REST: 186 operations in the main OpenAPI plus 71 in
+    the MoltGuard sub-API. MoltProof: a read-only verifier at /proof/ with no contract. The crosswalk in
+    mcp/moltrust-ch-tool-crosswalk.yml binds MCP to REST; the card's extensions bind A2A skills to REST.

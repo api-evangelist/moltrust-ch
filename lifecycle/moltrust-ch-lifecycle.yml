@@ -1,0 +1,92 @@
+generated: '2026-09-19'
+method: searched
+source: https://status.moltrust.ch/ + https://raw.githubusercontent.com/MoltyCel/status.moltrust.ch/master/history/summary.json + https://moltrust.ch/pricing.html + https://api.moltrust.ch/billing/plans + https://moltrust.ch/terms.html + https://moltrust.ch/bindings/trust-registry/v1.html + both OpenAPIs
+versioning:
+  scheme: unversioned-path
+  current:
+    moltrust_api: '2.5'
+    moltguard_api: 1.5.0
+    mcp_server_hosted: 1.28.1
+    mcp_server_pypi: 1.2.2
+    agent_card: 1.0.1
+    trust_registry_binding: v1 (URI-versioned, published 2026-05-09)
+  notes: >-
+    The REST base https://api.moltrust.ch carries no version segment; info.version "2.5" in the OpenAPI
+    matches the live /health version field, so the number does track deployments. The MoltGuard sub-API
+    is separately versioned (1.5.0). The provider's own binding spec commits to URI versioning (/v1, /v2)
+    for the A2A binding, with additive changes non-breaking within a version. The developers page calls
+    the surface "MolTrust API v1" while the spec says 2.5 - the marketing label and the build number
+    differ.
+changelog:
+  url: null
+  artifact: changelog/moltrust-ch-changelog.yml
+  notes: No changelog page on moltrust.ch (/changelog and /changelog.html 404); change history is carried by dated blog posts, the SDK CHANGELOG.md and GitHub releases. See changelog/.
+status_page:
+  url: https://status.moltrust.ch/
+  provider: Upptime (open source, GitHub Actions, GitHub Pages)
+  machine_readable_api: true
+  machine_readable:
+    summary: https://raw.githubusercontent.com/MoltyCel/status.moltrust.ch/master/history/summary.json
+    config: https://raw.githubusercontent.com/MoltyCel/status.moltrust.ch/master/.upptimerc.yml
+    captured: lifecycle/moltrust-ch-status-summary.json
+  monitors:
+  - {name: MoltGuard Health, url: 'https://api.moltrust.ch/guard/health', uptime_year: '99.88%'}
+  - {name: MoltGuard API Info, url: 'https://api.moltrust.ch/guard/api/info', uptime_year: '99.88%'}
+  - {name: Skill Info, url: 'https://api.moltrust.ch/guard/skill/info', uptime_year: '99.83%'}
+  - {name: Shopping Info, url: 'https://api.moltrust.ch/guard/shopping/info', uptime_year: '99.89%'}
+  - {name: MolTrust Homepage, url: 'https://moltrust.ch', uptime_year: '99.91%'}
+  monitor_gap: >-
+    Every monitored endpoint is on the MoltGuard sub-API or the marketing site. The main MolTrust API
+    (/health, /identity/*, /credentials/*, /mcp, /a2a) is NOT on the status page, so the page cannot
+    show an outage of the registry itself. Downtime recorded 2026-03-27 to 2026-04-01 (up to 263 minutes in
+    a day).
+  probed:
+  - {url: 'https://status.moltrust.ch/', status: 200, checked: '2026-09-19'}
+  - {url: 'https://raw.githubusercontent.com/MoltyCel/status.moltrust.ch/master/history/summary.json', status: 200, checked: '2026-09-19'}
+deprecation:
+  policy_documented: false
+  sunset_header: false
+  deprecated_operations: []
+  notes: >-
+    No deprecation or sunset policy page, no RFC 8594 headers, and no `deprecated: true` in either spec
+    (257 operations). No Deprecation pointer is emitted. The Terms reserve the right to change credit prices
+    "with reasonable notice" and to change the Terms with email notice; that is the only change-notice
+    commitment published.
+sla:
+  documented: true
+  source: https://moltrust.ch/pricing.html + GET https://api.moltrust.ch/billing/plans
+  targets:
+  - {plan: Free, uptime_target: null, note: 'Terms 1: "Service availability is provided on a commercially reasonable basis, without guarantees of uninterrupted access."'}
+  - {plan: Base ($19/mo), uptime_target: '99.5%', source: '/billing/plans plans.base.sla'}
+  - {plan: Scale ($299/mo), uptime_target: '99.9%', source: '/billing/plans plans.scale.sla'}
+  - {plan: Enterprise, uptime_target: custom, note: '"custom SLA, request a quote" (llms.txt / enterprise page)'}
+  credits_and_remedies: Not published - no service-credit schedule accompanies the percentage targets.
+retention:
+  evidence: 12 months uniform across paid plans (pricing page; /billing/plans retention_months 12)
+  aae_metadata: 30 / 90 / 365 days or up to 7 years by validity tier (Privacy Notice)
+  operational_logs: 90 days (Privacy Notice)
+  caep_events: hard-deleted 90 days after acknowledgement (docs/caep.html)
+terms:
+  url: https://moltrust.ch/terms.html
+  effective: '2026-02-23'
+  archived_versions_published: false
+  archived_versions_note: '"Previous versions of these terms are available upon request" - not published.'
+privacy_notice:
+  url: https://moltrust.ch/privacy.html
+  version: '1.1'
+  last_updated: '2026-06-04'
+roadmap:
+  published: partial
+  notes: >-
+    No roadmap page. Forward-looking items are stated inline: AAE runtime enforcement "roadmap (Q3 2026)"
+    (agent card), XMTP push channel for CAEP "Q2/Q3 2026" (docs/caep.html), Bitcoin Lightning
+    micropayments "COMING SOON" (pricing page; POST /payment/lightning/invoice already in the spec), EU
+    Art. 27 representative "within 30 days" (Privacy Notice v1.1). The GitHub repo carries docs/BACKLOG.md
+    and docs/STATUS.md, the latter self-marked STALE since 2026-06-25.
+observed_change_cadence:
+  window: 2026-02-19 to 2026-09-19
+  note: >-
+    First public SDK 2026-02-19; Terms effective 2026-02-23; 68 dated blog posts since 2026-02-23 with
+    product/protocol releases roughly weekly through April and monthly since; GitHub moltrust-api pushed
+    2026-09-19 (the STATUS.md notes 98 PRs landed June-August). An actively changing API with no
+    machine-readable change record of its own.

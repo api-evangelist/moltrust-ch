@@ -1,0 +1,74 @@
+generated: '2026-09-19'
+method: searched
+source: https://moltrust.ch/developers.html + https://moltrust.ch/pricing.html + openapi/moltrust-ch-openapi.yml
+  (Test Harness tag, register-pop) + openapi/moltrust-ch-moltguard-openapi.yml (sample endpoints) + GET https://api.moltrust.ch/guard/api/agent/sample
+  (200) + GET /stats
+summary: 'There is no separate sandbox host or test-mode key prefix - one production host, one key. What the provider
+  offers instead: a free tier that makes every read and the registration flow free to exercise; MoltGuard mock "sample"
+  endpoints that return canned data with no auth; a keyless proof-of-possession registration that mints a DID with
+  zero credits; a partner-tier test harness for endorsements; and the public /stats counters that separate test
+  agents from real ones. No magic test values (cards, IBANs, tokens) exist because the API takes DIDs and wallets,
+  not payment instruments.'
+environments:
+- name: production
+  base_url: https://api.moltrust.ch
+  note: 'The only environment. Terms 2: "No subscription or API key required for standard endpoints."'
+test_vs_live_keys:
+  separate_modes: false
+  key_prefix: null
+  note: 'The binding spec shows keys as "mt_..." in one example (X-API-Key: mt_...) but no prefix scheme is documented
+    and no test/live split exists.'
+free_exercise_paths:
+- flow: get a key
+  operation: signup_for_api_key_auth_signup_post
+  cost: 0 credits; one key per email
+- flow: keyless registration
+  operation: register_agent_pop_identity_register_pop_post
+  cost: 0; grants a DID + signed VC and a ZERO balance ("no spendable credits") - a way to create a real identity
+    without any credit exposure
+  challenge: register_challenge_identity_register_challenge_get
+- flow: read a live trust score
+  operation: get_trust_score_skill_trust_score__did__get
+  cost: 0, public; the developers page quickstart uses did:moltrust:d34ed796a4dc4698 as a live example DID
+- flow: resolve / verify / stats / pricing / health
+  operations:
+  - resolve_did_identity_resolve__did__get
+  - public_stats_stats_get
+  - credits_pricing_credits_pricing_get
+  - health_check_health_get
+  cost: 0
+mock_endpoints:
+- operation: getAgentSample
+  path: GET https://api.moltrust.ch/guard/api/agent/sample
+  auth: none
+  observed: 200 - wallet 0x0000000000000000000000000000000000000000, score 42, breakdown {...}, _meta.note "Sample
+    data. Use /api/agent/score/:address for real results (x402 payment required)."
+- operation: getMarketSample
+  path: GET https://api.moltrust.ch/guard/api/market/sample
+  auth: none
+  note: 'Mock market-integrity response (spec: "Sample market integrity response (mock, no auth)").'
+test_harness:
+  operation: test_harness_endorse_test_harness_endorse_post
+  path: POST /test-harness/endorse
+  body: TestHarnessEndorseRequest {endorser_did, target_did, weight?, reason?}
+  access: '"Requires partner-tier API key" - not self-serve'
+  purpose: Record endorsements so a partner can drive an agent past the 3-endorsement threshold that unlocks a non-null
+    trust score.
+test_population_signals:
+  source: GET https://api.moltrust.ch/stats (2026-09-19)
+  values:
+    agents_total: 101
+    agents_test: 16
+    agents_partner_test: 19
+    agents_active: 11
+  note: The registry itself distinguishes test and partner-test agents in its public counters.
+hackathon_keys:
+  operation: registerHackathon
+  path: POST /guard/hackathon/register
+  note: '"issues API key bypassing x402" per the spec summary - a time-boxed bypass for events, IP rate-limited.'
+time_simulation:
+  supported: false
+  note: No test clocks. Validity windows (AAE VALIDITY, ttl_seconds on UCAN delegations, validity_days on VCs) are
+    the only time controls and they run on real time.
+magic_values: []
+magic_values_note: None published; do not invent any.

@@ -1,0 +1,138 @@
+# MolTrust API
+
+> Production trust API for autonomous AI agents. W3C DIDs, Verifiable Credentials, on-chain anchored on Base L2. AAE permission model, x402 micropayments, A2A v1.0 + ERC-8004 conformant. Operated by CryptoKRI GmbH, Zurich.
+
+## Discovery surfaces
+- [Agent Card (A2A v1.0)](https://api.moltrust.ch/.well-known/agent-card.json): 5 public skills, A2A v1.0 conformant with custom protocol binding declaration
+- [Extended Agent Card](https://api.moltrust.ch/extendedAgentCard): Authenticated A2A v1.0 endpoint. Auth via X-API-Key OR X-MolTrust-DID. Returns 9 skills + 7 extensions (paid skills, x402 pricing inventory, MoltGuard capabilities). Public Card signals availability via capabilities.extendedAgentCard:true.
+- [Trust Registry Binding Spec](https://moltrust.ch/bindings/trust-registry/v1.html): MolTrust's published A2A v1.0 Custom Protocol Binding for trust registry services. Defines endpoint conventions, authentication schemes, and extension system. First reference implementation in this category.
+- [ERC-8004 Registration](https://api.moltrust.ch/.well-known/agent-registration.json): Domain verification, agent #33553 on Base IdentityRegistry
+- [JWKS](https://api.moltrust.ch/.well-known/jwks.json): Ed25519 public keys for signature verification
+- [Per-DID Card](https://api.moltrust.ch/a2a/agent-card/{did}): Dynamic per-agent card with trust-score breakdown
+- [OpenAPI / Swagger](https://api.moltrust.ch/docs): Full API specification
+
+## Live endpoints — free tier
+- [Health](https://api.moltrust.ch/health): Service status
+- [Stats](https://api.moltrust.ch/stats): Aggregate registration/credential/rating counts
+- [Trust Score](https://api.moltrust.ch/skill/trust-score/{did}): AgentScore (0-100) with sybil-penalty + flags + breakdown
+- [Free MoltGuard sample](https://api.moltrust.ch/guard/api/agent/sample): Sample wallet score (no auth)
+- [Free wallet score](https://api.moltrust.ch/guard/api/agent/score-free/{address}): Rate-limited (1 req/10min)
+- [Recent agents](https://api.moltrust.ch/agents/recent): Last 10 registered external agents
+- [Swarm graph](https://api.moltrust.ch/swarm/graph/{did}): Endorsement-graph neighbors
+- [Endorsements given/received](https://api.moltrust.ch/skill/endorsements/{did}): Trust-edge inspection
+- [Identity verification](https://api.moltrust.ch/identity/verify/{did}): Public DID-verify endpoint
+- [Agent type lookup](https://api.moltrust.ch/identity/agent-type/{did}): Returns agent_class + governance tier
+- [Agent types listing](https://api.moltrust.ch/identity/agent-types): Catalog of all agent classes (orchestrator/autonomous/human_initiated/copilot)
+- [Delegation lookup](https://api.moltrust.ch/identity/delegations/{did}): AAE delegation chain inspection
+- [Wallet binding](https://api.moltrust.ch/wallet/{address}): EVM wallet → DID lookup with payment readiness
+
+## Live endpoints — paid via x402 (USDC on Base L2)
+- [Sybil scan](https://api.moltrust.ch/guard/api/sybil/scan/{address}) — $0.10: On-chain sybil-cluster detection (wallet age, counterparty graph, funding source)
+- [Agent score (full)](https://api.moltrust.ch/guard/api/agent/score/{address}) — $0.05: Detailed risk profile
+- [Market check](https://api.moltrust.ch/guard/api/market/check/{addr}) — $0.05: Prediction-market integrity check
+- [Credential issue](https://api.moltrust.ch/credentials/issue): W3C Verifiable Credential issuance (auth-gated)
+- [Credential verify](https://api.moltrust.ch/credentials/verify): VC verification including AAE delegation chain validation
+
+## MoltGuard sub-API (api.moltrust.ch/guard/)
+
+Dedicated sub-API for trust, integrity, sybil-detection, credential issuance, and market surveillance. Independent Node/Hono service, proxied via nginx under `/guard/*`. **Full machine-readable specification**: <https://api.moltrust.ch/guard/openapi.json> (OpenAPI 3.1, 70 paths, 14 capability clusters). **Live self-doc**: <https://api.moltrust.ch/guard/api/info>.
+
+### Free (no payment; some rate-limited)
+- `GET /guard/health` — Service liveness
+- `GET /guard/api/info` — Self-doc + live pricing inventory
+- `GET /guard/api/agent/sample` · `GET /guard/api/market/sample` — Mock samples (no auth)
+- `GET /guard/api/agent/score-free/{address}` — Wallet score, rate-limit 1/10min
+- `GET /guard/api/market/check-free/{marketId}` — Market check, rate-limit 1/10min
+- `GET /guard/skill/info` · `GET /guard/skill/schema` · `GET /guard/skill/audit?url=<github-url>` (5/hr)
+- `GET /guard/skill/verify/{skillHash}` · `GET /guard/skill/verify/did/{did}` · `GET /guard/skill/anchor/{skillHash}`
+- `GET /guard/audit/checks` · `GET /guard/audit/version`
+- `GET /guard/shopping/info` · `GET /guard/shopping/schema` · `GET /guard/shopping/receipt/{id}` · `POST /guard/shopping/verify`
+- `GET /guard/travel/info` · `GET /guard/travel/schema` · `GET /guard/travel/receipt/{id}` · `GET /guard/travel/trip/{tripId}` · `POST /guard/travel/verify`
+- `POST /guard/prediction/wallet-link` · `GET /guard/prediction/wallet/{address}` · `GET /guard/prediction/leaderboard`
+- `GET /guard/radar/clusters` · `GET /guard/radar/operators` — MoltRadar: single-operator clusters + operator ranking (EdDSA-signed, key did:web:moltrust.ch#moltguard-key-1)
+- `POST /guard/api/credential/verify` — Verify W3C VC + AAE chain
+- `GET /guard/transparency/latest` · `GET /guard/transparency/history` · `GET /guard/transparency/verify/{hash}`
+- `GET /guard/events/feed` — Polymarket anomaly + multi-outcome events scanner output
+- `POST /guard/salesguard/{brand,product,reseller}/...` · `GET /guard/salesguard/verify/{product_id}` · `GET /guard/salesguard/reseller/verify/{reseller_did}`
+- `GET /guard/api/graph/{score,neighbours,stats}/...` — Endorsement-graph queries
+- `GET /guard/api/flags`, `/api/flags/{flagId}`, `/api/flags/track-record` · `POST /guard/api/flags/record`
+- `GET/POST /guard/vc/aae/evaluate` · `GET /guard/vc/aae/info` · `POST /guard/governance/validate-capabilities`
+- `POST /guard/api/action/check` · `GET /guard/api/action/{stats,events/{did}}`
+- `POST /guard/api/wallet/attest` · `GET /guard/api/wallet/attest/{did}`
+- `POST /guard/hackathon/register` · `GET /guard/hackathon/stats`
+- `GET /guard/vc/challenge` · `POST /guard/vc/verify-binding` · `POST /guard/vc/register-key`
+
+(siehe OpenAPI für die vollständige Liste, ~59 free endpoints.)
+
+### Paid via x402 (USDC on Base L2)
+- `GET /guard/api/agent/score/{address}` — $0.05 — Wallet score with breakdown
+- `GET /guard/api/agent/detail/{address}` — $0.05 — Detailed agent breakdown
+- `GET /guard/api/sybil/scan/{address}` — $0.10 — On-chain sybil-cluster detection
+- `GET /guard/api/market/check/{marketId}` — $0.05 — Market integrity check
+- `GET /guard/api/market/feed` — $0.10 — Aggregated market integrity feed
+- `POST /guard/api/credential/issue` — $0.10 — Generic VC issuance
+- `GET /guard/prediction/integrity/{market_id}` — $0.10 — Prediction-market integrity
+- `GET /guard/radar/market/{id}` — $0.05 — MoltRadar: full operator decomposition (every ERC-8004-identified wallet and its on-chain operator)
+- `POST /guard/vc/skill/issue` — $5.00 — VerifiedSkillCredential issuance
+- `POST /guard/vc/prediction/issue` — $5.00 — PredictionTrackCredential issuance
+- `POST /guard/vc/buyer-agent/issue` — $5.00 — BuyerAgentCredential issuance
+- `POST /guard/vc/travel-agent/issue` — $5.00 — TravelAgentCredential issuance
+
+### Capability clusters (14)
+agent-scoring · sybil-detection · market-integrity · skill-verification · credential-issuance · shopping-vc · travel-vc · salesguard · prediction-markets · transparency · agent-graph · agent-flags · aae-evaluation · attestation-and-hackathon
+
+### Programmatic discovery
+- Endpoint inventory + JSON Schema for every response: <https://api.moltrust.ch/guard/openapi.json> (53 KB, OpenAPI 3.1)
+- The MolTrust extendedAgentCard (`<https://api.moltrust.ch/extendedAgentCard>`, auth-gated) lists MoltGuard via the `x402-pricing/v1` and `moltguard/v1` extensions — built at request time from the OpenAPI spec above (no hardcodes).
+
+## DID method
+- did:moltrust (W3C-compliant, Base L2 anchored)
+- did:web:api.moltrust.ch (platform identity, ERC-8004 agent #33553)
+- Universal Resolver: https://uresolver.moltrust.ch/1.0/identifiers/{did}
+- DIF driver PR: https://github.com/decentralized-identity/universal-resolver/pull/540
+
+## Authorization model — AAE
+Agent Authorization Envelope. Three blocks:
+- **MANDATE**: What the agent is authorized to do (capabilities, scopes)
+- **CONSTRAINTS**: Boundaries (rate limits, value caps, time windows, allowed counterparties)
+- **VALIDITY**: Issuance, expiration, revocation status
+JWS-signed, anchored on-chain. Distinct from per-action authentication models.
+
+## Authentication schemes (per agent-card.json)
+- `apiKey` — X-API-Key header (Stripe-tier-gated: Professional / Scale)
+- `moltrust-did` — X-MolTrust-DID header (agent identification for trust-gated endpoints)
+- `aae-envelope` — Bearer JWS token (declared, implementation in progress)
+- `x402-payment` — x402 micropayment protocol on Base L2 (for paid endpoints)
+
+## MCP integration
+- moltrust-mcp-server v1.2.0 on PyPI (40 tools, MCP Streamable HTTP)
+- MCP endpoint: https://api.moltrust.ch/mcp
+- Compatible with Claude Desktop, Cursor, Cline, Continue, and any MCP-aware client
+
+## SDKs
+- npm: @moltrust/sdk, @moltrust/aae, @moltrust/x402, @moltrust/mpp, @moltrust/openclaw
+- PyPI: moltrust-mcp-server v1.2.0
+- GitHub: https://github.com/MoltyCel
+
+## Standards conformance
+- W3C DID Core (PR #696 to w3c/did-extensions)
+- W3C Verifiable Credentials Data Model
+- A2A v1.0 (Agent Card spec, Custom Trust Registry Binding)
+- ERC-8004 (on-chain agent registration on Base)
+- x402 micropayment protocol
+- DIF Universal Resolver driver
+- Singapore IMDA MGF for Agentic AI (Jan 2026)
+- Aligned with: NIST AI RMF, EU AI Act, FATF 2023, OWASP LLM Top 10, MITRE ATLAS
+
+## Pricing tiers (subscription)
+- Professional: $99/month (€99) — 10,000 credits/month
+- Scale: $299/month (€299) — 30,000 credits/month
+- Enterprise: from $2,500/month — volume ladder (5M–unlimited calls), custom SLA
+- Free tier: rate-limited public endpoints listed above
+- Pay-per-use: x402 micropayments on premium endpoints (~$0.05–$0.50 per call)
+
+## Documentation
+- Marketing site & whitepapers: https://moltrust.ch (see https://moltrust.ch/llms.txt)
+- Technical specification: https://moltrust.ch/MolTrust_Protocol_TechSpec_v0.9.pdf
+- AIP comparison: https://moltrust.ch/blog/aip-comparison.html
+- arXiv preprint: https://moltrust.ch/arxiv-preprint-v1.9.pdf

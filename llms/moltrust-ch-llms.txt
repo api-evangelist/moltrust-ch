@@ -1,0 +1,91 @@
+# MolTrust
+
+> Open trust infrastructure for autonomous AI agents. W3C DIDs, Verifiable Credentials, on-chain anchoring on Base L2. Operated by CryptoKRI GmbH, Zurich. Implements Singapore IMDA MGF for Agentic AI (Jan 2026) via W3C standards.
+
+## Core concepts
+- **AAE — Agent Authorization Envelope**: Declarative permission model with three blocks: MANDATE / CONSTRAINTS / VALIDITY. Distinct from per-action authentication models (TIVA, BAID).
+- **DID method**: did:moltrust (W3C-compliant, Base L2 anchored) + did:web for platform identity.
+- **Trust scoring**: Cross-vertical behavioral aggregation (Sports, Shopping, Travel, Skills, Prediction Markets) with sybil-cluster detection.
+- **ERC-8004 cross-link**: Platform identity registered as agent #33553 on Base IdentityRegistry.
+
+## Publications
+- [Hub](/publications/): All anchored publications
+- [arXiv Preprint v1.9](/arxiv-preprint-v1.9.pdf): Deployment-first evidence (anchored Block 45,085,088)
+- [AIP Conformance Preprint v1](/aip-conformance-preprint-v1.pdf): AIP feature-set implementation (anchored Block 45,085,649, SSRN 6568061)
+- [Technical Specification v0.9](/MolTrust_Protocol_TechSpec_v0.9.pdf): Normative spec (anchored Block 46,986,137)
+- [Protocol Whitepaper v0.8](/MolTrust_Protocol_Whitepaper_v0.8.pdf): Narrative protocol standard (anchored Block 45,085,102)
+- [KYA Whitepaper](/MolTrust_KYA_Whitepaper.pdf): Know Your Agent strategic framework (anchored Block 45,085,361)
+- [Swarm Intelligence v4](/MolTrust_Swarm_Intelligence_Whitepaper_v4.pdf): Trust propagation protocol (anchored Block 45,085,366)
+- [EU AI Act Mapping v1.0](/publications/eu-ai-act-mapping.pdf): Article-by-article (anchored Block 45,077,147)
+- [NIST AI RMF Mapping v1.0](/publications/nist-ai-rmf-mapping.pdf): Function-by-function (anchored Block 45,077,151)
+- [Sybil-Resistance Methodology v1.3](/publications/sybil-resistance-methodology.pdf): Standalone note (anchored Block 45,077,156)
+- [Integrity Records](/publications/integrity.html): SHA-256 + on-chain anchor references
+
+## API & Discovery (api.moltrust.ch)
+- [Free self-registration](https://api.moltrust.ch/docs): No card, no payment. POST /auth/signup (email only) returns a free API key (100 requests/day); POST /identity/register then grants a W3C DID + signed VC + 100 credits. Paid tiers raise usage limits but are not required to register.
+- [Agent Card (A2A v1.0)](https://api.moltrust.ch/.well-known/agent-card.json): 5 public skills, A2A v1.0 conformant, references custom protocol binding
+- [Extended Agent Card](https://api.moltrust.ch/extendedAgentCard): Authenticated endpoint (X-API-Key OR X-MolTrust-DID), returns 9 skills + 7 extensions including x402 pricing inventory and MoltGuard capabilities
+- [Trust Registry Binding Spec](https://moltrust.ch/bindings/trust-registry/v1.html): A2A v1.0 Custom Protocol Binding for trust registry services (first published reference implementation)
+- [ERC-8004 Registration](https://api.moltrust.ch/.well-known/agent-registration.json): Domain verification (agent #33553)
+- [JWKS](https://api.moltrust.ch/.well-known/jwks.json): Public keys for signature verification
+- [DID Resolution (DIF Universal Resolver)](https://uresolver.moltrust.ch/1.0/identifiers/{did}): W3C DID resolution
+- [API Docs](https://api.moltrust.ch/docs): OpenAPI spec
+- [API llms.txt](https://api.moltrust.ch/llms.txt): Detailed endpoint reference for agents
+
+## About
+- [About MolTrust](/about.html)
+- [Contact](/contact.html)
+- [Verify Agent Trust](/transparency.html): Agent-trust verification (distinct from document integrity)
+
+## Developers
+- [DID Method Spec](/did-method-spec.html): did:moltrust normative spec
+- [Free skill security audit](https://api.moltrust.ch/guard/skill/audit): ten CWE-mapped checks over a SKILL.md, no API key, 5 per hour per IP; the check list and its version are public at /guard/audit/checks and /guard/audit/version
+- [Canonical Skill Hash Specification](https://moltrust.ch/skill-hash-spec.html): how the hash over a SKILL.md is derived, so a skill verdict can be recomputed by anyone
+- [Developer onboarding](/developers.html)
+- npm packages: @moltrust/sdk, @moltrust/aae, @moltrust/x402, @moltrust/mpp, @moltrust/openclaw
+- PyPI: moltrust-mcp-server v1.2.0 (40 MCP tools)
+- GitHub: https://github.com/MoltyCel
+
+## Enterprise
+- [Pricing](/pricing.html): Free (100 credits, no card) · Professional $99/mo = 10,000 credits · Scale $299/mo = 30,000 credits · Enterprise from $2,500/mo. USD/EUR; x402 USDC per-call on Base. Endpoint costs: /pricing/usage.html
+- [Enterprise volume](/enterprise/): 5M $2,500 · 20M $5,000 · 50M $7,500 · Unlimited $10,000 per month; custom SLA, request a quote.
+- [Regulated Markets](/regulated-markets.html)
+- [Article 12 Logging Support](/compliance.html): Article-by-article mapping (DID, AAE MANDATE/CONSTRAINTS/VALIDITY, on-chain anchor) plus the live EU AI Act compliance API — POST /compliance/assess (risk classification, Art 6/7 + Annex III), POST /compliance/declaration (Annex V declaration of conformity as a signed W3C VC), GET /compliance/report/{did}, POST /compliance/incident (Art 73 deadlines: 2/10/15 days). Regulation (EU) 2024/1689 applies generally from 2 August 2026 (Art 113); high-risk classification under Art 6(1) from 2 August 2027. Subscription plans on /pricing.
+- [Sample Audit Evidence Bundle](/sample-audit-evidence-bundle.html): Anonymized example of the signed PDF audit bundle (PAdES-B-LT, Base L2 anchor, Article 12 / ISO 42001 / NIST / IMDA mapping) produced by the Professional and Scale tiers.
+
+## Products
+- [MoltGuard](/moltguard.html): Risk scoring + sybil detection + MoltRadar operator resolution (ERC-8004 wallet→operator clustering on prediction markets); paid via x402, $0.10 USDC
+- [MoltProof](/moltproof.html): Read-only verifier — did an on-chain trading agent keep its committed AAE mandate? Resolves the agent's DID/ERC-8004 identity, reads public execution, checks allowed venue / output-token / position cap / validity, and emits ADHERENT/BREACHED/NO_MANDATE/NEEDS_REVIEW with a recomputable, Ed25519-signed verdict (kid did:web:moltrust.ch#moltproof-key-1). No keys, no custody. API base https://api.moltrust.ch/proof/ — GET /verdict-free/:agent (free), /verdict/:agent, /evidence/:agent, /mandate/:agent, POST /verify, GET /registry, /info, /health; deep endpoints $0.05 x402 on Base; MCP tools moltproof_verdict/_mandate/_evidence/_verify/_registry on https://api.moltrust.ch/mcp
+- [VCOne Agent](/vcone.html): Verifiable Credentials issuance agent
+- [Skill Verification](/skills.html): On-chain skill provenance
+- [MT Music](/music.html): VerifiedMusicCredential — provenance for AI-generated tracks (tool, human oversight, rights), anchored on Base; ready for EU AI Act Article 50(2). Attested once, verifiable by every platform.
+- [MT Shopping](/shopping.html): Proof of what a shopping agent bought — against what it was allowed to spend. Seals the mandate and every purchase as a recomputable MoltProof, anchored on Base; a merchant or bank re-checks it without taking your word. BuyerAgentCredential.
+- [MT Travel](/travel.html): Multi-segment bookings with a MoltProof per leg — hotel, flight, car, each sealed with its own proof and delegation chain. A disputed booking or cancellation proves itself. TravelAgentCredential.
+- [MolTrust Sports](/sports.html): For sportsbook and sports-data platforms — agents commit a prediction before the event and settle against it after, sealed up front and recomputable after as a MoltProof. Verification only, no custody.
+- [MT Salesguard](/salesguard.html): Provenance for the agent economy — who's an authorized reseller, what's genuine, as a MoltProof agents can read. Machine-enforceable: gates the sale, not just records it. BrandRegistry / AuthorizedReseller / ProductProvenance.
+- [MT Prediction](/prediction.html): Verifiable track records for prediction-market agents — composite scores anyone can recompute from the public record. Polymarket integrated.
+- [MT Global](/regulated-markets.html): Attested MoltProofs for regulated markets (China, India) and OpenClaw agents without chain access — verifiable against MolTrust's signed log, not the public chain; you're trusting our signature. Fully API-only: no blockchain, no VPN; @moltrust/* on cnpm.
+
+## Standards engagement
+- [W3C DID Method Spec PR](https://github.com/w3c/did-extensions/pull/696)
+- [DIF Universal Resolver Driver PR](https://github.com/decentralized-identity/universal-resolver/pull/540)
+- [A2A v1.0 conformance](/blog/a2a-v03-conformance.html)
+- [ERC-8004 implementation](/blog/erc8004-on-chain-off-chain-agent-trust.html)
+- [Singapore IMDA MGF positioning](/regulated-markets.html)
+
+## Optional
+- [Blog](/blog/): 35+ technical posts (latest: "What is it exactly we should be worried about?" — an opinion piece on the Financial Times report that the frontier labs cannot agree on a common safety standard, arguing that the Hugging Face agent incident shows AI as the tool rather than the will, and that what is missing is a boundary which is enforced and independently checkable rather than merely declared)
+- [What is it exactly we should be worried about?](/blog/what-should-we-be-worried-about.html): Opinion (Lars Kroehl). The Financial Times reports that Anthropic and OpenAI cannot agree on a common safety standard. The Hugging Face incident needed no bad intent anywhere in the loop — a goal, wide access and no enforceable boundary were enough. The shared parts of safety cannot be one vendor’s product; AAE revision 02 at the IETF states an agent’s mandate so a third party can recompute whether an action was inside it.
+- [Enforcement you can recompute](/blog/enforcement-you-can-recompute.html): Analysis (Lars Kroehl). Agents now move real money on agentic payment rails, and the cheapest attack is a sentence hidden on a web page. moltrust-enforce checks a transaction against a signed mandate before the agent acts, and verify() recomputes that verdict locally so the operator never has to trust the server.
+- [Hugging Face Rebuilt the Timeline. The Agent Could Have Carried It.](/blog/reconstructed-or-recomputed.html): Analysis (Lars Kroehl). An autonomous agent breached Hugging Face in July 2026; the intrusion timeline had to be rebuilt from more than 17,000 log events with an open-weight model after commercial API models declined the forensic task. The alternative is holding the evidence differently — each consequential agent action emits a signed, tamper-evident record when it happens, so nothing needs reassembling and an outsider can verify without trusting the operator. Worked example: MoltProof returns BREACHED on a mandate that permitted WETH only, citing tx 0xf6311a…ca68 on Base block 48378345, recomputable against any public Base RPC. Four verdict states, including a forced NEEDS_REVIEW so an undecodable action is never passed off as clean.
+- [An AI Agent Walks Up to a Border](/blog/agent-walks-up-to-a-border.html): Opinion (Lars Kroehl). Agent authorization is a passport — origin, mandate, constraints, validity, signed and independently checkable, with delegation narrowing down the chain. The infrastructure exists (public chain, open standards, callable API, IETF draft-kroehl-agentic-trust-aae, conformance report scored four-of-five IBCT with the fifth marked openly unfinished) but adoption is a rounding error until EU AI Act enforcement of high-risk/agentic obligations closes the border and audits ask which agent acted on whose authority.
+- [Compliance as an API](/blog/compliance-as-an-api.html): Three new /compliance endpoints turn EU AI Act obligations into deterministic, article-pinned API calls — risk classification (Art. 6/7), an EU declaration of conformity as a signed Verifiable Credential (Annex V), and Art. 73 incident deadlines computed from the text. No model in the loop where the regulation gives a deterministic answer; every answer carries the EUR-Lex article it rests on.
+- [If you build on Polymarket, you're trading on an estimate](/blog/polymarket-operator-estimate.html): On-chain wash and cluster metrics are upper bounds — pseudonymous data cannot prove who controls a set of wallets. Verifiable agent identity (ERC-8004, on-chain-anchored credentials) turns operator attribution from an inferred guess into a provable, recomputable fact; MoltRadar surfaces that identified-agent layer.
+- [AI agents are moving money in banks — the proof gap](/blog/the-proof-gap.html): AI agents already initiate payments, route them, and clear compliance checks inside banks, but most institutions cannot show what an agent did or on whose authority. Why guardrails (prevention) are not evidence (retrospective proof), and what a Know-Your-Agent evidence layer — portable W3C identity, signed delegation chains, independently verifiable claims — looks like
+- [Add trust verification in one line — CrewAI & LangChain middleware](/blog/crewai-trust-middleware.html): MolTrust middleware for CrewAI and LangChain 1.x checks each agent's behavioral trust score before every tool call — one line, no account required, scores public and recomputable
+- [ANS: same trust model from 1995](/blog/ans-trust-model.html): The Linux Foundation's Agent Name Service hands agents a signed trust score you verify by signature, not by math (the spec compares itself to a credit bureau). Why recomputable, on-chain solvency you can reproduce yourself is the alternative
+- [Agent identity across organizations — passport vs token](/blog/agent-identity-cross-org.html): Issuer-bound agent tokens (e.g. Microsoft Entra Agent ID) stop at the tenant boundary; cross-organization agent identity needs portable, independently verifiable W3C DID/VC credentials and the AAE
+- [Estonia AI-isikukood — the open authorization layer](/blog/estonia-ai-agent-authorization-layer.html): Estonia's AI personal ID code covers agent identity; the authorization layer (scope, limits, validity, delegation) maps to the AAE MANDATE / CONSTRAINTS / VALIDITY model
+- [Trust Without Trusting: why the referee needs a replay](/blog/trust-without-trusting-referee-replay.html): A payment hash proves a transfer settled, not that the agent acted within authority. The MolTrust preprint makes agent conduct checkable by recomputation — trust without trusting the operator's logs
+- [Partners](/partners/)
+- [Wallet](/wallet.html)

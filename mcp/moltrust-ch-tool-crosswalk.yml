@@ -1,0 +1,758 @@
+generated: '2026-09-19'
+method: derived
+source: 'Derived by binding the 53 tools returned live by tools/list on https://api.moltrust.ch/mcp (2026-09-19,
+  anonymous, saved verbatim to mcp/moltrust-ch-mcp-tools.json) to operationIds in the two published OpenAPIs: openapi/moltrust-ch-openapi.yml
+  (MolTrust API 2.5, 186 operations) and openapi/moltrust-ch-moltguard-openapi.yml (MoltGuard 1.5.0, 71 operations).
+  Every operationId below was verified to exist verbatim in one of the two specs by the generating script; the MCP
+  inputSchema of every tool is real (captured, not gated).'
+purpose: 'Make the MCP tool the first-class discovery unit and bind it to the REST operation that backs it, so an
+  agent can read the full parameter/requestBody contract from the OpenAPI while calling the tool. MolTrust exposes
+  four projections of one trust core - REST (two specs), MCP (53 tools), A2A (13 card skills) and a MoltProof sub-service
+  with no contract - and no surface is a superset: 6 tools have no public REST contract and 195 REST operations
+  have no tool.'
+surfaces:
+  rest_openapi:
+  - openapi/moltrust-ch-openapi.yml
+  - openapi/moltrust-ch-moltguard-openapi.yml
+  mcp:
+    endpoint: https://api.moltrust.ch/mcp
+    transport: streamable-http
+    tools_list: open - initialize + tools/list answered anonymously (mcp-session-id required after initialize)
+    server_info: moltrust 1.28.1, protocolVersion 2025-06-18
+    resources: 0
+    prompts: 0
+  a2a:
+    card: a2a/moltrust-ch-agent-card.json
+    skills: 13
+    note: A2A skills are served over the custom Trust Registry Binding (REST endpoints named in the card extensions),
+      not over JSON-RPC task methods - see a2a/moltrust-ch-a2a.yml.
+  moltproof:
+    base: https://api.moltrust.ch/proof/
+    contract: null
+    note: /proof/openapi.json 404; only llms.txt prose and /proof/info self-doc.
+crosswalk:
+- tool: moltrust_register
+  category: identity
+  rest:
+  - register_agent_identity_register_post
+  spec:
+  - openapi/moltrust-ch-openapi.yml
+  binding: rest
+  confidence: high
+- tool: moltrust_verify
+  category: identity
+  rest:
+  - verify_agent_identity_verify__did__get
+  spec:
+  - openapi/moltrust-ch-openapi.yml
+  binding: rest
+  confidence: high
+- tool: moltrust_reputation
+  category: reputation
+  rest:
+  - get_reputation_reputation_query__did__get
+  spec:
+  - openapi/moltrust-ch-openapi.yml
+  binding: rest
+  confidence: high
+- tool: moltrust_rate
+  category: reputation
+  rest:
+  - rate_agent_reputation_rate_post
+  spec:
+  - openapi/moltrust-ch-openapi.yml
+  binding: rest
+  confidence: high
+- tool: moltrust_credential
+  category: credentials
+  rest:
+  - issue_vc_credentials_issue_post
+  - verify_vc_credentials_verify_post
+  spec:
+  - openapi/moltrust-ch-openapi.yml
+  binding: rest
+  confidence: high
+  note: action=issue -> credentials/issue; action=verify -> credentials/verify.
+- tool: moltrust_credits
+  category: credits
+  rest:
+  - credits_balance_credits_balance__did__get
+  - credits_pricing_credits_pricing_get
+  - credits_transfer_credits_transfer_post
+  - credits_transactions_credits_transactions__did__get
+  spec:
+  - openapi/moltrust-ch-openapi.yml
+  binding: rest
+  confidence: high
+  note: One tool fans out over four REST operations by its action argument (balance / pricing / transfer / history).
+- tool: moltrust_deposit_info
+  category: credits
+  rest:
+  - credits_deposit_info_credits_deposit_info_get
+  spec:
+  - openapi/moltrust-ch-openapi.yml
+  binding: rest
+  confidence: high
+- tool: moltrust_claim_deposit
+  category: credits
+  rest:
+  - credits_deposit_credits_deposit_post
+  spec:
+  - openapi/moltrust-ch-openapi.yml
+  binding: rest
+  confidence: high
+- tool: moltrust_stats
+  category: platform
+  rest:
+  - public_stats_stats_get
+  spec:
+  - openapi/moltrust-ch-openapi.yml
+  binding: rest
+  confidence: high
+- tool: moltrust_deposit_history
+  category: credits
+  rest:
+  - credits_deposit_history_credits_deposits__did__get
+  spec:
+  - openapi/moltrust-ch-openapi.yml
+  binding: rest
+  confidence: high
+- tool: moltrust_erc8004
+  category: erc8004
+  rest:
+  - erc8004_resolve_resolve_erc8004__agent_id__get
+  - erc8004_registration_file_agents__did__erc8004_get
+  - erc8004_resolve_by_address_identity_erc8004__address__get
+  spec:
+  - openapi/moltrust-ch-openapi.yml
+  binding: rest
+  confidence: medium
+  note: 'action-driven: resolve by agent_id, by DID (registration file) or by address; the tool description names
+    all three lookups.'
+- tool: moltguard_score
+  category: agent-scoring
+  rest:
+  - getAgentScorePaid
+  - getAgentScoreFree
+  spec:
+  - openapi/moltrust-ch-moltguard-openapi.yml
+  binding: rest
+  confidence: high
+  note: Paid path ($0.05 USDC via x402) or the rate-limited free variant; the MCP server decides which based on
+    payment configuration.
+- tool: moltguard_detail
+  category: agent-scoring
+  rest:
+  - getAgentDetailPaid
+  spec:
+  - openapi/moltrust-ch-moltguard-openapi.yml
+  binding: rest
+  confidence: high
+- tool: moltguard_sybil
+  category: sybil-detection
+  rest:
+  - getSybilScan
+  spec:
+  - openapi/moltrust-ch-moltguard-openapi.yml
+  binding: rest
+  confidence: high
+- tool: moltguard_market
+  category: market-integrity
+  rest:
+  - getMarketCheckPaid
+  - getMarketCheckFree
+  spec:
+  - openapi/moltrust-ch-moltguard-openapi.yml
+  binding: rest
+  confidence: high
+- tool: moltguard_feed
+  category: market-integrity
+  rest:
+  - getMarketFeed
+  spec:
+  - openapi/moltrust-ch-moltguard-openapi.yml
+  binding: rest
+  confidence: high
+- tool: moltguard_credential_issue
+  category: credential-issuance
+  rest:
+  - issueCredential
+  spec:
+  - openapi/moltrust-ch-moltguard-openapi.yml
+  binding: rest
+  confidence: high
+- tool: moltguard_credential_verify
+  category: credential-issuance
+  rest:
+  - verifyCredential
+  spec:
+  - openapi/moltrust-ch-moltguard-openapi.yml
+  binding: rest
+  confidence: high
+- tool: mt_shopping_info
+  category: shopping-vc
+  rest:
+  - getShoppingInfo
+  spec:
+  - openapi/moltrust-ch-moltguard-openapi.yml
+  binding: rest
+  confidence: high
+- tool: mt_shopping_verify
+  category: shopping-vc
+  rest:
+  - verifyShopping
+  spec:
+  - openapi/moltrust-ch-moltguard-openapi.yml
+  binding: rest
+  confidence: high
+- tool: mt_shopping_issue_vc
+  category: shopping-vc
+  rest:
+  - issueBuyerAgentVC
+  spec:
+  - openapi/moltrust-ch-moltguard-openapi.yml
+  binding: rest
+  confidence: high
+- tool: mt_travel_info
+  category: travel-vc
+  rest:
+  - getTravelInfo
+  spec:
+  - openapi/moltrust-ch-moltguard-openapi.yml
+  binding: rest
+  confidence: high
+- tool: mt_travel_verify
+  category: travel-vc
+  rest:
+  - verifyTravel
+  spec:
+  - openapi/moltrust-ch-moltguard-openapi.yml
+  binding: rest
+  confidence: high
+- tool: mt_travel_issue_vc
+  category: travel-vc
+  rest:
+  - issueTravelAgentVC
+  spec:
+  - openapi/moltrust-ch-moltguard-openapi.yml
+  binding: rest
+  confidence: high
+- tool: mt_skill_audit
+  category: skill-verification
+  rest:
+  - getSkillAudit
+  spec:
+  - openapi/moltrust-ch-moltguard-openapi.yml
+  binding: rest
+  confidence: high
+- tool: mt_skill_verify
+  category: skill-verification
+  rest:
+  - verifySkillByHash
+  spec:
+  - openapi/moltrust-ch-moltguard-openapi.yml
+  binding: rest
+  confidence: high
+- tool: mt_skill_issue_vc
+  category: skill-verification
+  rest:
+  - issueSkillVC
+  spec:
+  - openapi/moltrust-ch-moltguard-openapi.yml
+  binding: rest
+  confidence: high
+- tool: mt_prediction_link
+  category: prediction-markets
+  rest:
+  - linkPredictionWallet
+  spec:
+  - openapi/moltrust-ch-moltguard-openapi.yml
+  binding: rest
+  confidence: high
+- tool: mt_prediction_wallet
+  category: prediction-markets
+  rest:
+  - getPredictionWallet
+  spec:
+  - openapi/moltrust-ch-moltguard-openapi.yml
+  binding: rest
+  confidence: high
+- tool: mt_prediction_leaderboard
+  category: prediction-markets
+  rest:
+  - getPredictionLeaderboard
+  spec:
+  - openapi/moltrust-ch-moltguard-openapi.yml
+  binding: rest
+  confidence: high
+- tool: mt_salesguard_verify
+  category: salesguard
+  rest:
+  - verifyProduct
+  spec:
+  - openapi/moltrust-ch-moltguard-openapi.yml
+  binding: rest
+  confidence: high
+- tool: mt_salesguard_reseller
+  category: salesguard
+  rest:
+  - verifyReseller
+  spec:
+  - openapi/moltrust-ch-moltguard-openapi.yml
+  binding: rest
+  confidence: high
+- tool: mt_salesguard_register
+  category: salesguard
+  rest:
+  - registerBrand
+  spec:
+  - openapi/moltrust-ch-moltguard-openapi.yml
+  binding: rest
+  confidence: high
+- tool: mt_fantasy_commit
+  category: sports
+  rest:
+  - fantasy_lineup_commit_sports_fantasy_lineups_commit_post
+  spec:
+  - openapi/moltrust-ch-openapi.yml
+  binding: rest
+  confidence: high
+- tool: mt_fantasy_verify
+  category: sports
+  rest:
+  - fantasy_lineup_verify_sports_fantasy_lineups_verify__commitment_hash__get
+  spec:
+  - openapi/moltrust-ch-openapi.yml
+  binding: rest
+  confidence: high
+- tool: mt_fantasy_history
+  category: sports
+  rest:
+  - fantasy_history_sports_fantasy_history__did__get
+  spec:
+  - openapi/moltrust-ch-openapi.yml
+  binding: rest
+  confidence: high
+- tool: mt_create_interaction_proof
+  category: skills-endorsement
+  rest:
+  - create_interaction_proof_endpoint_skill_interaction_proof_post
+  spec:
+  - openapi/moltrust-ch-openapi.yml
+  binding: rest
+  confidence: high
+- tool: mt_endorse_agent
+  category: skills-endorsement
+  rest:
+  - endorse_skill_endpoint_skill_endorse_post
+  spec:
+  - openapi/moltrust-ch-openapi.yml
+  binding: rest
+  confidence: high
+- tool: mt_get_trust_score
+  category: trust-score
+  rest:
+  - get_trust_score_skill_trust_score__did__get
+  spec:
+  - openapi/moltrust-ch-openapi.yml
+  binding: rest
+  confidence: high
+- tool: mt_get_swarm_graph
+  category: swarm
+  rest:
+  - get_swarm_graph_swarm_graph__did__get
+  spec:
+  - openapi/moltrust-ch-openapi.yml
+  binding: rest
+  confidence: high
+- tool: mt_get_swarm_stats
+  category: swarm
+  rest:
+  - get_swarm_stats_swarm_stats_get
+  spec:
+  - openapi/moltrust-ch-openapi.yml
+  binding: rest
+  confidence: high
+- tool: mt_register_seed
+  category: swarm
+  rest:
+  - register_seed_swarm_seed_post
+  spec:
+  - openapi/moltrust-ch-openapi.yml
+  binding: rest
+  confidence: high
+  note: Admin-only on both surfaces.
+- tool: mt_get_badge
+  category: badges
+  rest:
+  - get_identity_badge_identity_badge__did__get
+  - get_trust_badge_badge__did__get
+  spec:
+  - openapi/moltrust-ch-openapi.yml
+  binding: rest
+  confidence: medium
+  note: Two badge read endpoints exist (/identity/badge/{did} and /badge/{did}); the tool returns tier/score/expiry,
+    which matches /identity/badge.
+- tool: mt_check_badge
+  category: badges
+  rest:
+  - get_identity_badge_identity_badge__did__get
+  spec:
+  - openapi/moltrust-ch-openapi.yml
+  binding: rest
+  confidence: medium
+  note: Yes/no projection of the same badge read.
+- tool: mt_issue_music_credential
+  category: music
+  rest:
+  - issue_music_credential_music_credential_issue_post
+  spec:
+  - openapi/moltrust-ch-openapi.yml
+  binding: rest
+  confidence: high
+- tool: mt_verify_music_credential
+  category: music
+  rest:
+  - verify_music_credential_music_verify__credential_id__get
+  spec:
+  - openapi/moltrust-ch-openapi.yml
+  binding: rest
+  confidence: high
+- tool: mt_get_track_provenance
+  category: music
+  rest:
+  - get_music_credential_music_credential__credential_id__get
+  spec:
+  - openapi/moltrust-ch-openapi.yml
+  binding: rest
+  confidence: high
+mcp_only:
+- tool: mt_issue_badge
+  reason: No badge-issuance operation exists in either published OpenAPI (only GET /identity/badge/{did} and GET
+    /badge/{did} reads). The tool describes paid tiers (verified $5 / trusted ...); its backing call is not part
+    of the public REST contract.
+- tool: moltproof_verdict
+  reason: 'Backed by the MoltProof sub-service at https://api.moltrust.ch/proof/ (GET /verdict/:agent per llms.txt),
+    which publishes no OpenAPI: /proof/openapi.json returned 404 on 2026-09-19.'
+- tool: moltproof_mandate
+  reason: MoltProof sub-service (GET /proof/mandate/:agent); no OpenAPI published.
+- tool: moltproof_evidence
+  reason: MoltProof sub-service (GET /proof/evidence/:agent); no OpenAPI published.
+- tool: moltproof_registry
+  reason: MoltProof sub-service (GET /proof/registry, probed 200 on 2026-09-19); no OpenAPI published.
+- tool: moltproof_verify
+  reason: MoltProof sub-service (POST /proof/verify); no OpenAPI published. Offline recomputation is also shipped
+    as the moltrust-enforce / @moltrust/verify libraries.
+rest_only:
+- group: .well-known
+  operations:
+  - did_web_document__well_known_did_json_get
+  - well_known_agent_json_alias__well_known_agent_json_get
+  - well_known_agent_registration__well_known_agent_registration_json_get
+  - well_known_mcp_json__well_known_mcp_json_get
+  - well_known_registry_key__well_known_registry_key_json_get
+  - well_known_x402_alias__well_known_x402_get
+- group: a2a
+  operations:
+  - a2a_discovery_hint_a2a_head
+  - a2a_trust_card_a2a_agent_card__did__get
+  - handle_requests_a2a_post
+- group: aae
+  operations:
+  - get_agent_aae_evaluations_aae_evaluations__did__get
+- group: admin
+  operations:
+  - admin_assign_agent_admin_reseller_tenant__payer_ref__agents_post
+  - admin_create_reseller_admin_reseller_create_post
+  - admin_draft_invoice_admin_reseller_tenant__payer_ref__invoice_post
+  - admin_funnel_admin_funnel_get
+  - admin_login_admin_login_post
+  - admin_logout_admin_logout_post
+  - admin_me_admin_me_get
+  - admin_usage_admin_usage_get
+  - caller_detail_admin_traffic_caller__ip__get
+  - dashboard_activity_admin_dashboard_activity_get
+  - dashboard_agents_admin_dashboard_agents_get
+  - dashboard_caller_detail_admin_dashboard_callers__ip__get
+  - dashboard_callers_admin_dashboard_callers_get
+  - dashboard_discovery_admin_dashboard_discovery_get
+  - dashboard_health_admin_dashboard_health_get
+  - dashboard_journal_admin_dashboard_journal_get
+  - dashboard_journal_entry_admin_dashboard_journal__date__get
+  - dashboard_journal_list_admin_dashboard_journal_list_get
+  - dashboard_journal_search_admin_dashboard_journal_search_get
+  - dashboard_overview_admin_dashboard_overview_get
+  - dashboard_security_admin_dashboard_security_get
+  - dashboard_traffic_admin_dashboard_traffic_get
+  - dashboard_x402_admin_dashboard_x402_get
+  - elevate_admin_reseller_elevate_post
+  - journal_append_admin_journal_append_post
+  - list_referrals_admin_billing_referrals_get
+  - list_resellers_admin_reseller_list_get
+  - reseller_detail_admin_reseller_tenant__payer_ref__get
+  - set_caller_label_admin_traffic_caller__ip__label_post
+  - totp_confirm_admin_reseller_2fa_confirm_post
+  - totp_enroll_admin_reseller_2fa_enroll_post
+  - totp_status_admin_reseller_2fa_status_get
+- group: agents
+  operations:
+  - claim_agent_operator_agents__did__operator_post
+  - get_inactive_agents_agents_inactive_get
+  - recent_agents_agents_recent_get
+- group: anchors
+  operations:
+  - anchors_batch_anchors_batch_post
+- group: api
+  operations:
+  - site_search_api_search_get
+- group: attestations
+  operations:
+  - get_attestation_attestations__attestation_id__get
+- group: auth
+  operations:
+  - auth_with_moltbook_auth_moltbook_post
+  - github_auth_callback_auth_github_callback_get
+  - github_auth_start_auth_github_get
+  - signup_by_signature_auth_signup_did_post
+  - signup_for_api_key_auth_signup_post
+- group: aws
+  operations:
+  - aws_fulfillment_aws_fulfillment_post
+- group: billing
+  operations:
+  - create_checkout_billing_checkout_post
+  - customer_portal_billing_portal_post
+  - get_subscription_billing_subscription__customer_id__get
+  - list_plans_billing_plans_get
+  - stripe_webhook_billing_webhook_post
+- group: caep
+  operations:
+  - caep_acknowledge_caep_acknowledge__event_id__post
+  - caep_pending_caep_pending__did__get
+- group: compliance
+  operations:
+  - compliance_assess_compliance_assess_post
+  - compliance_declaration_compliance_declaration_post
+  - compliance_incident_compliance_incident_post
+  - compliance_report_compliance_report__did__get
+- group: contact
+  operations:
+  - contact_submit_contact_post
+- group: credentials
+  operations:
+  - verify_delegation_chain_endpoint_credentials_verify_chain_post
+- group: credits
+  operations:
+  - credits_solvency_v0_credits_solvency__did__get
+- group: delegation
+  operations:
+  - configure_delegation_delegation_configure_post
+  - delegation_create_delegation_create_post
+  - delegation_verify_delegation_verify_post
+- group: enforce
+  operations:
+  - enforce_check_endpoint_enforce_check_post
+  - enforce_ratify_endpoint_enforce_ratify_post
+- group: extendedAgentCard
+  operations:
+  - extended_agent_card_extendedAgentCard_get
+- group: health
+  operations:
+  - health_check_health_get
+- group: identity
+  operations:
+  - bind_wallet_identity_bind_post
+  - bridge_did_identity_bridge_post
+  - bridge_did_simple_identity_bridge_simple_post
+  - erc8004_dual_register_identity_erc8004_register_post
+  - erc8004_validate_identity_erc8004_validate_post
+  - get_agent_class_identity_agent_type__did__get
+  - get_agent_public_key_identity_key__did__get
+  - get_binding_nonce_identity_nonce_get
+  - get_delegations_identity_delegations__did__get
+  - get_identity_badge_svg_identity_badge__did__svg_get
+  - import_external_score_identity_import_score_post
+  - list_agent_types_identity_agent_types_get
+  - register_agent_pop_identity_register_pop_post
+  - register_batch_identity_register_batch_post
+  - register_challenge_identity_register_challenge_get
+  - resolve_did_identity_resolve__did__get
+  - resolve_external_did_identity_resolve_external__external_did__get
+  - revocation_status_identity_revocation_status__did__get
+  - revoke_agent_identity_revoke__did__post
+  - set_agent_class_identity_agent_type__did__post
+  - spiffe_bind_identity_spiffe_bind_post
+  - spiffe_list_identity_spiffe_get
+  - spiffe_lookup_identity_spiffe__spiffe_uri__get
+  - spiffe_unbind_identity_spiffe_bind__spiffe_uri__delete
+  - unrevoke_agent_identity_unrevoke__did__post
+- group: interaction
+  operations:
+  - validate_signing_endpoint_interaction_validate_signing_post
+- group: join
+  operations:
+  - join_redirect_join_get
+- group: moltguard:aae-evaluation
+  operations:
+  - checkAction
+  - evaluateAAEGet
+  - evaluateAAEPost
+  - getAAEInfo
+  - getActionEvents
+  - getActionStats
+  - validateCapabilities
+- group: moltguard:agent-flags
+  operations:
+  - getFlag
+  - getFlagTrackRecord
+  - listFlags
+  - recordFlag
+- group: moltguard:agent-graph
+  operations:
+  - getGraphNeighbours
+  - getGraphScore
+  - getGraphStats
+- group: moltguard:agent-scoring
+  operations:
+  - getAgentSample
+- group: moltguard:attestation-and-hackathon
+  operations:
+  - attestWallet
+  - getHackathonStats
+  - getVCChallenge
+  - getWalletAttestation
+  - registerHackathon
+  - registerVCKey
+  - verifyVCBinding
+- group: moltguard:market-integrity
+  operations:
+  - getEventsFeed
+  - getMarketSample
+- group: moltguard:prediction-markets
+  operations:
+  - getPredictionIntegrity
+  - getRadarClusters
+  - getRadarMarketPaid
+  - getRadarOperators
+  - issuePredictionVC
+- group: moltguard:salesguard
+  operations:
+  - authorizeReseller
+  - registerProduct
+- group: moltguard:shopping-vc
+  operations:
+  - getShoppingReceipt
+  - getShoppingSchema
+- group: moltguard:skill-verification
+  operations:
+  - getAuditChecks
+  - getAuditVersion
+  - getSkillAnchor
+  - getSkillInfo
+  - getSkillSchema
+  - verifySkillByDid
+- group: moltguard:transparency
+  operations:
+  - getApiInfo
+  - getHealth
+  - getTransparencyHistory
+  - getTransparencyLatest
+  - verifyTransparencyHash
+- group: moltguard:travel-vc
+  operations:
+  - getTravelReceipt
+  - getTravelSchema
+  - getTravelTrip
+- group: music
+  operations:
+  - get_agent_music_credentials_music_credential_agent__did__get
+  - revoke_music_credential_music_credential__credential_id__revoke_post
+- group: operators
+  operations:
+  - get_budget_cap_operators__operator_did__agents__agent_did__budget_cap_get
+  - list_budget_caps_operators__operator_did__budget_caps_get
+  - set_budget_cap_operators__operator_did__agents__agent_did__budget_cap_put
+- group: payment
+  operations:
+  - create_lightning_invoice_payment_lightning_invoice_post
+- group: reputation
+  operations:
+  - reputation_batch_sync_reputation_batch_sync_post
+- group: reseller
+  operations:
+  - reseller_agents_reseller_agents_get
+  - reseller_billing_reseller_billing_get
+  - reseller_login_reseller_login_post
+  - reseller_logout_reseller_logout_post
+  - reseller_me_reseller_me_get
+  - reseller_onboard_reseller_agents_post
+- group: sitemap.xml
+  operations:
+  - sitemap_redirect_sitemap_xml_get
+- group: skill
+  operations:
+  - get_endorsements_given_skill_endorsements_given__did__get
+  - get_endorsements_skill_endorsements__did__get
+- group: skills
+  operations:
+  - list_skills_skills_get
+- group: sports
+  operations:
+  - fantasy_lineup_settle_sports_fantasy_lineups_settle__commitment_hash__patch
+  - signal_provider_badge_sports_signals_badge__provider_id__svg_get
+  - signal_provider_leaderboard_sports_signals_leaderboard_get
+  - signal_provider_register_sports_signals_register_post
+  - signal_provider_verify_sports_signals_verify__provider_id__get
+  - sports_health_sports_health_get
+  - sports_predict_commit_sports_predictions_commit_post
+  - sports_predict_history_sports_predictions_history__did__get
+  - sports_predict_settle_admin_sports_predictions_settle__commitment_hash__patch
+  - sports_predict_verify_sports_predictions_verify__commitment_hash__get
+- group: swarm
+  operations:
+  - propagate_trust_swarm_propagate__did__get
+- group: test-harness
+  operations:
+  - test_harness_endorse_test_harness_endorse_post
+- group: trust
+  operations:
+  - trust_gate_trust_gate__did__get
+- group: vc
+  operations:
+  - aae_challenge_vc_aae_challenge_post
+  - aae_evaluate_vc_aae_evaluate_post
+  - aae_submit_vc_aae_submit_post
+  - ipr_admin_anchor_vc_ipr_admin_anchor_post
+  - ipr_admin_reanchor_vc_ipr_admin_reanchor_post
+  - ipr_admin_reconcile_vc_ipr_admin_reconcile_post
+  - ipr_admin_retry_vc_ipr_admin_retry_post
+  - ipr_by_agent_vc_ipr_agent__did__get
+  - ipr_get_vc_ipr__ipr_id__get
+  - ipr_outcome_vc_ipr__ipr_id__outcome_post
+  - ipr_stats_endpoint_vc_ipr_stats_get
+  - ipr_status_vc_ipr__ipr_id__status_get
+  - ipr_submit_vc_ipr_submit_post
+  - ipr_verify_vc_ipr_verify_post
+- group: violation
+  operations:
+  - create_violation_record_violation_record_post
+  - get_agent_violations_violation_agent__did__get
+  - get_violation_record_violation__record_id__get
+  - reverse_violation_violation__record_id__reverse_post
+- group: wallet
+  operations:
+  - wallet_shadow_score_wallet__address__get
+- group: webhooks
+  operations:
+  - payment_webhook_webhooks_payment_post
+- group: x402
+  operations:
+  - x402_stats_x402_stats_get
+  - x402_verify_x402_verify_get
+coverage:
+  tools_named: 53
+  tools_bound: 47
+  mcp_only: 6
+  rest_ops_total: 256
+  rest_ops_with_tool: 55
+  rest_ops_without_tool: 201

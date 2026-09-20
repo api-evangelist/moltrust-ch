@@ -1,0 +1,115 @@
+generated: '2026-09-19'
+method: searched
+source: a2a/moltrust-ch-agent-card.json (securitySchemes) + https://moltrust.ch/developers.html + https://moltrust.ch/bindings/trust-registry/v1.html
+  (section 4) + https://moltrust.ch/terms.html (section 3) + openapi/moltrust-ch-openapi.yml (X-API-Key / X-MolTrust-DID
+  header parameters) + openapi/moltrust-ch-moltguard-openapi.yml (x402 scheme) + live probes 2026-09-19
+docs: https://moltrust.ch/developers.html
+upgraded_from: derived pass of derive-authentication.py (which found only the MoltGuard x402 scheme because the
+  main FastAPI spec declares no securitySchemes at all - auth appears there as 49 X-API-Key and 6 X-MolTrust-DID
+  header PARAMETERS)
+summary:
+  types:
+  - apiKey
+  - http-bearer (declared, not live)
+  - x402-payment
+  - admin-key (undeclared)
+  api_key_in:
+  - header
+  oauth2_flows: []
+  openid_connect: false
+  mutual_tls: false
+  note: No OAuth 2.0 anywhere. Two credential styles for the registry (a key, or the agent's own DID), one economic
+    credential for MoltGuard (an x402 payment receipt), and an admin key that only appears in operation prose.
+schemes:
+- name: apiKey
+  type: apiKey
+  in: header
+  parameter_name: X-API-Key
+  description: Primary credential. Obtain free with POST /auth/signup {"email"} (one key per email, Terms 3) or
+    POST /auth/signup-did (Ed25519 proof of possession - "Mint an API key by proving key possession instead of owning
+    a mailbox") after a keyless POST /identity/register-pop. GitHub login (GET /auth/github) and Moltbook token
+    (POST /auth/moltbook) are alternative signup routes. The key carries an owner_did and a credit balance; 49 operations
+    in the main spec declare it as a required header parameter (a missing key therefore returns 422 "Field required",
+    not 401).
+  obtain:
+  - POST https://api.moltrust.ch/auth/signup
+  - POST https://api.moltrust.ch/auth/signup-did
+  - GET https://api.moltrust.ch/auth/github
+  env: MOLTRUST_API_KEY (SDK, MCP server, moltrust-enforce)
+  rotation: '"An agent counts once per month regardless of key rotations (5 included)" - pricing page; compromised
+    keys: contact info@moltrust.ch (Terms 3)'
+  sources:
+  - a2a/moltrust-ch-agent-card.json
+  - openapi/moltrust-ch-openapi.yml
+  - https://moltrust.ch/developers.html
+  - https://moltrust.ch/terms.html
+- name: moltrust-did
+  type: apiKey
+  in: header
+  parameter_name: X-MolTrust-DID
+  description: 'Agent DID for self-identification on trust-gated endpoints (agent card). Accepted as an alternative
+    to X-API-Key on GET /extendedAgentCard (live 401 message: "provide X-API-Key OR X-MolTrust-DID header") and
+    required alongside X-API-Key on the AAE enforcement operations (/vc/aae/challenge, /vc/aae/submit, /enforce/check,
+    /enforce/ratify). Identifies the acting agent rather than the paying account.'
+  sources:
+  - a2a/moltrust-ch-agent-card.json
+  - openapi/moltrust-ch-openapi.yml
+  - https://moltrust.ch/bindings/trust-registry/v1.html
+- name: aae-envelope
+  type: http
+  scheme: bearer
+  bearer_format: AAE-JWS
+  status: declared-not-live
+  description: Agent Authorization Envelope as a JWS-signed bearer token (MANDATE / CONSTRAINTS / VALIDITY). The
+    agent card says "Declared schema; HTTP-auth-layer implementation in progress" and the card's aae extension says
+    "runtime enforcement is roadmap (Q3 2026)". Do not send it expecting authorization; AAEs are currently submitted
+    as request bodies to POST /vc/aae/submit and evaluated by /enforce/check.
+  sources:
+  - a2a/moltrust-ch-agent-card.json
+  - https://moltrust.ch/bindings/trust-registry/v1.html
+- name: x402
+  type: apiKey
+  in: header
+  parameter_name: X-PAYMENT
+  description: x402 v2 payment receipt ("x402 <base64-encoded-receipt>") for the 11 paid MoltGuard endpoints. A
+    request without it receives 402 with a PaymentRequired body naming price, network (base) and payTo; prices are
+    published in advance at /.well-known/x402.json. Payment is the credential - no account needed.
+  sources:
+  - openapi/moltrust-ch-moltguard-openapi.yml
+  - well-known/moltrust-ch-x402.json
+- name: admin-key
+  type: apiKey
+  in: header
+  parameter_name: X-Admin-Key
+  status: undeclared
+  description: Named only in operation descriptions ("Requires X-Admin-Key header") on POST /violation/record, POST
+    /violation/{record_id}/reverse and POST /music/credential/{credential_id}/revoke; never declared as a parameter
+    or scheme. Operator-only; recorded so a reader knows those writes are not customer-callable.
+  sources:
+  - openapi/moltrust-ch-openapi.yml
+- name: partner-tier key
+  type: apiKey
+  in: header
+  parameter_name: X-API-Key
+  status: tier-gated
+  description: POST /test-harness/endorse "Requires partner-tier API key" - same header, elevated tier.
+  sources:
+  - openapi/moltrust-ch-openapi.yml
+mcp_server:
+  endpoint: https://api.moltrust.ch/mcp
+  discovery_auth: none (initialize + tools/list answered anonymously)
+  tool_auth: MOLTRUST_API_KEY env for the local server; several tools take api_key / endorser_api_key / admin_key
+    arguments
+  oauth: false
+a2a:
+  card_security_schemes:
+  - apiKey
+  - moltrust-did
+  - aae-envelope
+  card_security_requirements: '[] - no scheme is bound to any skill in the card'
+signup_probe:
+  url: POST https://api.moltrust.ch/auth/signup
+  body: '{}'
+  status: 422
+  response: '{"detail":[{"type":"missing","loc":["body","email"],"msg":"Field required","input":{}}]}'
+  note: Confirms the email-only signup contract; no key was minted by this pipeline.

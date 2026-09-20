@@ -1,0 +1,61 @@
+generated: '2026-09-19'
+method: generated
+source: 'Packaged Agent Skills generated from the two MolTrust OpenAPIs (openapi/moltrust-ch-openapi.yml, openapi/moltrust-ch-moltguard-openapi.yml).
+  SEARCHED FIRST: no provider-published SKILL.md / AGENTS.md was found - GET https://api.moltrust.ch/skills returns
+  {"skills":[],"total":0}, the MoltyCel GitHub org ships no agent skill files for its own API, and the /guard/skill/*
+  surface audits OTHER projects'' SKILL.md files. Every step below is grounded in an operationId verified verbatim
+  in the spec.'
+skills:
+- file: moltrust-ch-register-an-agent-and-read-its-trust-score.md
+  name: Register an agent and read its trust score
+  api: openapi/moltrust-ch-openapi.yml
+  operations:
+  - signup_for_api_key_auth_signup_post
+  - register_agent_identity_register_post
+  - verify_agent_identity_verify__did__get
+  - resolve_did_identity_resolve__did__get
+  - get_trust_score_skill_trust_score__did__get
+  - get_agent_class_identity_agent_type__did__get
+- file: moltrust-ch-issue-and-verify-a-verifiable-credential.md
+  name: Issue and verify a W3C Verifiable Credential
+  api: openapi/moltrust-ch-openapi.yml
+  operations:
+  - issue_vc_credentials_issue_post
+  - verify_vc_credentials_verify_post
+  - verify_delegation_chain_endpoint_credentials_verify_chain_post
+  - revocation_status_identity_revocation_status__did__get
+- file: moltrust-ch-configure-a-mandate-and-enforce-an-action.md
+  name: Configure an AAE mandate and enforce an action against it
+  api: openapi/moltrust-ch-openapi.yml
+  operations:
+  - configure_delegation_delegation_configure_post
+  - delegation_create_delegation_create_post
+  - delegation_verify_delegation_verify_post
+  - get_delegations_identity_delegations__did__get
+  - enforce_check_endpoint_enforce_check_post
+  - enforce_ratify_endpoint_enforce_ratify_post
+- file: moltrust-ch-pay-per-call-wallet-trust-check-with-x402.md
+  name: Pay-per-call wallet trust check with x402
+  api: openapi/moltrust-ch-moltguard-openapi.yml
+  operations:
+  - getAgentScoreFree
+  - getAgentScorePaid
+  - getAgentDetailPaid
+  - getSybilScan
+  - getApiInfo
+- file: moltrust-ch-eu-ai-act-classify-declare-and-report.md
+  name: 'EU AI Act: classify a system, issue an Annex V declaration, record an incident'
+  api: openapi/moltrust-ch-openapi.yml
+  operations:
+  - compliance_assess_compliance_assess_post
+  - compliance_declaration_compliance_declaration_post
+  - compliance_report_compliance_report__did__get
+  - compliance_incident_compliance_incident_post
+- file: moltrust-ch-poll-caep-events-and-verify-signed-scores.md
+  name: Poll CAEP trust-change events and verify signed scores
+  api: openapi/moltrust-ch-openapi.yml
+  operations:
+  - caep_pending_caep_pending__did__get
+  - caep_acknowledge_caep_acknowledge__event_id__post
+  - well_known_registry_key__well_known_registry_key_json_get
+  - get_trust_score_skill_trust_score__did__get

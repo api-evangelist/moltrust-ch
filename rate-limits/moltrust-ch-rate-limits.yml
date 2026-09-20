@@ -1,0 +1,87 @@
+generated: '2026-09-19'
+method: searched
+source: https://moltrust.ch/pricing.html + https://moltrust.ch/docs/caep.html + openapi/moltrust-ch-moltguard-openapi.yml
+  (429 RateLimitError) + openapi/moltrust-ch-openapi.yml (operation prose) + a2a/moltrust-ch-agent-card.json + live
+  probe 2026-09-19
+corroboration: Live GET https://api.moltrust.ch/identity/agent-types (200) and /skill/trust-score/{did} (200) returned
+  NO RateLimit-*, X-RateLimit-* or Retry-After headers; no 429 was provoked (probing to exhaustion is out of bounds).
+  The only runtime signal a client gets is the 429 body.
+confidence: medium
+confidence_note: Numbers come from the provider's own pages and spec prose and are internally inconsistent (60/hour
+  on the pricing page vs 100/day in the agent card). Header names cannot be recorded because none are published
+  or observed.
+limit_count: 6
+scopes:
+- scope: per-key (free tier)
+  surface: MolTrust API
+  window: 1 hour
+  limit: 60
+  unit: requests
+  burst: null
+  status_on_exhaustion: 429
+  headers: []
+  retry_after: null
+  source: https://moltrust.ch/pricing.html ("60 free calls/hour once your DID is registered")
+  conflict: agent card securitySchemes.apiKey.description says "Free tier is 100 requests/day"
+- scope: per-account (credits)
+  surface: MolTrust API
+  window: monthly floor / per call
+  limit: 30 credits/month floor; 100 credits at registration; 0-2 credits per call
+  unit: credits
+  status_on_exhaustion: not documented (likely 402/403 - unverified)
+  headers: []
+  source: https://moltrust.ch/pricing.html + GET /credits/pricing
+  note: Quota-shaped rather than rate-shaped; balance readable at GET /credits/balance/{did} (free).
+- scope: per-address (free MoltGuard reads)
+  surface: MoltGuard /guard/api/agent/score-free/{address}, /guard/api/market/check-free/{marketId}
+  window: 10 minutes
+  limit: 1
+  unit: requests
+  status_on_exhaustion: 429
+  body: 'RateLimitError {"message":"Free tier: max 1 request(s) per 10 minutes. Use x402 paid endpoints for unlimited
+    access."}'
+  headers: []
+  retry_after: null
+  source: openapi/moltrust-ch-moltguard-openapi.yml#getAgentScoreFree + /guard/api/info
+  method: derived
+- scope: per-IP
+  surface: MoltGuard GET /guard/skill/audit
+  window: 1 hour
+  limit: 5
+  unit: requests
+  status_on_exhaustion: 429
+  headers: []
+  source: https://moltrust.ch/llms.txt ("5 per hour per IP") + /guard/skill/info + spec 429
+- scope: per-DID
+  surface: MolTrust API GET /caep/pending/{did}
+  window: 1 hour
+  limit: 120
+  unit: requests
+  status_on_exhaustion: 429 (undeclared in spec)
+  headers: []
+  source: https://moltrust.ch/docs/caep.html ("Rate-limit 120/h per DID") + operation description
+- scope: per-IP
+  surface: MoltGuard POST /guard/hackathon/register
+  window: null
+  limit: null
+  unit: null
+  status_on_exhaustion: 429
+  body: '"IP rate limit exceeded"'
+  headers: []
+  source: openapi/moltrust-ch-moltguard-openapi.yml#registerHackathon
+validated_and_rate_limited_reads:
+  operations:
+  - get_trust_score_skill_trust_score__did__get
+  - get_swarm_graph_swarm_graph__did__get
+  source: 'spec descriptions: "Validated and rate limited: the handler writes trust_score_cache rows, so an unbounded
+    stream of junk DIDs was both a compute cost and a way to grow the cache table."'
+  limit_published: false
+paid_rail:
+  note: x402-paid MoltGuard endpoints are documented as "unlimited access" (RateLimitError message) - the limit
+    is economic (USDC per call), not a window.
+mcp_surface:
+  endpoint: https://api.moltrust.ch/mcp
+  limits_published: false
+  note: tools/list answered anonymously with no limit headers; tool calls inherit the REST limits of the key they
+    carry.
+terms: Terms 4 "No Circumventing Rate Limits" prohibits bypassing limits and quotas.

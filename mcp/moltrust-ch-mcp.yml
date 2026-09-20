@@ -1,0 +1,120 @@
+generated: '2026-09-19'
+method: probed
+status: published
+source: https://api.moltrust.ch/mcp (initialize + tools/list, 2026-09-19) + https://api.moltrust.ch/.well-known/mcp.json + https://pypi.org/pypi/moltrust-mcp-server/json + https://github.com/MoltyCel/moltrust-mcp-server
+deployment:
+  mode: both
+  endpoint: https://api.moltrust.ch/mcp
+  install: uvx moltrust-mcp-server
+  package: https://pypi.org/project/moltrust-mcp-server/
+  auth: api-key
+  verified: probed
+  notes: >-
+    REMOTE: POST https://api.moltrust.ch/mcp with Accept "application/json, text/event-stream" answered
+    initialize (200, text/event-stream, serverInfo {name: moltrust, version: 1.28.1}, protocolVersion
+    2025-06-18) and issued an mcp-session-id; notifications/initialized returned 202; tools/list with that
+    session id returned 53 tools with full inputSchema (saved verbatim to mcp/moltrust-ch-mcp-tools.json,
+    41,921 bytes of SSE). resources/list and prompts/list both returned empty lists. A GET on the endpoint
+    returns 406 and a POST without the session id returns 400 "Missing session ID" - the standard
+    streamable-HTTP shape, not a gate. Discovery of the tool list needs NO credential; the tools themselves
+    call the REST API and the paid/write ones need MOLTRUST_API_KEY (several tools take api_key /
+    endorser_api_key / admin_key as explicit arguments). LOCAL: the same server ships on PyPI as
+    moltrust-mcp-server 1.2.2 (2026-07-28); README install lines "claude mcp add moltrust -- uvx
+    moltrust-mcp-server" and a claude_desktop_config.json block with env MOLTRUST_API_KEY. Note the version
+    skew: the hosted server reports 1.28.1 while PyPI is 1.2.2 and llms.txt still says "v1.2.0 (40 tools)".
+server:
+  name: moltrust
+  version: 1.28.1
+  transport: streamable-http
+  url: https://api.moltrust.ch/mcp
+  protocol_version: '2025-06-18'
+  capabilities: {tools: {listChanged: false}, resources: {subscribe: false, listChanged: false}, prompts: {listChanged: false}, experimental: {}}
+  instructions: >-
+    MolTrust - Trust Infrastructure for AI Agents. Register agents, verify identities, query reputation
+    scores, rate agents, manage W3C Verifiable Credentials, query ERC-8004 on-chain agent registries on
+    Base, score wallet trust, detect Sybil wallets, check prediction market integrity, track prediction
+    market wallet performance and leaderboards, verify shopping/travel/skill credentials, and audit agent
+    skills.
+  discovery_document: well-known/moltrust-ch-mcp.json
+  listings:
+  - Glama (https://glama.ai/mcp/servers/@MoltyCel/moltrust-mcp-server) - per the README badge and the provider's blog post glama-mcp-server-listing.html
+  - MCP registry name io.github.MoltyCel/moltrust-mcp-server (README mcp-name comment)
+  - AWS Marketplace listing referenced on the developers page (not verified here)
+auth:
+  methods: [api-key]
+  api_key:
+    header: X-API-Key
+    env: MOLTRUST_API_KEY
+    obtain: POST https://api.moltrust.ch/auth/signup (email) or POST /auth/signup-did (Ed25519 proof of possession)
+  oauth2: null
+  note: No OAuth. /.well-known/oauth-authorization-server and /.well-known/oauth-protected-resource are 404 on the MCP host (well-known/moltrust-ch-well-known.yml).
+tool_count: 53
+tools_file: mcp/moltrust-ch-mcp-tools.json
+crosswalk: mcp/moltrust-ch-tool-crosswalk.yml
+tool_areas:
+  identity_and_credentials: [moltrust_register, moltrust_verify, moltrust_reputation, moltrust_rate, moltrust_credential, moltrust_credits, moltrust_deposit_info, moltrust_claim_deposit, moltrust_stats, moltrust_deposit_history, moltrust_erc8004]
+  moltguard_scoring: [moltguard_score, moltguard_detail, moltguard_sybil, moltguard_market, moltguard_feed, moltguard_credential_issue, moltguard_credential_verify]
+  moltproof_mandate_conformance: [moltproof_verdict, moltproof_mandate, moltproof_evidence, moltproof_registry, moltproof_verify]
+  swarm_intelligence: [mt_get_trust_score, mt_get_swarm_graph, mt_get_swarm_stats, mt_register_seed]
+  badges: [mt_get_badge, mt_issue_badge, mt_check_badge]
+  shopping: [mt_shopping_info, mt_shopping_verify, mt_shopping_issue_vc]
+  travel: [mt_travel_info, mt_travel_verify, mt_travel_issue_vc]
+  skills: [mt_skill_audit, mt_skill_verify, mt_skill_issue_vc, mt_create_interaction_proof, mt_endorse_agent]
+  prediction_markets: [mt_prediction_link, mt_prediction_wallet, mt_prediction_leaderboard]
+  sports_fantasy: [mt_fantasy_commit, mt_fantasy_verify, mt_fantasy_history]
+  music: [mt_issue_music_credential, mt_verify_music_credential, mt_get_track_provenance]
+  salesguard: [mt_salesguard_verify, mt_salesguard_reseller, mt_salesguard_register]
+tools:
+- {name: moltrust_register, category: identity, description: 'Register a new AI agent on MolTrust: creates a DID, issues a W3C VC.', input: [display_name, platform]}
+- {name: moltrust_verify, category: identity, description: Verify an AI agent by its DID., input: [did]}
+- {name: moltrust_reputation, category: reputation, description: Aggregate trust score (1-5) and rating count for a DID., input: [did]}
+- {name: moltrust_rate, category: reputation, description: Rate another agent 1-5 stars., input: [from_did, to_did, score]}
+- {name: moltrust_credential, category: credentials, description: Issue or verify a W3C Verifiable Credential., input: [action, subject_did, credential_type, credential]}
+- {name: moltrust_credits, category: credits, description: 'Balance, pricing, transfer or transaction history.', input: [action, did, to_did, amount, reference, limit, offset]}
+- {name: moltrust_deposit_info, category: credits, description: USDC deposit instructions (wallet on Base)., input: []}
+- {name: moltrust_claim_deposit, category: credits, description: Claim credits from a USDC deposit tx on Base., input: [tx_hash, did]}
+- {name: moltrust_stats, category: platform, description: Network statistics., input: []}
+- {name: moltrust_deposit_history, category: credits, description: USDC deposit history for a DID., input: [did]}
+- {name: moltrust_erc8004, category: erc8004, description: Query the ERC-8004 registry on Base., input: [action, did, agent_id]}
+- {name: moltguard_score, category: agent-scoring, description: Trust score for a Base wallet address., input: [address]}
+- {name: moltguard_detail, category: agent-scoring, description: Detailed trust report for a wallet., input: [address]}
+- {name: moltguard_sybil, category: sybil-detection, description: Sybil indicators for a wallet., input: [address]}
+- {name: moltguard_market, category: market-integrity, description: Polymarket market integrity check., input: [market_id]}
+- {name: moltguard_feed, category: market-integrity, description: Top anomaly feed (top 20 markets)., input: []}
+- {name: moltguard_credential_issue, category: credential-issuance, description: Issue an AgentTrustCredential for a wallet., input: [address]}
+- {name: moltguard_credential_verify, category: credential-issuance, description: Verify a MoltGuard VC JWS signature., input: [jws]}
+- {name: mt_shopping_info, category: shopping-vc, description: MT Shopping service info., input: []}
+- {name: mt_shopping_verify, category: shopping-vc, description: Verify a transaction against a BuyerAgentCredential., input: [credential_jws, transaction_amount, transaction_currency, merchant_id, item_description]}
+- {name: mt_shopping_issue_vc, category: shopping-vc, description: Issue a BuyerAgentCredential., input: [agent_did, human_did, spend_limit, currency, categories, validity_days]}
+- {name: mt_travel_info, category: travel-vc, description: MT Travel service info., input: []}
+- {name: mt_travel_verify, category: travel-vc, description: Verify a booking against a TravelAgentCredential (10-step pipeline)., input: [agent_did, vc_json, merchant, segment, amount, currency]}
+- {name: mt_travel_issue_vc, category: travel-vc, description: Issue a TravelAgentCredential., input: [agent_did, principal_did, segments, spend_limit, currency, traveler_name, validity_days]}
+- {name: mt_skill_audit, category: skill-verification, description: Audit a SKILL.md at a GitHub URL for security risks., input: [github_url]}
+- {name: mt_skill_verify, category: skill-verification, description: Verify a skill by canonical SHA-256 hash., input: [skill_hash]}
+- {name: mt_skill_issue_vc, category: skill-verification, description: Issue a VerifiedSkillCredential., input: [author_did, repository_url]}
+- {name: mt_prediction_link, category: prediction-markets, description: Link a prediction-market wallet and sync its track record., input: [address, platform, did]}
+- {name: mt_prediction_wallet, category: prediction-markets, description: Prediction profile and track record for a wallet., input: [address]}
+- {name: mt_prediction_leaderboard, category: prediction-markets, description: Leaderboard by prediction score., input: [limit]}
+- {name: mt_salesguard_verify, category: salesguard, description: Verify product provenance., input: [product_id]}
+- {name: mt_salesguard_reseller, category: salesguard, description: Verify reseller authorization., input: [reseller_did]}
+- {name: mt_salesguard_register, category: salesguard, description: Register a brand., input: [name, domain, contact_email]}
+- {name: mt_fantasy_commit, category: sports, description: Commit a fantasy lineup hash anchored on Base., input: [agent_did, contest_id, platform, sport, contest_start_iso, lineup_json, projected_score, confidence]}
+- {name: mt_fantasy_verify, category: sports, description: Verify a lineup commitment (public)., input: [commitment_hash]}
+- {name: mt_fantasy_history, category: sports, description: Lineup history and stats for a DID., input: [did]}
+- {name: mt_create_interaction_proof, category: skills-endorsement, description: Create an interaction proof before endorsing., input: [api_key, agent_a, agent_b, interaction_type, outcome]}
+- {name: mt_endorse_agent, category: skills-endorsement, description: Issue a SkillEndorsementCredential., input: [endorser_api_key, endorsed_did, skill, evidence_hash, evidence_timestamp, vertical]}
+- {name: mt_get_trust_score, category: trust-score, description: Swarm Intelligence trust score (Phase 2)., input: [did]}
+- {name: mt_get_swarm_graph, category: swarm, description: Two-hop trust propagation graph., input: [did]}
+- {name: mt_get_swarm_stats, category: swarm, description: Global swarm statistics., input: []}
+- {name: mt_register_seed, category: swarm, description: Register a trusted seed agent (admin)., input: [did, label, base_score, admin_key]}
+- {name: mt_get_badge, category: badges, description: Verified-by-MolTrust badge status., input: [did]}
+- {name: mt_issue_badge, category: badges, description: 'Issue a badge (tiers verified $5 / trusted ...).', input: [did, tier]}
+- {name: mt_check_badge, category: badges, description: Yes/no badge check., input: [did]}
+- {name: mt_issue_music_credential, category: music, description: Issue a VerifiedMusicCredential., input: [agent_did, tool, human_oversight, rights, track_title, track_description, genre, isrc]}
+- {name: mt_verify_music_credential, category: music, description: Verify a music credential by id., input: [credential_id]}
+- {name: mt_get_track_provenance, category: music, description: Full provenance for a music credential., input: [credential_id]}
+- {name: moltproof_verdict, category: moltproof, description: Verdict + per-check breakdown against the committed mandate (read-only)., input: [agent]}
+- {name: moltproof_mandate, category: moltproof, description: The committed AAE mandate for an agent., input: [agent]}
+- {name: moltproof_evidence, category: moltproof, description: Verdict plus decoded breaching transactions., input: [agent]}
+- {name: moltproof_registry, category: moltproof, description: Agents with committed mandates and their verdicts., input: []}
+- {name: moltproof_verify, category: moltproof, description: Recompute a verdict offline from public inputs and check its signature., input: [agent, mandate, actions, signature]}
