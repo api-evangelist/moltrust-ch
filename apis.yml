@@ -23,6 +23,19 @@ tags: &id001
 - Agent Identity
 - Decentralized Identity
 - Verifiable Credentials
+- Trust and Safety
+- Agent Authorization
+- Compliance
+- Blockchain
+- A2A
+- MCP
+- x402
+- agent-native
+tags_raw:
+- AI Agents
+- Agent Identity
+- Decentralized Identity
+- Verifiable Credentials
 - Trust & Safety
 - Agent Authorization
 - Compliance
@@ -99,7 +112,7 @@ apis:
   baseURL: https://api.moltrust.ch/guard
   tags:
   - AI Agents
-  - Trust & Safety
+  - Trust and Safety
   - Wallet Risk Scoring
   - Sybil Detection
   - Prediction Markets
@@ -115,6 +128,7 @@ apis:
   - x402
   - verifiable-credentials
   - agent-native
+  - Trust & Safety
   properties:
   - type: OpenAPI
     url: openapi/moltrust-ch-moltguard-openapi.yml
