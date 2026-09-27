@@ -1,0 +1,121 @@
+openapi: 3.2.0
+info:
+  title: Moltrust Ch Contact API
+  version: '2.5'
+  description: 'Operations tagged Contact across 2 of this provider''s published API definitions: moltrust-ch-openapi.json, moltrust-ch-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.moltrust.ch
+  description: Production. The served openapi.json omits servers[]; the base is stated by the provider at https://moltrust.ch/developers.html (quickstart), in the agent card supportedInterfaces[0].url (https://api.moltrust.ch/a2a) and in did.json service[].serviceEndpoint (https://api.moltrust.ch).
+tags:
+- name: Contact
+paths:
+  /contact:
+    post:
+      summary: Contact Submit
+      description: 'Accept one contact-form submission from moltrust.ch.
+
+
+        Writes the row first, then tries to notify. A mail failure is recorded in
+
+        `contact_inbox.mail_sent`, never allowed to discard the enquiry.'
+      operationId: contact_submit_contact_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContactRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Contact
+components:
+  schemas:
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ContactRequest:
+      properties:
+        name:
+          type: string
+          maxLength: 120
+          title: Name
+        email:
+          type: string
+          maxLength: 254
+          title: Email
+        topic:
+          type: string
+          maxLength: 64
+          title: Topic
+        message:
+          type: string
+          maxLength: 5000
+          title: Message
+        website:
+          type: string
+          maxLength: 256
+          title: Website
+          default: ''
+      type: object
+      required:
+      - name
+      - email
+      - topic
+      - message
+      title: ContactRequest
+      description: 'A contact-form submission.
+
+
+        ``website`` is the honeypot. It is named after a field a form-filling bot
+
+        expects to find and will happily complete; the real form renders it
+
+        hidden, empty and out of the tab order. It is never echoed back and never
+
+        appears in an error message.'
+x-refined-from:
+- moltrust-ch-openapi.json
+- moltrust-ch-openapi.yml

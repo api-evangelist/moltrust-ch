@@ -1,0 +1,141 @@
+openapi: 3.2.0
+info:
+  title: Moltrust Ch Caep API
+  version: '2.5'
+  description: 'Operations tagged caep across 2 of this provider''s published API definitions: moltrust-ch-openapi.json, moltrust-ch-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.moltrust.ch
+  description: Production. The served openapi.json omits servers[]; the base is stated by the provider at https://moltrust.ch/developers.html (quickstart), in the agent card supportedInterfaces[0].url (https://api.moltrust.ch/a2a) and in did.json service[].serviceEndpoint (https://api.moltrust.ch).
+tags:
+- name: caep
+paths:
+  /caep/pending/{did}:
+    get:
+      tags:
+      - caep
+      summary: Caep Pending
+      description: Pending CAEP events for a DID. Free during Early Access. 120/h per DID.
+      operationId: caep_pending_caep_pending__did__get
+      parameters:
+      - name: did
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Did
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 200
+          minimum: 1
+          default: 50
+          title: Limit
+      - name: since
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: event_id cursor for pagination
+          title: Since
+        description: event_id cursor for pagination
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /caep/acknowledge/{event_id}:
+    post:
+      tags:
+      - caep
+      summary: Caep Acknowledge
+      description: Mark a CAEP event as acknowledged. Only the DID the event was raised for.
+      operationId: caep_acknowledge_caep_acknowledge__event_id__post
+      parameters:
+      - name: event_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Event Id
+      - name: X-API-Key
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Api-Key
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /.well-known/registry-key.json:
+    get:
+      tags:
+      - caep
+      summary: Well Known Registry Key
+      description: Public Ed25519 registry key in JWK format. 1h cache.
+      operationId: well_known_registry_key__well_known_registry_key_json_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+components:
+  schemas:
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+x-refined-from:
+- moltrust-ch-openapi.json
+- moltrust-ch-openapi.yml

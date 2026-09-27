@@ -1,0 +1,235 @@
+openapi: 3.2.0
+info:
+  title: Moltrust Ch Billing API
+  version: '2.5'
+  description: 'Operations tagged billing across 2 of this provider''s published API definitions: moltrust-ch-openapi.json, moltrust-ch-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.moltrust.ch
+  description: Production. The served openapi.json omits servers[]; the base is stated by the provider at https://moltrust.ch/developers.html (quickstart), in the agent card supportedInterfaces[0].url (https://api.moltrust.ch/a2a) and in did.json service[].serviceEndpoint (https://api.moltrust.ch).
+tags:
+- name: Billing
+paths:
+  /billing/plans:
+    get:
+      tags:
+      - Billing
+      summary: List Plans
+      description: 'Public: return all available plans, free tier included.
+
+
+        The free tier is described here but kept out of TIERS: everything in that
+
+        dict resolves to a Stripe lookup_key, and a checkout for "free" has nothing
+
+        to resolve. Listing it only on the pricing page while /plans showed three
+
+        paid tiers left every machine reader believing there was no free tier.'
+      operationId: list_plans_billing_plans_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /billing/checkout:
+    post:
+      tags:
+      - Billing
+      summary: Create Checkout
+      description: 'Create a Stripe Checkout Session.
+
+        Returns {checkout_url} — redirect customer there.'
+      operationId: create_checkout_billing_checkout_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CheckoutRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /billing/portal:
+    post:
+      tags:
+      - Billing
+      summary: Customer Portal
+      description: Create a Stripe Customer Portal session for self-service management.
+      operationId: customer_portal_billing_portal_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PortalRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /billing/subscription/{customer_id}:
+    get:
+      tags:
+      - Billing
+      summary: Get Subscription
+      description: Get current subscription status for a customer.
+      operationId: get_subscription_billing_subscription__customer_id__get
+      parameters:
+      - name: customer_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Customer Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /billing/webhook:
+    post:
+      tags:
+      - Billing
+      summary: Stripe Webhook
+      description: 'Stripe sends signed events here.
+
+        Verifies signature → updates billing tables via asyncpg pool.'
+      operationId: stripe_webhook_billing_webhook_post
+      parameters:
+      - name: stripe-signature
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Stripe-Signature
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    PortalRequest:
+      properties:
+        customer_id:
+          type: string
+          title: Customer Id
+        return_url:
+          type: string
+          title: Return Url
+          default: https://moltrust.ch/dashboard
+      type: object
+      required:
+      - customer_id
+      title: PortalRequest
+    CheckoutRequest:
+      properties:
+        tier:
+          type: string
+          title: Tier
+        currency:
+          type: string
+          title: Currency
+          default: usd
+        email:
+          anyOf:
+          - type: string
+            format: email
+          - type: 'null'
+          title: Email
+        agent_did:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Agent Did
+        payer_ref:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Payer Ref
+        ref:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Ref
+          description: Optional referral source tag (e.g. 'dsncon'). Stored on the subscription for attribution.
+        success_url:
+          type: string
+          title: Success Url
+          default: https://moltrust.ch/billing/success
+        cancel_url:
+          type: string
+          title: Cancel Url
+          default: https://moltrust.ch/billing/cancel
+      type: object
+      required:
+      - tier
+      title: CheckoutRequest
+x-refined-from:
+- moltrust-ch-openapi.json
+- moltrust-ch-openapi.yml

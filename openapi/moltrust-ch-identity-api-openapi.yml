@@ -1,0 +1,1205 @@
+openapi: 3.2.0
+info:
+  title: Moltrust Ch Identity API
+  version: '2.5'
+  description: 'Operations tagged Identity across 2 of this provider''s published API definitions: moltrust-ch-openapi.json, moltrust-ch-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.moltrust.ch
+  description: Production. The served openapi.json omits servers[]; the base is stated by the provider at https://moltrust.ch/developers.html (quickstart), in the agent card supportedInterfaces[0].url (https://api.moltrust.ch/a2a) and in did.json service[].serviceEndpoint (https://api.moltrust.ch).
+tags:
+- name: Identity
+paths:
+  /identity/register:
+    post:
+      summary: Register Agent
+      operationId: register_agent_identity_register_post
+      parameters:
+      - name: X-API-Key
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Api-Key
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Identity
+  /identity/register-challenge:
+    get:
+      summary: Register Challenge
+      description: Issue a stateless PoP challenge for keyless registration (no API key).
+      operationId: register_challenge_identity_register_challenge_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      tags:
+      - Identity
+  /identity/register-pop:
+    post:
+      summary: Register Agent Pop
+      description: 'Keyless registration via Ed25519 proof-of-possession.
+
+
+        No API key, no signup: a valid signature over a fresh server challenge proves
+
+        the caller holds the private key for the presented public key. Grants a DID +
+
+        signed VC and a zero balance — no spendable credits, see the note further
+
+        down at the grant.
+
+
+        Anti-abuse is the per-IP rate limit above (30/hour). The PoW checked below
+
+        does not add to that in practice: the challenge is not consumed on use, so
+
+        one solve covers every registration made with it inside its 300 s TTL —
+
+        see the note at POW_DIFFICULTY_BITS in app/keyless_register.py. Trust starts
+
+        at 0 and Sybil-resistance lives in the endorsement graph, so there is
+
+        deliberately no Sybil gate here.'
+      operationId: register_agent_pop_identity_register_pop_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PopRegisterRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Identity
+  /identity/verify/{did}:
+    get:
+      summary: Verify Agent
+      operationId: verify_agent_identity_verify__did__get
+      parameters:
+      - name: did
+        in: path
+        required: true
+        schema:
+          type: string
+          maxLength: 128
+          title: Did
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Identity
+  /identity/badge/{did}:
+    get:
+      summary: Get Identity Badge
+      description: 'Identity badge — composite of agent metadata, current trust score and
+
+        rating count, plus convenience URLs for the public verify page and SVG
+
+        badge. Used by the moltrust.ch /verify/{did} frontend, which fetches
+
+        this JSON in parallel with /identity/badge/{did}.svg.
+
+
+        Returns 200 with `verified: true` for any registered DID, even if the
+
+        trust score is still withheld (insufficient endorsements). Returns 404
+
+        only when the DID is not registered at all.
+
+
+        Frontend contract (the fields the /verify/{did} page reads):
+
+        verified, tier, trust_score, grade, issued_at, expires_at,
+
+        vc_hash, badge_url. Additional fields (display_name, withheld,
+
+        total_ratings, average_rating, verify_url) are extras the page
+
+        ignores but other consumers (klaw gateway, etc.) may use.'
+      operationId: get_identity_badge_identity_badge__did__get
+      parameters:
+      - name: did
+        in: path
+        required: true
+        schema:
+          type: string
+          maxLength: 80
+          title: Did
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Identity
+  /identity/badge/{did}.svg:
+    get:
+      summary: Get Identity Badge Svg
+      description: 'SVG badge for embedding/inlining on the moltrust.ch /verify/{did}
+
+        page. The frontend fetches this in parallel with /identity/badge/{did}
+
+        and inlines the result via r.text().
+
+
+        Mirrors the rendering logic of /badge/{did:path} (which predates the
+
+        /identity/* convention) so both URLs stay in lockstep. 1h cache.
+
+        Returns 200 with a placeholder SVG even for unknown/unscored DIDs —
+
+        matches the /badge/{did:path} behaviour (renders ''N/A'' rather than
+
+        surfacing a 404 inline image).'
+      operationId: get_identity_badge_svg_identity_badge__did__svg_get
+      parameters:
+      - name: did
+        in: path
+        required: true
+        schema:
+          type: string
+          maxLength: 80
+          title: Did
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Identity
+  /identity/resolve/{did}:
+    get:
+      summary: Resolve Did
+      operationId: resolve_did_identity_resolve__did__get
+      parameters:
+      - name: did
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Did
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Identity
+  /identity/key/{did}:
+    get:
+      summary: Get Agent Public Key
+      description: Return public key + on-chain anchor info for a DID.
+      operationId: get_agent_public_key_identity_key__did__get
+      parameters:
+      - name: did
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Did
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Identity
+  /identity/nonce:
+    get:
+      summary: Get Binding Nonce
+      description: Generate a nonce for DID-wallet binding signature.
+      operationId: get_binding_nonce_identity_nonce_get
+      parameters:
+      - name: did
+        in: query
+        required: true
+        schema:
+          type: string
+          maxLength: 128
+          title: Did
+      - name: chain
+        in: query
+        required: false
+        schema:
+          type: string
+          maxLength: 20
+          default: base
+          title: Chain
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Identity
+  /identity/bind:
+    post:
+      summary: Bind Wallet
+      description: Bind a wallet address to a DID with cryptographic proof of ownership.
+      operationId: bind_wallet_identity_bind_post
+      parameters:
+      - name: X-API-Key
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Api-Key
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WalletBindRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Identity
+  /identity/bridge:
+    post:
+      summary: Bridge Did
+      description: Bridge an external DID to a MolTrust DID via wallet signature proof.
+      operationId: bridge_did_identity_bridge_post
+      parameters:
+      - name: X-API-Key
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Api-Key
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DIDBridgeRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Identity
+  /identity/bridge-simple:
+    post:
+      summary: Bridge Did Simple
+      description: Lightweight DID bridge — maps external DID to caller's MolTrust DID. No wallet required.
+      operationId: bridge_did_simple_identity_bridge_simple_post
+      parameters:
+      - name: X-API-Key
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Api-Key
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SimpleBridgeRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Identity
+  /identity/resolve-external/{external_did}:
+    get:
+      summary: Resolve External Did
+      description: Resolve an external DID to its bridged MolTrust DID document.
+      operationId: resolve_external_did_identity_resolve_external__external_did__get
+      parameters:
+      - name: external_did
+        in: path
+        required: true
+        schema:
+          type: string
+          title: External Did
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Identity
+  /identity/import-score:
+    post:
+      summary: Import External Score
+      description: Import an external trust score into MolTrust via DID bridge.
+      operationId: import_external_score_identity_import_score_post
+      parameters:
+      - name: X-API-Key
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Api-Key
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScoreImportRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Identity
+  /identity/agent-type/{did}:
+    post:
+      summary: Set Agent Class
+      description: Set or update the agent classification and governance tier.
+      operationId: set_agent_class_identity_agent_type__did__post
+      parameters:
+      - name: did
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Did
+      - name: X-API-Key
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Api-Key
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgentClassRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Identity
+    get:
+      summary: Get Agent Class
+      description: Read agent classification and governance rules.
+      operationId: get_agent_class_identity_agent_type__did__get
+      parameters:
+      - name: did
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Did
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Identity
+  /identity/agent-types:
+    get:
+      summary: List Agent Types
+      description: List all available agent classifications with governance rules.
+      operationId: list_agent_types_identity_agent_types_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      tags:
+      - Identity
+  /identity/register-batch:
+    post:
+      tags:
+      - Identity
+      summary: Register Batch
+      description: Batch-register external agents with Merkle anchoring. Requires ADMIN_KEY.
+      operationId: register_batch_identity_register_batch_post
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /identity/erc8004/register:
+    post:
+      summary: Erc8004 Dual Register
+      description: 'Dual registration: create MolTrust DID + register on ERC-8004 IdentityRegistry.'
+      operationId: erc8004_dual_register_identity_erc8004_register_post
+      parameters:
+      - name: X-API-Key
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Api-Key
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ERC8004RegisterRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Identity
+  /identity/erc8004/{address}:
+    get:
+      summary: Erc8004 Resolve By Address
+      description: Resolve ERC-8004 identity by Base wallet address.
+      operationId: erc8004_resolve_by_address_identity_erc8004__address__get
+      parameters:
+      - name: address
+        in: path
+        required: true
+        schema:
+          type: string
+          maxLength: 42
+          title: Address
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Identity
+  /identity/erc8004/validate:
+    post:
+      summary: Erc8004 Validate
+      description: 'MolTrust as ERC-8004 validator: assess agent, issue VC, post on-chain feedback.'
+      operationId: erc8004_validate_identity_erc8004_validate_post
+      parameters:
+      - name: X-API-Key
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Api-Key
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ERC8004ValidateRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Identity
+  /identity/revoke/{did}:
+    post:
+      summary: Revoke Agent
+      description: 'Revoke an agent. With cascade=true, all downstream delegated agents
+
+        are also revoked (max 8 hops). Emits CAEP events.'
+      operationId: revoke_agent_identity_revoke__did__post
+      parameters:
+      - name: did
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Did
+      - name: X-API-Key
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Api-Key
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RevokeRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Identity
+  /identity/unrevoke/{did}:
+    post:
+      summary: Unrevoke Agent
+      description: Reinstate a revoked agent. Admin only.
+      operationId: unrevoke_agent_identity_unrevoke__did__post
+      parameters:
+      - name: did
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Did
+      - name: X-API-Key
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Api-Key
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Identity
+  /identity/revocation-status/{did}:
+    get:
+      summary: Revocation Status
+      description: Check revocation status and downstream impact.
+      operationId: revocation_status_identity_revocation_status__did__get
+      parameters:
+      - name: did
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Did
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Identity
+  /identity/delegations/{did}:
+    get:
+      summary: Get Delegations
+      description: List all delegation relationships for an agent (parent and child).
+      operationId: get_delegations_identity_delegations__did__get
+      parameters:
+      - name: did
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Did
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Identity
+  /identity/spiffe/{spiffe_uri}:
+    get:
+      summary: Spiffe Lookup
+      description: 'Resolve a SPIFFE URI to a MolTrust DID with trust score and classification.
+
+        Lightweight bridge — full SVID/Workload API planned for Q3.'
+      operationId: spiffe_lookup_identity_spiffe__spiffe_uri__get
+      parameters:
+      - name: spiffe_uri
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Spiffe Uri
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Identity
+  /identity/spiffe/bind:
+    post:
+      summary: Spiffe Bind
+      description: Bind a SPIFFE URI to an existing MolTrust DID.
+      operationId: spiffe_bind_identity_spiffe_bind_post
+      parameters:
+      - name: X-API-Key
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Api-Key
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SpiffeBindRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Identity
+  /identity/spiffe/bind/{spiffe_uri}:
+    delete:
+      summary: Spiffe Unbind
+      description: Remove a SPIFFE binding. Admin only.
+      operationId: spiffe_unbind_identity_spiffe_bind__spiffe_uri__delete
+      parameters:
+      - name: spiffe_uri
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Spiffe Uri
+      - name: X-API-Key
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Api-Key
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Identity
+  /identity/spiffe:
+    get:
+      summary: Spiffe List
+      description: List all SPIFFE bindings. Requires API key.
+      operationId: spiffe_list_identity_spiffe_get
+      parameters:
+      - name: X-API-Key
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Api-Key
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Identity
+components:
+  schemas:
+    RevokeRequest:
+      properties:
+        reason:
+          type: string
+          maxLength: 100
+          title: Reason
+          default: manual_revocation
+        cascade:
+          type: boolean
+          title: Cascade
+          description: Revoke all downstream delegated agents
+          default: false
+      type: object
+      title: RevokeRequest
+    ERC8004ValidateRequest:
+      properties:
+        erc8004_agent_id:
+          type: integer
+          minimum: 0.0
+          title: Erc8004 Agent Id
+        validation_type:
+          type: string
+          maxLength: 64
+          title: Validation Type
+          default: trust_assessment
+      type: object
+      required:
+      - erc8004_agent_id
+      title: ERC8004ValidateRequest
+    ERC8004RegisterRequest:
+      properties:
+        name:
+          type: string
+          maxLength: 128
+          title: Name
+        description:
+          type: string
+          maxLength: 1024
+          title: Description
+          default: ''
+        wallet_address:
+          type: string
+          maxLength: 64
+          title: Wallet Address
+        platform:
+          type: string
+          maxLength: 64
+          title: Platform
+          default: base
+      type: object
+      required:
+      - name
+      - wallet_address
+      title: ERC8004RegisterRequest
+    AgentClassRequest:
+      properties:
+        agent_class:
+          type: string
+          title: Agent Class
+          description: 'One of: orchestrator, autonomous, human_initiated, copilot'
+        agent_framework:
+          anyOf:
+          - type: string
+            maxLength: 100
+          - type: 'null'
+          title: Agent Framework
+          description: e.g. langgraph, crewai, autogen
+        agent_version:
+          anyOf:
+          - type: string
+            maxLength: 50
+          - type: 'null'
+          title: Agent Version
+        publisher:
+          anyOf:
+          - type: string
+            maxLength: 255
+          - type: 'null'
+          title: Publisher
+      type: object
+      required:
+      - agent_class
+      title: AgentClassRequest
+    PopRegisterRequest:
+      properties:
+        public_key:
+          type: string
+          maxLength: 64
+          minLength: 64
+          title: Public Key
+          description: Ed25519 public key, 64 hex chars
+        challenge:
+          type: string
+          maxLength: 256
+          title: Challenge
+          description: Challenge from GET /identity/register-challenge
+        signature:
+          type: string
+          maxLength: 256
+          title: Signature
+          description: base64url Ed25519 signature over the challenge string
+        pow_nonce:
+          type: string
+          maxLength: 64
+          title: Pow Nonce
+          description: 'PoW nonce: sha256(pow_seed || nonce) must have >= difficulty_bits leading zero bits'
+        display_name:
+          type: string
+          maxLength: 64
+          minLength: 1
+          title: Display Name
+          default: anonymous
+        platform:
+          type: string
+          maxLength: 32
+          title: Platform
+          default: a2a
+      type: object
+      required:
+      - public_key
+      - challenge
+      - signature
+      - pow_nonce
+      title: PopRegisterRequest
+    ScoreImportRequest:
+      properties:
+        moltrust_did:
+          type: string
+          maxLength: 128
+          title: Moltrust Did
+        external_did:
+          type: string
+          maxLength: 256
+          title: External Did
+        external_score:
+          type: number
+          minimum: 0.0
+          title: External Score
+        external_system:
+          type: string
+          maxLength: 32
+          title: External System
+        proof:
+          type: string
+          maxLength: 512
+          title: Proof
+          default: ''
+      type: object
+      required:
+      - moltrust_did
+      - external_did
+      - external_score
+      - external_system
+      title: ScoreImportRequest
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    WalletBindRequest:
+      properties:
+        did:
+          type: string
+          maxLength: 128
+          title: Did
+        wallet_address:
+          type: string
+          maxLength: 64
+          title: Wallet Address
+        wallet_chain:
+          type: string
+          maxLength: 20
+          title: Wallet Chain
+          default: base
+        wallet_signature:
+          type: string
+          maxLength: 512
+          title: Wallet Signature
+        nonce:
+          type: string
+          maxLength: 64
+          title: Nonce
+      type: object
+      required:
+      - did
+      - wallet_address
+      - wallet_signature
+      - nonce
+      title: WalletBindRequest
+    DIDBridgeRequest:
+      properties:
+        external_did:
+          type: string
+          maxLength: 256
+          title: External Did
+        moltrust_did:
+          type: string
+          maxLength: 128
+          title: Moltrust Did
+        wallet_address:
+          type: string
+          maxLength: 64
+          title: Wallet Address
+        chain:
+          type: string
+          maxLength: 20
+          title: Chain
+          default: solana
+        proof:
+          type: string
+          maxLength: 512
+          title: Proof
+        nonce:
+          type: string
+          maxLength: 64
+          title: Nonce
+      type: object
+      required:
+      - external_did
+      - moltrust_did
+      - wallet_address
+      - proof
+      - nonce
+      title: DIDBridgeRequest
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    SimpleBridgeRequest:
+      properties:
+        external_did:
+          type: string
+          maxLength: 256
+          title: External Did
+        label:
+          type: string
+          maxLength: 128
+          title: Label
+          default: ''
+        platform:
+          type: string
+          maxLength: 32
+          title: Platform
+          default: external
+      type: object
+      required:
+      - external_did
+      title: SimpleBridgeRequest
+    RegisterRequest:
+      properties:
+        display_name:
+          type: string
+          maxLength: 64
+          minLength: 1
+          title: Display Name
+          default: anonymous
+        platform:
+          type: string
+          maxLength: 32
+          title: Platform
+          default: moltbook
+        email:
+          anyOf:
+          - type: string
+            maxLength: 256
+          - type: 'null'
+          title: Email
+        erc8004:
+          type: boolean
+          title: Erc8004
+          description: Also register on ERC-8004 IdentityRegistry on Base
+          default: false
+      type: object
+      title: RegisterRequest
+    SpiffeBindRequest:
+      properties:
+        spiffe_uri:
+          type: string
+          maxLength: 512
+          title: Spiffe Uri
+          description: SPIFFE URI, e.g. spiffe://moltrust.ch/agent/scanner
+        did:
+          type: string
+          maxLength: 128
+          title: Did
+          description: MolTrust DID to bind to
+      type: object
+      required:
+      - spiffe_uri
+      - did
+      title: SpiffeBindRequest
+x-refined-from:
+- moltrust-ch-openapi.json
+- moltrust-ch-openapi.yml

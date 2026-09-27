@@ -1,0 +1,561 @@
+openapi: 3.2.0
+info:
+  title: Moltrust Ch Sports API
+  version: '2.5'
+  description: 'Operations tagged Sports across 2 of this provider''s published API definitions: moltrust-ch-openapi.json, moltrust-ch-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.moltrust.ch
+  description: Production. The served openapi.json omits servers[]; the base is stated by the provider at https://moltrust.ch/developers.html (quickstart), in the agent card supportedInterfaces[0].url (https://api.moltrust.ch/a2a) and in did.json service[].serviceEndpoint (https://api.moltrust.ch).
+tags:
+- name: Sports
+paths:
+  /sports/health:
+    get:
+      summary: Sports Health
+      description: Sports module health check.
+      operationId: sports_health_sports_health_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      tags:
+      - Sports
+  /sports/predictions/commit:
+    post:
+      summary: Sports Predict Commit
+      description: Commit a prediction before an event starts. Returns commitment hash + on-chain anchor.
+      operationId: sports_predict_commit_sports_predictions_commit_post
+      parameters:
+      - name: X-API-Key
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Api-Key
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PredictionCommitRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Sports
+  /sports/predictions/verify/{commitment_hash}:
+    get:
+      summary: Sports Predict Verify
+      description: Verify a prediction commitment exists and return details.
+      operationId: sports_predict_verify_sports_predictions_verify__commitment_hash__get
+      parameters:
+      - name: commitment_hash
+        in: path
+        required: true
+        schema:
+          type: string
+          maxLength: 64
+          title: Commitment Hash
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Sports
+  /sports/predictions/history/{did}:
+    get:
+      summary: Sports Predict History
+      description: Get prediction history and stats for an agent.
+      operationId: sports_predict_history_sports_predictions_history__did__get
+      parameters:
+      - name: did
+        in: path
+        required: true
+        schema:
+          type: string
+          maxLength: 128
+          title: Did
+      - name: X-API-Key
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Api-Key
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Sports
+  /sports/predictions/settle/{commitment_hash}:
+    patch:
+      summary: Sports Predict Settle Admin
+      description: 'Admin endpoint: manually settle a prediction (for polymarket or manual events).'
+      operationId: sports_predict_settle_admin_sports_predictions_settle__commitment_hash__patch
+      parameters:
+      - name: commitment_hash
+        in: path
+        required: true
+        schema:
+          type: string
+          maxLength: 64
+          title: Commitment Hash
+      - name: X-API-Key
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Api-Key
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ManualSettleRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Sports
+  /sports/signals/register:
+    post:
+      summary: Signal Provider Register
+      description: Register as a Verified Signal Provider. Returns credential with on-chain anchor.
+      operationId: signal_provider_register_sports_signals_register_post
+      parameters:
+      - name: X-API-Key
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Api-Key
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignalProviderRegisterRequest'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Sports
+  /sports/signals/verify/{provider_id}:
+    get:
+      summary: Signal Provider Verify
+      description: 'Public: verify a signal provider and see their track record.'
+      operationId: signal_provider_verify_sports_signals_verify__provider_id__get
+      parameters:
+      - name: provider_id
+        in: path
+        required: true
+        schema:
+          type: string
+          maxLength: 11
+          title: Provider Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Sports
+  /sports/signals/leaderboard:
+    get:
+      summary: Signal Provider Leaderboard
+      description: 'Public: top signal providers ranked by accuracy.'
+      operationId: signal_provider_leaderboard_sports_signals_leaderboard_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      tags:
+      - Sports
+  /sports/signals/badge/{provider_id}.svg:
+    get:
+      summary: Signal Provider Badge
+      description: 'Public: SVG badge for embedding in websites.'
+      operationId: signal_provider_badge_sports_signals_badge__provider_id__svg_get
+      parameters:
+      - name: provider_id
+        in: path
+        required: true
+        schema:
+          type: string
+          maxLength: 11
+          title: Provider Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Sports
+  /sports/fantasy/lineups/commit:
+    post:
+      summary: Fantasy Lineup Commit
+      description: Commit a fantasy lineup before contest start. Returns commitment hash + on-chain anchor.
+      operationId: fantasy_lineup_commit_sports_fantasy_lineups_commit_post
+      parameters:
+      - name: X-API-Key
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Api-Key
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FantasyLineupCommitRequest'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Sports
+  /sports/fantasy/lineups/verify/{commitment_hash}:
+    get:
+      summary: Fantasy Lineup Verify
+      description: 'Public: verify a fantasy lineup commitment.'
+      operationId: fantasy_lineup_verify_sports_fantasy_lineups_verify__commitment_hash__get
+      parameters:
+      - name: commitment_hash
+        in: path
+        required: true
+        schema:
+          type: string
+          maxLength: 64
+          title: Commitment Hash
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Sports
+  /sports/fantasy/lineups/settle/{commitment_hash}:
+    patch:
+      summary: Fantasy Lineup Settle
+      description: 'Admin: settle a fantasy lineup with results.'
+      operationId: fantasy_lineup_settle_sports_fantasy_lineups_settle__commitment_hash__patch
+      parameters:
+      - name: commitment_hash
+        in: path
+        required: true
+        schema:
+          type: string
+          maxLength: 64
+          title: Commitment Hash
+      - name: X-API-Key
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Api-Key
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#[REDACTED]'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Sports
+  /sports/fantasy/history/{did}:
+    get:
+      summary: Fantasy History
+      description: Get fantasy lineup history and ROI stats for an agent.
+      operationId: fantasy_history_sports_fantasy_history__did__get
+      parameters:
+      - name: did
+        in: path
+        required: true
+        schema:
+          type: string
+          maxLength: 64
+          title: Did
+      - name: X-API-Key
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Api-Key
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Sports
+components:
+  schemas:
+    ManualSettleRequest:
+      properties:
+        result:
+          type: string
+          maxLength: 64
+          title: Result
+        score:
+          anyOf:
+          - type: string
+            maxLength: 32
+          - type: 'null'
+          title: Score
+        detail:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Detail
+      type: object
+      required:
+      - result
+      title: ManualSettleRequest
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    SignalProviderRegisterRequest:
+      properties:
+        agent_did:
+          type: string
+          maxLength: 128
+          title: Agent Did
+        provider_name:
+          type: string
+          maxLength: 128
+          title: Provider Name
+        provider_url:
+          anyOf:
+          - type: string
+            maxLength: 512
+          - type: 'null'
+          title: Provider Url
+        sport_focus:
+          items:
+            type: string
+          type: array
+          title: Sport Focus
+        description:
+          anyOf:
+          - type: string
+            maxLength: 500
+          - type: 'null'
+          title: Description
+      type: object
+      required:
+      - agent_did
+      - provider_name
+      title: SignalProviderRegisterRequest
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    FantasyLineupCommitRequest:
+      properties:
+        agent_did:
+          type: string
+          maxLength: 64
+          title: Agent Did
+        contest_id:
+          type: string
+          maxLength: 256
+          title: Contest Id
+        platform:
+          type: string
+          maxLength: 32
+          title: Platform
+        sport:
+          type: string
+          maxLength: 32
+          title: Sport
+        contest_type:
+          anyOf:
+          - type: string
+            maxLength: 32
+          - type: 'null'
+          title: Contest Type
+        contest_start_iso:
+          type: string
+          maxLength: 30
+          title: Contest Start Iso
+        entry_fee_usd:
+          anyOf:
+          - type: number
+            minimum: 0.0
+          - type: 'null'
+          title: Entry Fee Usd
+        lineup:
+          additionalProperties: true
+          type: object
+          title: Lineup
+        projected_score:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Projected Score
+        confidence:
+          anyOf:
+          - type: number
+            maximum: 1.0
+            minimum: 0.0
+          - type: 'null'
+          title: Confidence
+      type: object
+      required:
+      - agent_did
+      - contest_id
+      - platform
+      - sport
+      - contest_start_iso
+      - lineup
+      title: FantasyLineupCommitRequest
+    PredictionCommitRequest:
+      properties:
+        agent_did:
+          type: string
+          maxLength: 128
+          title: Agent Did
+        event_id:
+          type: string
+          maxLength: 256
+          title: Event Id
+        prediction:
+          additionalProperties: true
+          type: object
+          title: Prediction
+        event_start:
+          type: string
+          maxLength: 30
+          title: Event Start
+      type: object
+      required:
+      - agent_did
+      - event_id
+      - prediction
+      - event_start
+      title: PredictionCommitRequest
+x-refined-from:
+- moltrust-ch-openapi.json
+- moltrust-ch-openapi.yml

@@ -1,0 +1,585 @@
+openapi: 3.2.0
+info:
+  title: Moltrust Ch Admin API
+  version: '2.5'
+  description: 'Operations tagged Admin across 2 of this provider''s published API definitions: moltrust-ch-openapi.json, moltrust-ch-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.moltrust.ch
+  description: Production. The served openapi.json omits servers[]; the base is stated by the provider at https://moltrust.ch/developers.html (quickstart), in the agent card supportedInterfaces[0].url (https://api.moltrust.ch/a2a) and in did.json service[].serviceEndpoint (https://api.moltrust.ch).
+tags:
+- name: Admin
+paths:
+  /admin/login:
+    post:
+      summary: Admin Login
+      operationId: admin_login_admin_login_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminLoginRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Admin
+  /admin/logout:
+    post:
+      summary: Admin Logout
+      operationId: admin_logout_admin_logout_post
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      tags:
+      - Admin
+  /admin/me:
+    get:
+      summary: Admin Me
+      operationId: admin_me_admin_me_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      tags:
+      - Admin
+  /admin/dashboard/overview:
+    get:
+      summary: Dashboard Overview
+      operationId: dashboard_overview_admin_dashboard_overview_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      tags:
+      - Admin
+  /admin/dashboard/agents:
+    get:
+      summary: Dashboard Agents
+      operationId: dashboard_agents_admin_dashboard_agents_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      tags:
+      - Admin
+  /admin/dashboard/activity:
+    get:
+      summary: Dashboard Activity
+      operationId: dashboard_activity_admin_dashboard_activity_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      tags:
+      - Admin
+  /admin/dashboard/security:
+    get:
+      summary: Dashboard Security
+      operationId: dashboard_security_admin_dashboard_security_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      tags:
+      - Admin
+  /admin/usage:
+    get:
+      summary: Admin Usage
+      description: 'API usage over 7, 30 or 90 days, read from the daily rollups.
+
+
+        Reads usage_daily, usage_daily_keys and usage_daily_payments — never
+
+        request_log, which keeps 30 days and would silently answer a 90-day
+
+        question with a 30-day one.
+
+
+        Two counting rules this endpoint exists to get right:
+
+
+        * ``usage_daily.distinct_dids`` is stored per
+
+        (day, endpoint, status, source, class) group. Summing it counts an agent
+
+        once per group it appears in. Distinct identities therefore come from
+
+        usage_daily_keys, which is one row per (day, key) and can be counted
+
+        across a range honestly.
+
+        * A 200 cannot be traced back to the 402 that preceded it — the rollup has
+
+        no per-request identity. So "conversion" is reported as challenges issued
+
+        against payments actually settled (from payment_events), and the 200s
+
+        are reported only for endpoints that also issued a 402, which is the
+
+        closest honest proxy.'
+      operationId: admin_usage_admin_usage_get
+      parameters:
+      - name: days
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 30
+          title: Days
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Admin
+  /admin/funnel:
+    get:
+      summary: Admin Funnel
+      description: 'Acquisition funnel since the epoch: registrations, then what followed.
+
+
+        Registrations per day by platform bucket, and for each registered agent the
+
+        time to its first authenticated call, first credential and first x402
+
+        payment. The window is fixed at ``FUNNEL_EPOCH`` rather than a rolling N
+
+        days: the question is how the listings are performing since they went out,
+
+        and a rolling window would quietly drop the early cohort.
+
+
+        Three measurement limits are reported in the response rather than hidden:
+
+
+        * ``platform`` is free-form, so unmapped values land in ``other`` with the
+
+        raw strings listed beside the bucket.
+
+        * First call comes from a daily rollup, so it is a day count. An agent that
+
+        registers and calls an hour later scores 0 days, not 0.04.
+
+        * First credential excludes the AgentTrustCredential that registration
+
+        issues automatically. Counting it would make the column a constant zero:
+
+        86 of 90 land within a minute of the agent''s own created_at.
+
+        * Payments carry a wallet. Rows are attributed by ``payment_events.did``
+
+        when set, otherwise by ``agents.wallet_address``; ``payments.linkage``
+
+        says how many rows either path could reach, so an empty payment column is
+
+        readable as missing linkage rather than as missing revenue.'
+      operationId: admin_funnel_admin_funnel_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      tags:
+      - Admin
+  /admin/dashboard/x402:
+    get:
+      summary: Dashboard X402
+      operationId: dashboard_x402_admin_dashboard_x402_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      tags:
+      - Admin
+  /admin/dashboard/discovery:
+    get:
+      summary: Dashboard Discovery
+      description: 'Discovery-Tracking dashboard — latest snapshot + 7-day history + baseline.
+
+
+        Reads discovery_snapshots (populated by scripts/discovery_snapshot.py cron).
+
+        Returns latest + previous-day + baseline rows; the frontend computes deltas.
+
+        Admin-only endpoint — intentionally NOT in agent-card/OpenAPI/llms.txt
+
+        (Discovery-Checklist Gate: internal-only).'
+      operationId: dashboard_discovery_admin_dashboard_discovery_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      tags:
+      - Admin
+  /admin/dashboard/journal:
+    get:
+      summary: Dashboard Journal
+      description: Return today's and recent journal entries.
+      operationId: dashboard_journal_admin_dashboard_journal_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      tags:
+      - Admin
+  /admin/dashboard/journal/list:
+    get:
+      summary: Dashboard Journal List
+      description: List ALL available journal entries with preview. Admin auth.
+      operationId: dashboard_journal_list_admin_dashboard_journal_list_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      tags:
+      - Admin
+  /admin/dashboard/journal/search:
+    get:
+      summary: Dashboard Journal Search
+      description: Full-text search across all journal entries. Admin auth.
+      operationId: dashboard_journal_search_admin_dashboard_journal_search_get
+      parameters:
+      - name: q
+        in: query
+        required: false
+        schema:
+          type: string
+          minLength: 2
+          maxLength: 100
+          default: ''
+          title: Q
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Admin
+  /admin/dashboard/journal/{date}:
+    get:
+      summary: Dashboard Journal Entry
+      description: Return a specific journal entry by date (YYYY-MM-DD).
+      operationId: dashboard_journal_entry_admin_dashboard_journal__date__get
+      parameters:
+      - name: date
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Date
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Admin
+  /admin/journal/append:
+    post:
+      summary: Journal Append
+      description: Append a note to today's (or specified date's) journal entry.
+      operationId: journal_append_admin_journal_append_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#[REDACTED]'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Admin
+  /admin/dashboard/callers:
+    get:
+      summary: Dashboard Callers
+      description: Aggregated caller list from request_log. Admin auth.
+      operationId: dashboard_callers_admin_dashboard_callers_get
+      parameters:
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 500
+          minimum: 1
+          default: 50
+          title: Limit
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+          default: 0
+          title: Offset
+      - name: q
+        in: query
+        required: false
+        schema:
+          type: string
+          minLength: 2
+          maxLength: 100
+          title: Q
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Admin
+  /admin/dashboard/callers/{ip}:
+    get:
+      summary: Dashboard Caller Detail
+      description: Detail view for a single IP. Admin auth.
+      operationId: dashboard_caller_detail_admin_dashboard_callers__ip__get
+      parameters:
+      - name: ip
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Ip
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Admin
+  /admin/dashboard/health:
+    get:
+      summary: Dashboard Health
+      description: 'Discovery & error-health panel for the admin dashboard: high-error
+
+        endpoints (24h), discovery failures (callers getting ONLY 404s over 7d), and
+
+        /.well-known/* status (24h). Admin auth. Read-only.'
+      operationId: dashboard_health_admin_dashboard_health_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      tags:
+      - Admin
+  /admin/dashboard/traffic:
+    get:
+      summary: Dashboard Traffic
+      operationId: dashboard_traffic_admin_dashboard_traffic_get
+      parameters:
+      - name: hours
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 168
+          minimum: 1
+          default: 24
+          title: Hours
+      - name: source
+        in: query
+        required: false
+        schema:
+          type: string
+          maxLength: 20
+          title: Source
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Admin
+  /admin/traffic/caller/{ip}:
+    get:
+      tags:
+      - Admin
+      summary: Caller Detail
+      description: 'Admin: Get detailed traffic info for a specific IP.'
+      operationId: caller_detail_admin_traffic_caller__ip__get
+      parameters:
+      - name: ip
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Ip
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /admin/traffic/caller/{ip}/label:
+    post:
+      tags:
+      - Admin
+      summary: Set Caller Label
+      description: 'Admin: Set or update label for a caller IP.'
+      operationId: set_caller_label_admin_traffic_caller__ip__label_post
+      parameters:
+      - name: ip
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Ip
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    AdminLoginRequest:
+      properties:
+        username:
+          type: string
+          maxLength: 32
+          title: Username
+        password:
+          type: string
+          maxLength: 128
+          title: Password
+      type: object
+      required:
+      - username
+      - password
+      title: AdminLoginRequest
+x-refined-from:
+- moltrust-ch-openapi.json
+- moltrust-ch-openapi.yml

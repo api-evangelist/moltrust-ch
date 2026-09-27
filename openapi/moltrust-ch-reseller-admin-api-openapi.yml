@@ -1,0 +1,304 @@
+openapi: 3.2.0
+info:
+  title: Moltrust Ch Reseller Admin API
+  version: '2.5'
+  description: 'Operations tagged reseller-admin across 2 of this provider''s published API definitions: moltrust-ch-openapi.json, moltrust-ch-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.moltrust.ch
+  description: Production. The served openapi.json omits servers[]; the base is stated by the provider at https://moltrust.ch/developers.html (quickstart), in the agent card supportedInterfaces[0].url (https://api.moltrust.ch/a2a) and in did.json service[].serviceEndpoint (https://api.moltrust.ch).
+tags:
+- name: reseller-admin
+paths:
+  /admin/reseller/2fa/status:
+    get:
+      tags:
+      - reseller-admin
+      summary: Totp Status
+      operationId: totp_status_admin_reseller_2fa_status_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /admin/reseller/2fa/enroll:
+    post:
+      tags:
+      - reseller-admin
+      summary: Totp Enroll
+      operationId: totp_enroll_admin_reseller_2fa_enroll_post
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /admin/reseller/2fa/confirm:
+    post:
+      tags:
+      - reseller-admin
+      summary: Totp Confirm
+      operationId: totp_confirm_admin_reseller_2fa_confirm_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CodeBody'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /admin/reseller/elevate:
+    post:
+      tags:
+      - reseller-admin
+      summary: Elevate
+      operationId: elevate_admin_reseller_elevate_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CodeBody'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /admin/reseller/list:
+    get:
+      tags:
+      - reseller-admin
+      summary: List Resellers
+      operationId: list_resellers_admin_reseller_list_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /admin/reseller/tenant/{payer_ref}:
+    get:
+      tags:
+      - reseller-admin
+      summary: Reseller Detail
+      operationId: reseller_detail_admin_reseller_tenant__payer_ref__get
+      parameters:
+      - name: payer_ref
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Payer Ref
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /admin/reseller/create:
+    post:
+      tags:
+      - reseller-admin
+      summary: Admin Create Reseller
+      operationId: admin_create_reseller_admin_reseller_create_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateBody'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /admin/reseller/tenant/{payer_ref}/agents:
+    post:
+      tags:
+      - reseller-admin
+      summary: Admin Assign Agent
+      operationId: admin_assign_agent_admin_reseller_tenant__payer_ref__agents_post
+      parameters:
+      - name: payer_ref
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Payer Ref
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignBody'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /admin/reseller/tenant/{payer_ref}/invoice:
+    post:
+      tags:
+      - reseller-admin
+      summary: Admin Draft Invoice
+      operationId: admin_draft_invoice_admin_reseller_tenant__payer_ref__invoice_post
+      parameters:
+      - name: payer_ref
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Payer Ref
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InvoiceBody'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    CodeBody:
+      properties:
+        code:
+          type: string
+          title: Code
+      type: object
+      required:
+      - code
+      title: CodeBody
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    InvoiceBody:
+      properties:
+        finalize:
+          type: boolean
+          title: Finalize
+          default: false
+      type: object
+      title: InvoiceBody
+    CreateBody:
+      properties:
+        login:
+          type: string
+          title: Login
+        password:
+          type: string
+          title: Password
+        wholesale_price_cents:
+          type: integer
+          title: Wholesale Price Cents
+        display_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Display Name
+        email:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Email
+        vat_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Vat Id
+      type: object
+      required:
+      - login
+      - password
+      - wholesale_price_cents
+      title: CreateBody
+    AssignBody:
+      properties:
+        did:
+          type: string
+          title: Did
+      type: object
+      required:
+      - did
+      title: AssignBody
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+x-refined-from:
+- moltrust-ch-openapi.json
+- moltrust-ch-openapi.yml

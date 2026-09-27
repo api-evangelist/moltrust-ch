@@ -1,0 +1,299 @@
+openapi: 3.2.0
+info:
+  title: Moltrust Ch Credits API
+  version: '2.5'
+  description: 'Operations tagged Credits across 2 of this provider''s published API definitions: moltrust-ch-openapi.json, moltrust-ch-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.moltrust.ch
+  description: Production. The served openapi.json omits servers[]; the base is stated by the provider at https://moltrust.ch/developers.html (quickstart), in the agent card supportedInterfaces[0].url (https://api.moltrust.ch/a2a) and in did.json service[].serviceEndpoint (https://api.moltrust.ch).
+tags:
+- name: Credits
+paths:
+  /credits/pricing:
+    get:
+      summary: Credits Pricing
+      operationId: credits_pricing_credits_pricing_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      tags:
+      - Credits
+  /credits/balance/{did}:
+    get:
+      summary: Credits Balance
+      operationId: credits_balance_credits_balance__did__get
+      parameters:
+      - name: did
+        in: path
+        required: true
+        schema:
+          type: string
+          maxLength: 128
+          title: Did
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Credits
+  /credits/transfer:
+    post:
+      summary: Credits Transfer
+      operationId: credits_transfer_credits_transfer_post
+      parameters:
+      - name: X-API-Key
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Api-Key
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/[REDACTED]'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Credits
+  /credits/transactions/{did}:
+    get:
+      summary: Credits Transactions
+      operationId: credits_transactions_credits_transactions__did__get
+      parameters:
+      - name: did
+        in: path
+        required: true
+        schema:
+          type: string
+          maxLength: 128
+          title: Did
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 200
+          minimum: 1
+          default: 50
+          title: Limit
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+          default: 0
+          title: Offset
+      - name: X-API-Key
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Api-Key
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Credits
+  /credits/deposit:
+    post:
+      summary: Credits Deposit
+      description: Claim credits by submitting a USDC transaction hash from Base.
+      operationId: credits_deposit_credits_deposit_post
+      parameters:
+      - name: X-API-Key
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Api-Key
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DepositRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Credits
+  /credits/deposits/{did}:
+    get:
+      summary: Credits Deposit History
+      description: Get USDC deposit history for an agent.
+      operationId: credits_deposit_history_credits_deposits__did__get
+      parameters:
+      - name: did
+        in: path
+        required: true
+        schema:
+          type: string
+          maxLength: 128
+          title: Did
+      - name: X-API-Key
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Api-Key
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Credits
+  /credits/solvency/{did}:
+    get:
+      summary: Credits Solvency V0
+      description: 'Public, recomputable on-chain USDC solvency (solvency_usdc_v0).
+
+
+        Read-only and UNAUTHENTICATED by design: a third party must be able to
+
+        fetch the inputs and reproduce the value independently from a Base RPC.
+
+        Spec: docs/solvency-usdc-v0.md (v0.1.0). Path (C) only — reads recorded
+
+        on-chain USDC deposits; does NOT touch wallet_score / shadow_score.'
+      operationId: credits_solvency_v0_credits_solvency__did__get
+      parameters:
+      - name: did
+        in: path
+        required: true
+        schema:
+          type: string
+          maxLength: 128
+          title: Did
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Credits
+  /credits/deposit-info:
+    get:
+      summary: Credits Deposit Info
+      description: 'Public endpoint: how to deposit USDC for credits.'
+      operationId: credits_deposit_info_credits_deposit_info_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      tags:
+      - Credits
+components:
+  schemas:
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    DepositRequest:
+      properties:
+        tx_hash:
+          type: string
+          maxLength: 70
+          minLength: 64
+          title: Tx Hash
+        did:
+          type: string
+          maxLength: 128
+          title: Did
+      type: object
+      required:
+      - tx_hash
+      - did
+      title: DepositRequest
+x-refined-from:
+- moltrust-ch-openapi.json
+- moltrust-ch-openapi.yml

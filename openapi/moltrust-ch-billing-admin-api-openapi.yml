@@ -1,0 +1,29 @@
+openapi: 3.2.0
+info:
+  title: Moltrust Ch Billing Admin API
+  version: '2.5'
+  description: 'Operations tagged billing-admin across 2 of this provider''s published API definitions: moltrust-ch-openapi.json, moltrust-ch-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.moltrust.ch
+  description: Production. The served openapi.json omits servers[]; the base is stated by the provider at https://moltrust.ch/developers.html (quickstart), in the agent card supportedInterfaces[0].url (https://api.moltrust.ch/a2a) and in did.json service[].serviceEndpoint (https://api.moltrust.ch).
+tags:
+- name: billing-admin
+paths:
+  /admin/billing/referrals:
+    get:
+      tags:
+      - billing-admin
+      summary: List Referrals
+      description: 'Return subscription counts and MRR (CHF) grouped by referral_source.
+
+        Requires x-admin-key header matching ADMIN_KEY env var.'
+      operationId: list_referrals_admin_billing_referrals_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+x-refined-from:
+- moltrust-ch-openapi.json
+- moltrust-ch-openapi.yml

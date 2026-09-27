@@ -1,0 +1,229 @@
+openapi: 3.2.0
+info:
+  title: Moltrust Ch Skill API
+  version: '2.5'
+  description: 'Operations tagged Skill across 2 of this provider''s published API definitions: moltrust-ch-openapi.json, moltrust-ch-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.moltrust.ch
+  description: Production. The served openapi.json omits servers[]; the base is stated by the provider at https://moltrust.ch/developers.html (quickstart), in the agent card supportedInterfaces[0].url (https://api.moltrust.ch/a2a) and in did.json service[].serviceEndpoint (https://api.moltrust.ch).
+tags:
+- name: Skill
+paths:
+  /skill/interaction-proof:
+    post:
+      summary: Create Interaction Proof Endpoint
+      description: 'Interaction Proof: hash payload + anchor on Base L2. Required before endorsement.'
+      operationId: create_interaction_proof_endpoint_skill_interaction_proof_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InteractionProofRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Skill
+  /skill/endorse:
+    post:
+      summary: Endorse Skill Endpoint
+      description: Issue SkillEndorsementCredential (W3C VC). Requires valid interaction proof.
+      operationId: endorse_skill_endpoint_skill_endorse_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EndorseRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Skill
+  /skill/trust-score/{did}:
+    get:
+      summary: Get Trust Score
+      description: 'Phase 2 Trust Score with breakdown. Free. 1h cache.
+
+
+        Validated and rate limited: the handler writes trust_score_cache rows, so
+
+        an unbounded stream of junk DIDs was both a compute cost and a way to grow
+
+        the cache table.'
+      operationId: get_trust_score_skill_trust_score__did__get
+      parameters:
+      - name: did
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Did
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Skill
+  /skill/endorsements/given/{did}:
+    get:
+      summary: Get Endorsements Given
+      description: All endorsements given by an agent (transparency). Free.
+      operationId: get_endorsements_given_skill_endorsements_given__did__get
+      parameters:
+      - name: did
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Did
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Skill
+  /skill/endorsements/{did}:
+    get:
+      summary: Get Endorsements
+      description: All received endorsements for an agent. Free.
+      operationId: get_endorsements_skill_endorsements__did__get
+      parameters:
+      - name: did
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Did
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Skill
+components:
+  schemas:
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    InteractionProofRequest:
+      properties:
+        api_key:
+          type: string
+          title: Api Key
+        interaction_payload:
+          additionalProperties: true
+          type: object
+          title: Interaction Payload
+      type: object
+      required:
+      - api_key
+      - interaction_payload
+      title: InteractionProofRequest
+    EndorseRequest:
+      properties:
+        api_key:
+          type: string
+          title: Api Key
+        endorsed_did:
+          type: string
+          title: Endorsed Did
+        skill:
+          type: string
+          title: Skill
+        evidence_hash:
+          type: string
+          title: Evidence Hash
+        evidence_timestamp:
+          type: string
+          title: Evidence Timestamp
+        vertical:
+          type: string
+          title: Vertical
+      type: object
+      required:
+      - api_key
+      - endorsed_did
+      - skill
+      - evidence_hash
+      - evidence_timestamp
+      - vertical
+      title: EndorseRequest
+x-refined-from:
+- moltrust-ch-openapi.json
+- moltrust-ch-openapi.yml

@@ -1,0 +1,221 @@
+openapi: 3.2.0
+info:
+  title: Moltrust Ch Violation API
+  version: '2.5'
+  description: 'Operations tagged Violation across 2 of this provider''s published API definitions: moltrust-ch-openapi.json, moltrust-ch-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.moltrust.ch
+  description: Production. The served openapi.json omits servers[]; the base is stated by the provider at https://moltrust.ch/developers.html (quickstart), in the agent card supportedInterfaces[0].url (https://api.moltrust.ch/a2a) and in did.json service[].serviceEndpoint (https://api.moltrust.ch).
+tags:
+- name: Violation
+paths:
+  /violation/record:
+    post:
+      summary: Create Violation Record
+      description: Record a protocol violation. Requires X-Admin-Key header. Tech Spec 2.7.
+      operationId: create_violation_record_violation_record_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ViolationRecordRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Violation
+  /violation/{record_id}:
+    get:
+      summary: Get Violation Record
+      description: Retrieve a ViolationRecord by ID. Public endpoint.
+      operationId: get_violation_record_violation__record_id__get
+      parameters:
+      - name: record_id
+        in: path
+        required: true
+        schema:
+          type: string
+          maxLength: 64
+          title: Record Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Violation
+  /violation/{record_id}/reverse:
+    post:
+      summary: Reverse Violation
+      description: Reverse a violation record. Requires X-Admin-Key header. Tech Spec 2.7.
+      operationId: reverse_violation_violation__record_id__reverse_post
+      parameters:
+      - name: record_id
+        in: path
+        required: true
+        schema:
+          type: string
+          maxLength: 64
+          title: Record Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ViolationReversalRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Violation
+  /violation/agent/{did}:
+    get:
+      summary: Get Agent Violations
+      description: List all violation records for a given agent DID. Public endpoint.
+      operationId: get_agent_violations_violation_agent__did__get
+      parameters:
+      - name: did
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Did
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Violation
+components:
+  schemas:
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    ViolationReversalRequest:
+      properties:
+        adjudicator_reference:
+          anyOf:
+          - type: string
+            maxLength: 256
+          - type: 'null'
+          title: Adjudicator Reference
+        reversal_date:
+          anyOf:
+          - type: string
+            maxLength: 64
+          - type: 'null'
+          title: Reversal Date
+      type: object
+      title: ViolationReversalRequest
+    ViolationRecordRequest:
+      properties:
+        agent_did:
+          type: string
+          maxLength: 128
+          title: Agent Did
+        principal_did:
+          type: string
+          maxLength: 128
+          title: Principal Did
+        violation_type:
+          type: string
+          maxLength: 64
+          title: Violation Type
+        interaction_proof_id:
+          anyOf:
+          - type: string
+            maxLength: 128
+          - type: 'null'
+          title: Interaction Proof Id
+        description:
+          anyOf:
+          - type: string
+            maxLength: 1024
+          - type: 'null'
+          title: Description
+        adjudicator_reference:
+          anyOf:
+          - type: string
+            maxLength: 256
+          - type: 'null'
+          title: Adjudicator Reference
+        confirmed_at:
+          type: string
+          maxLength: 64
+          title: Confirmed At
+      type: object
+      required:
+      - agent_did
+      - principal_did
+      - violation_type
+      - confirmed_at
+      title: ViolationRecordRequest
+x-refined-from:
+- moltrust-ch-openapi.json
+- moltrust-ch-openapi.yml

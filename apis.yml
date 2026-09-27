@@ -1,5 +1,5 @@
 aid: moltrust-ch
-name: CryptoKRI GmbH
+name: MolTrust
 description: 'CryptoKRI GmbH (Zurich, CHE-115.481.407) operates MolTrust, a trust registry for autonomous AI agents:
   W3C DID identity (did:moltrust, did:web), W3C Verifiable Credential issuance and verification, Agent Authorization
   Envelopes (AAE, an IETF Internet-Draft) with UCAN delegation and stateless mandate enforcement, behavioural trust
@@ -9,6 +9,22 @@ description: 'CryptoKRI GmbH (Zurich, CHE-115.481.407) operates MolTrust, a trus
   travel, skills, music, sports, brand provenance) paid per call in USDC via x402. Published surfaces: two OpenAPI
   3.1 documents, a signed A2A agent card, a hosted MCP server with 53 tools, llms.txt on both hosts, JWKS / DID
   documents / x402 discovery under /.well-known, npm and PyPI SDKs, and an Upptime status page.'
+deliveryModel:
+  model: saas
+  license_evidence:
+    not_product:
+    - moltycel/uni-resolver-driver-did-moltrust
+  open_source: unknown
+  commercial: true
+  callable_host: true
+  label: Hosted service · you call their endpoint
+  confidence: low
+  source:
+  - openapi
+  - pricing
+  - repository-not-product
+  generated: '2026-09-25'
+  method: derived
 image: https://moltrust.ch/img/moltrust-logo.png
 url: https://raw.githubusercontent.com/api-evangelist/moltrust-ch/refs/heads/main/apis.yml
 x-type: company
@@ -30,7 +46,7 @@ tags: &id001
 - A2A
 - MCP
 - x402
-- agent-native
+- Agent-Native
 tags_raw:
 - AI Agents
 - Agent Identity
@@ -58,97 +74,13 @@ tags_raw: &id002
 - x402
 - agent-native
 apis:
-- name: MolTrust API
-  description: 'REST trust-registry API (FastAPI, v2.5, 186 operations): agent registration and DID resolution,
-    W3C VC issue/verify, AAE delegation configuration, UCAN 0.10.0 delegation create/verify, stateless /enforce/check
-    verdicts, Ed25519-signed trust scores, endorsements and swarm graph, EU AI Act compliance endpoints, credits
-    and USDC deposits, ERC-8004 cross-links, CAEP polling events, interaction proof records and vertical credentials
-    (sports, music). Auth by X-API-Key or X-MolTrust-DID; per-call credit metering.'
-  image: https://moltrust.ch/img/moltrust-logo.png
-  humanURL: https://api.moltrust.ch/docs
-  baseURL: https://api.moltrust.ch
-  tags: *id001
-  tags_raw: *id002
-  properties:
-  - type: OpenAPI
-    url: openapi/moltrust-ch-openapi.yml
-  - type: OpenAPI
-    name: Provider-hosted OpenAPI 3.1 (source)
-    url: https://api.moltrust.ch/openapi.json
-  - type: Documentation
-    url: https://api.moltrust.ch/docs
-  - type: APIReference
-    url: https://api.moltrust.ch/redoc
-  - type: GettingStarted
-    url: https://moltrust.ch/developers.html
-  - type: LLMsTxt
-    url: llms/moltrust-ch-api-llms.txt
-  - type: LLMsTxt
-    name: Provider-hosted llms.txt (API host)
-    url: https://api.moltrust.ch/llms.txt
-  - type: Authentication
-    url: authentication/moltrust-ch-authentication.yml
-  - type: Conventions
-    url: conventions/moltrust-ch-conventions.yml
-  - type: ErrorCatalog
-    url: errors/moltrust-ch-problem-types.yml
-  - type: DataModel
-    url: data-model/moltrust-ch-data-model.yml
-  - type: Overlay
-    url: overlays/moltrust-ch-openapi-overlay.yaml
-  - type: Sandbox
-    url: sandbox/moltrust-ch-sandbox.yml
-  - type: Components
-    url: components/moltrust-ch-components.yml
-- name: MoltGuard API
-  description: 'Trust and integrity sub-API of MolTrust (Hono/Node, v1.5.0, 71 operations across 14 capability clusters):
-    Base wallet risk scoring and sybil-cluster detection, Polymarket market-integrity checks and MoltRadar operator
-    clustering, SKILL.md security audits with ten CWE-mapped checks, VerifiedSkill / BuyerAgent / TravelAgent /
-    PredictionTrack credential issuance, MT Salesguard brand and reseller provenance, AAE evaluation, endorsement-graph
-    queries and hash-verifiable TrustProof transparency records. Free reads are rate-limited; paid endpoints are
-    priced per call in USDC on Base via x402 (X-PAYMENT header).'
-  image: https://moltrust.ch/img/moltrust-logo.png
-  humanURL: https://api.moltrust.ch/guard/api/info
-  baseURL: https://api.moltrust.ch/guard
-  tags:
-  - AI Agents
-  - Trust and Safety
-  - Wallet Risk Scoring
-  - Sybil Detection
-  - Prediction Markets
-  - x402
-  - Verifiable Credentials
-  - agent-native
-  tags_raw:
-  - ai-agents
-  - trust-and-safety
-  - wallet-risk-scoring
-  - sybil-detection
-  - prediction-markets
-  - x402
-  - verifiable-credentials
-  - agent-native
-  - Trust & Safety
-  properties:
-  - type: OpenAPI
-    url: openapi/moltrust-ch-moltguard-openapi.yml
-  - type: OpenAPI
-    name: Provider-hosted OpenAPI 3.1 (source)
-    url: https://api.moltrust.ch/guard/openapi.json
-  - type: Documentation
-    url: https://api.moltrust.ch/guard/api/info
-  - type: Overlay
-    url: overlays/moltrust-ch-moltguard-overlay.yaml
-  - type: ErrorCatalog
-    url: errors/moltrust-ch-problem-types.yml
-  - type: RateLimits
-    url: rate-limits/moltrust-ch-rate-limits.yml
 - name: MolTrust MCP Server
-  description: Hosted streamable-HTTP Model Context Protocol server (serverInfo moltrust 1.28.1, protocol 2025-06-18)
-    exposing 53 tools over the MolTrust and MoltGuard APIs - identity and credentials, MoltGuard scoring, MoltProof
-    mandate conformance, swarm intelligence, badges, shopping, travel, skills, prediction markets, fantasy sports,
-    music provenance and Salesguard. tools/list answers anonymously; tool calls carry MOLTRUST_API_KEY. Also distributed
-    as the PyPI package moltrust-mcp-server for local stdio use.
+  description: >-
+    Hosted streamable-HTTP Model Context Protocol server (serverInfo moltrust 1.28.1, protocol 2025-06-18)
+    exposing 53 tools over the MolTrust and MoltGuard APIs - identity and credentials, MoltGuard scoring,
+    MoltProof mandate conformance, swarm intelligence, badges, shopping, travel, skills, prediction markets,
+    fantasy sports, music provenance and Salesguard. tools/list answers anonymously; tool calls carry
+    MOLTRUST_API_KEY. Also distributed as the PyPI package moltrust-mcp-server for local stdio use.
   image: https://moltrust.ch/img/moltrust-logo.png
   humanURL: https://github.com/MoltyCel/moltrust-mcp-server
   baseURL: https://api.moltrust.ch/mcp
@@ -156,7 +88,7 @@ apis:
   - MCP
   - AI Agents
   - Agent Identity
-  - agent-native
+  - Agent-Native
   tags_raw:
   - mcp
   - ai-agents
@@ -175,9 +107,11 @@ apis:
   - type: Packages
     url: https://pypi.org/project/moltrust-mcp-server/
 - name: MolTrust DID Universal Resolver
-  description: 'DIF Universal Resolver deployment for the did:moltrust method (and bridged did:moltrust:ext_* identifiers),
+  description: >-
+    DIF Universal Resolver deployment for the did:moltrust method (and bridged did:moltrust:ext_* identifiers),
     returning W3C DID Documents at the standard /1.0/identifiers/{did} path. The did:moltrust method specification
-    is published on moltrust.ch and a driver was contributed to the DIF universal-resolver project (PR #540).'
+    is published on moltrust.ch and a driver was contributed to the DIF universal-resolver project (PR
+    #540).
   image: https://moltrust.ch/img/moltrust-logo.png
   humanURL: https://moltrust.ch/did-method-spec.html
   baseURL: https://uresolver.moltrust.ch/1.0
@@ -194,12 +128,2213 @@ apis:
     url: https://moltrust.ch/did-method-spec.html
   - type: SourceCode
     url: https://github.com/MoltyCel/uni-resolver-driver-did-moltrust
+- aid: moltrust-ch:moltrust-ch-a2a-api
+  name: MolTrust A2a API
+  description: The A2a API from MolTrust — 2 operation(s) for a2a.
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - A2a
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-a2a-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- aid: moltrust-ch:moltrust-ch-a2a-json-rpc-api
+  name: 'MolTrust A2A: JSON-RPC API'
+  description: 'The A2A: JSON-RPC API from MolTrust — 1 operation(s) for a2a: json-rpc.'
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - 'A2A: JSON-RPC'
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-a2a-json-rpc-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- aid: moltrust-ch:moltrust-ch-aae-api
+  name: MolTrust Aae API
+  description: The Aae API from MolTrust — 1 operation(s) for aae.
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - Aae
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-aae-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- aid: moltrust-ch:moltrust-ch-aae-enforcement-api
+  name: MolTrust AAE Enforcement API
+  description: The AAE Enforcement API from MolTrust — 5 operation(s) for aae enforcement.
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - AAE Enforcement
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-aae-enforcement-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- aid: moltrust-ch:moltrust-ch-aae-evaluation-api
+  name: MolTrust Aae Evaluation API
+  description: AAE permission evaluation
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - aae-evaluation
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-aae-evaluation-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- aid: moltrust-ch:moltrust-ch-admin-api
+  name: MolTrust Admin API
+  description: The Admin API from MolTrust — 22 operation(s) for admin.
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - Admin
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-admin-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- aid: moltrust-ch:moltrust-ch-agent-flags-api
+  name: MolTrust Agent Flags API
+  description: Anomaly flag tracking + record
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - agent-flags
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-agent-flags-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- aid: moltrust-ch:moltrust-ch-agent-graph-api
+  name: MolTrust Agent Graph API
+  description: Endorsement graph score/neighbours/stats
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - agent-graph
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-agent-graph-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- aid: moltrust-ch:moltrust-ch-agent-scoring-api
+  name: MolTrust Agent Scoring API
+  description: Wallet risk scoring + score-free samples
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - agent-scoring
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-agent-scoring-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- aid: moltrust-ch:moltrust-ch-agents-api
+  name: MolTrust Agents API
+  description: The Agents API from MolTrust — 4 operation(s) for agents.
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - Agents
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-agents-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- aid: moltrust-ch:moltrust-ch-anchoring-api
+  name: MolTrust Anchoring API
+  description: The Anchoring API from MolTrust — 1 operation(s) for anchoring.
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - Anchoring
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-anchoring-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- aid: moltrust-ch:moltrust-ch-attestation-and-hackathon-api
+  name: MolTrust Attestation And Hackathon API
+  description: Wallet attestation + challenge-response + hackathon
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - attestation-and-hackathon
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-attestation-and-hackathon-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- aid: moltrust-ch:moltrust-ch-attestations-api
+  name: MolTrust Attestations API
+  description: The Attestations API from MolTrust — 1 operation(s) for attestations.
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - Attestations
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-attestations-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- aid: moltrust-ch:moltrust-ch-auth-api
+  name: MolTrust Auth API
+  description: The Auth API from MolTrust — 5 operation(s) for auth.
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - Auth
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-auth-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- aid: moltrust-ch:moltrust-ch-aws-marketplace-api
+  name: MolTrust AWS Marketplace API
+  description: The AWS Marketplace API from MolTrust — 1 operation(s) for aws marketplace.
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - AWS Marketplace
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-aws-marketplace-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- aid: moltrust-ch:moltrust-ch-badge-api
+  name: MolTrust Badge API
+  description: The Badge API from MolTrust — 1 operation(s) for badge.
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - Badge
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-badge-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- aid: moltrust-ch:moltrust-ch-billing-admin-api
+  name: MolTrust Billing Admin API
+  description: The billing-admin API from MolTrust — 1 operation(s) for billing-admin.
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - billing-admin
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-billing-admin-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- aid: moltrust-ch:moltrust-ch-billing-api
+  name: MolTrust Billing API
+  description: The billing API from MolTrust — 5 operation(s) for billing.
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - billing
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-billing-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- aid: moltrust-ch:moltrust-ch-caep-api
+  name: MolTrust Caep API
+  description: The caep API from MolTrust — 3 operation(s) for caep.
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - caep
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-caep-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- aid: moltrust-ch:moltrust-ch-compliance-api
+  name: MolTrust Compliance API
+  description: The Compliance API from MolTrust — 4 operation(s) for compliance.
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - Compliance
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-compliance-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- aid: moltrust-ch:moltrust-ch-contact-api
+  name: MolTrust Contact API
+  description: The Contact API from MolTrust — 1 operation(s) for contact.
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - Contact
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-contact-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- aid: moltrust-ch:moltrust-ch-credential-issuance-api
+  name: MolTrust Credential Issuance API
+  description: Generic VC issuance + verify
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - credential-issuance
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-credential-issuance-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- aid: moltrust-ch:moltrust-ch-credentials-api
+  name: MolTrust Credentials API
+  description: The Credentials API from MolTrust — 3 operation(s) for credentials.
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - Credentials
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-credentials-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- aid: moltrust-ch:moltrust-ch-credits-api
+  name: MolTrust Credits API
+  description: The Credits API from MolTrust — 8 operation(s) for credits.
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - Credits
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-credits-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- aid: moltrust-ch:moltrust-ch-delegation-api
+  name: MolTrust Delegation API
+  description: The Delegation API from MolTrust — 3 operation(s) for delegation.
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - Delegation
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-delegation-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- aid: moltrust-ch:moltrust-ch-extendedagentcard-api
+  name: MolTrust Extended Agent Card API
+  description: The ExtendedAgentCard API from MolTrust — 1 operation(s) for extendedagentcard.
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - ExtendedAgentCard
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-extendedagentcard-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- aid: moltrust-ch:moltrust-ch-health-api
+  name: MolTrust Health API
+  description: The Health API from MolTrust — 1 operation(s) for health.
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - Health
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-health-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- aid: moltrust-ch:moltrust-ch-identity-api
+  name: MolTrust Identity API
+  description: The Identity API from MolTrust — 28 operation(s) for identity.
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - Identity
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-identity-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- aid: moltrust-ch:moltrust-ch-interaction-api
+  name: MolTrust Interaction API
+  description: The Interaction API from MolTrust — 1 operation(s) for interaction.
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - Interaction
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-interaction-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- aid: moltrust-ch:moltrust-ch-join-api
+  name: MolTrust Join API
+  description: The Join API from MolTrust — 1 operation(s) for join.
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - Join
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-join-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- aid: moltrust-ch:moltrust-ch-market-integrity-api
+  name: MolTrust Market Integrity API
+  description: Polymarket/Kalshi integrity checks + feed + events
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - market-integrity
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-market-integrity-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- aid: moltrust-ch:moltrust-ch-music-api
+  name: MolTrust Music API
+  description: The Music API from MolTrust — 5 operation(s) for music.
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - Music
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-music-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- aid: moltrust-ch:moltrust-ch-operators-api
+  name: MolTrust Operators API
+  description: The Operators API from MolTrust — 2 operation(s) for operators.
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - Operators
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-operators-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- aid: moltrust-ch:moltrust-ch-output-provenance-admin-api
+  name: MolTrust Output Provenance Admin API
+  description: >-
+    The Output Provenance Admin API from MolTrust — 4 operation(s) for output provenance admin.
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - Output Provenance Admin
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-output-provenance-admin-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- aid: moltrust-ch:moltrust-ch-output-provenance-api
+  name: MolTrust Output Provenance API
+  description: The Output Provenance API from MolTrust — 7 operation(s) for output provenance.
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - Output Provenance
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-output-provenance-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- aid: moltrust-ch:moltrust-ch-payment-api
+  name: MolTrust Payment API
+  description: The Payment API from MolTrust — 1 operation(s) for payment.
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - Payment
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-payment-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- aid: moltrust-ch:moltrust-ch-prediction-markets-api
+  name: MolTrust Prediction Markets API
+  description: Wallet-link + leaderboard + PredictionTrackCredential
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - prediction-markets
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-prediction-markets-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- aid: moltrust-ch:moltrust-ch-reputation-api
+  name: MolTrust Reputation API
+  description: The Reputation API from MolTrust — 3 operation(s) for reputation.
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - Reputation
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-reputation-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- aid: moltrust-ch:moltrust-ch-reseller-admin-api
+  name: MolTrust Reseller Admin API
+  description: The reseller-admin API from MolTrust — 9 operation(s) for reseller-admin.
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - reseller-admin
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-reseller-admin-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- aid: moltrust-ch:moltrust-ch-reseller-api
+  name: MolTrust Reseller API
+  description: The reseller API from MolTrust — 5 operation(s) for reseller.
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - reseller
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-reseller-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- aid: moltrust-ch:moltrust-ch-resolve-api
+  name: MolTrust Resolve API
+  description: The Resolve API from MolTrust — 1 operation(s) for resolve.
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - Resolve
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-resolve-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- aid: moltrust-ch:moltrust-ch-salesguard-api
+  name: MolTrust Salesguard API
+  description: Brand/Product/Reseller registration + verify
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - salesguard
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-salesguard-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- aid: moltrust-ch:moltrust-ch-search-api
+  name: MolTrust Search API
+  description: The Search API from MolTrust — 1 operation(s) for search.
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - Search
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-search-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- aid: moltrust-ch:moltrust-ch-shopping-vc-api
+  name: MolTrust Shopping Vc API
+  description: BuyerAgentCredential receipt + verify + issue
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - shopping-vc
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-shopping-vc-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- aid: moltrust-ch:moltrust-ch-sitemap-xml-api
+  name: MolTrust Sitemap.xml API
+  description: The Sitemap.xml API from MolTrust — 1 operation(s) for sitemap.xml.
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - Sitemap.xml
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-sitemap-xml-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- aid: moltrust-ch:moltrust-ch-skill-api
+  name: MolTrust Skill API
+  description: The Skill API from MolTrust — 5 operation(s) for skill.
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - Skill
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-skill-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- aid: moltrust-ch:moltrust-ch-skill-verification-api
+  name: MolTrust Skill Verification API
+  description: VerifiedSkillCredential audit + issue + verify + anchor
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - skill-verification
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-skill-verification-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- aid: moltrust-ch:moltrust-ch-skills-api
+  name: MolTrust Skills API
+  description: The Skills API from MolTrust — 1 operation(s) for skills.
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - Skills
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-skills-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- aid: moltrust-ch:moltrust-ch-sports-api
+  name: MolTrust Sports API
+  description: The Sports API from MolTrust — 13 operation(s) for sports.
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - Sports
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-sports-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- aid: moltrust-ch:moltrust-ch-stats-api
+  name: MolTrust Stats API
+  description: The Stats API from MolTrust — 1 operation(s) for stats.
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - Stats
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-stats-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- aid: moltrust-ch:moltrust-ch-swarm-api
+  name: MolTrust Swarm API
+  description: The Swarm API from MolTrust — 4 operation(s) for swarm.
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - Swarm
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-swarm-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- aid: moltrust-ch:moltrust-ch-sybil-detection-api
+  name: MolTrust Sybil Detection API
+  description: On-chain sybil-cluster detection
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - sybil-detection
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-sybil-detection-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- aid: moltrust-ch:moltrust-ch-test-harness-api
+  name: MolTrust Test Harness API
+  description: The Test Harness API from MolTrust — 1 operation(s) for test harness.
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - Test Harness
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-test-harness-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- aid: moltrust-ch:moltrust-ch-transparency-api
+  name: MolTrust Transparency API
+  description: TrustProof history + health + info
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - transparency
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-transparency-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- aid: moltrust-ch:moltrust-ch-travel-vc-api
+  name: MolTrust Travel Vc API
+  description: TravelAgentCredential trip + verify + issue
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - travel-vc
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-travel-vc-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- aid: moltrust-ch:moltrust-ch-trust-api
+  name: MolTrust Trust API
+  description: The Trust API from MolTrust — 1 operation(s) for trust.
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - Trust
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-trust-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- aid: moltrust-ch:moltrust-ch-violation-api
+  name: MolTrust Violation API
+  description: The Violation API from MolTrust — 4 operation(s) for violation.
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - Violation
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-violation-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- aid: moltrust-ch:moltrust-ch-wallet-api
+  name: MolTrust Wallet API
+  description: The Wallet API from MolTrust — 1 operation(s) for wallet.
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - Wallet
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-wallet-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- aid: moltrust-ch:moltrust-ch-webhooks-api
+  name: MolTrust Webhooks API
+  description: The Webhooks API from MolTrust — 1 operation(s) for webhooks.
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - Webhooks
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-webhooks-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- aid: moltrust-ch:moltrust-ch-well-known-api
+  name: MolTrust .well Known API
+  description: The .well Known API from MolTrust — 5 operation(s) for .well known.
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - .well Known
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-well-known-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
+- aid: moltrust-ch:moltrust-ch-x402-api
+  name: MolTrust X402 API
+  description: The X402 API from MolTrust — 2 operation(s) for x402.
+  humanURL: https://api.moltrust.ch/docs
+  baseURL: https://api.moltrust.ch
+  tags:
+  - X402
+  properties:
+  - type: OpenAPI
+    url: openapi/moltrust-ch-x402-api-openapi.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/docs
+  - type: APIReference
+    url: https://api.moltrust.ch/redoc
+  - type: GettingStarted
+    url: https://moltrust.ch/developers.html
+  - type: LLMsTxt
+    url: llms/moltrust-ch-api-llms.txt
+  - type: LLMsTxt
+    url: https://api.moltrust.ch/llms.txt
+  - type: Authentication
+    url: authentication/moltrust-ch-authentication.yml
+  - type: Conventions
+    url: conventions/moltrust-ch-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moltrust-ch-problem-types.yml
+  - type: DataModel
+    url: data-model/moltrust-ch-data-model.yml
+  - type: Sandbox
+    url: sandbox/moltrust-ch-sandbox.yml
+  - type: Components
+    url: components/moltrust-ch-components.yml
+  - type: Documentation
+    url: https://api.moltrust.ch/guard/api/info
+  - type: RateLimits
+    url: rate-limits/moltrust-ch-rate-limits.yml
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: Overlay
+  url: overlays/moltrust-ch-openapi-overlay.yaml
+- type: Overlay
+  url: overlays/moltrust-ch-moltguard-overlay.yaml
 - type: AgenticAccess
   url: agentic-access/moltrust-ch-agentic-access.yml
 - type: DomainSecurity
@@ -286,3 +2421,11 @@ x-enrichment:
   status: enriched
   artifacts_added: 47
   pass: local-v3
+x-legal-name: CryptoKRI GmbH
+x-a2a:
+  verified: true
+  probed: '2026-09-26'
+  url: "https://api.moltrust.ch/.well-known/agent-card.json"
+  grade: "flavored"
+  protocol_version: "1.0"
+  control: 404

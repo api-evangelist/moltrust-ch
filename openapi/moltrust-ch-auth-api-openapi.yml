@@ -1,0 +1,233 @@
+openapi: 3.2.0
+info:
+  title: Moltrust Ch Auth API
+  version: '2.5'
+  description: 'Operations tagged Auth across 2 of this provider''s published API definitions: moltrust-ch-openapi.json, moltrust-ch-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.moltrust.ch
+  description: Production. The served openapi.json omits servers[]; the base is stated by the provider at https://moltrust.ch/developers.html (quickstart), in the agent card supportedInterfaces[0].url (https://api.moltrust.ch/a2a) and in did.json service[].serviceEndpoint (https://api.moltrust.ch).
+tags:
+- name: Auth
+paths:
+  /auth/moltbook:
+    post:
+      summary: Auth With Moltbook
+      operationId: auth_with_moltbook_auth_moltbook_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MoltbookAuthRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Auth
+  /auth/github:
+    get:
+      summary: Github Auth Start
+      description: Redirect to GitHub OAuth
+      operationId: github_auth_start_auth_github_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      tags:
+      - Auth
+  /auth/github/callback:
+    get:
+      summary: Github Auth Callback
+      operationId: github_auth_callback_auth_github_callback_get
+      parameters:
+      - name: code
+        in: query
+        required: true
+        schema:
+          type: string
+          maxLength: 128
+          title: Code
+      - name: state
+        in: query
+        required: false
+        schema:
+          type: string
+          maxLength: 64
+          default: ''
+          title: State
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Auth
+  /auth/signup:
+    post:
+      summary: Signup For Api Key
+      operationId: signup_for_api_key_auth_signup_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignupRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Auth
+  /auth/signup-did:
+    post:
+      summary: Signup By Signature
+      description: 'Mint an API key by proving key possession instead of owning a mailbox.
+
+
+        An agent that registered through /identity/register-pop already holds an
+
+        Ed25519 key the server knows. Requiring an email on top of that asks for a
+
+        human and a mailbox to stand behind something that is not about either —
+
+        and every mailbox-shaped identity is one more thing to Sybil.
+
+
+        Same challenge, same proof-of-work, same signature check as keyless
+
+        registration. The key is bound to the DID that owns the public key, so it
+
+        cannot be minted for an agent the caller does not control.'
+      operationId: signup_by_signature_auth_signup_did_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DidSignupRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Auth
+components:
+  schemas:
+    MoltbookAuthRequest:
+      properties:
+        token:
+          type: string
+          maxLength: 512
+          minLength: 10
+          title: Token
+      type: object
+      required:
+      - token
+      title: MoltbookAuthRequest
+    DidSignupRequest:
+      properties:
+        public_key:
+          type: string
+          maxLength: 128
+          title: Public Key
+        challenge:
+          type: string
+          maxLength: 256
+          title: Challenge
+        signature:
+          type: string
+          maxLength: 256
+          title: Signature
+        pow_nonce:
+          type: string
+          maxLength: 64
+          title: Pow Nonce
+      type: object
+      required:
+      - public_key
+      - challenge
+      - signature
+      - pow_nonce
+      title: DidSignupRequest
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    SignupRequest:
+      properties:
+        email:
+          type: string
+          maxLength: 256
+          title: Email
+      type: object
+      required:
+      - email
+      title: SignupRequest
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+x-refined-from:
+- moltrust-ch-openapi.json
+- moltrust-ch-openapi.yml

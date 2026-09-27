@@ -1,0 +1,163 @@
+openapi: 3.2.0
+info:
+  title: Moltrust Ch Swarm API
+  version: '2.5'
+  description: 'Operations tagged Swarm across 2 of this provider''s published API definitions: moltrust-ch-openapi.json, moltrust-ch-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.moltrust.ch
+  description: Production. The served openapi.json omits servers[]; the base is stated by the provider at https://moltrust.ch/developers.html (quickstart), in the agent card supportedInterfaces[0].url (https://api.moltrust.ch/a2a) and in did.json service[].serviceEndpoint (https://api.moltrust.ch).
+tags:
+- name: Swarm
+paths:
+  /swarm/graph/{did}:
+    get:
+      summary: Get Swarm Graph
+      description: 'Endorsement graph: who endorses this DID, who endorses them (2 hops).
+
+
+        Two-hop graph queries are the most expensive read on the endorsement
+
+        tables; validated and rate limited for the same reason as trust-score.'
+      operationId: get_swarm_graph_swarm_graph__did__get
+      parameters:
+      - name: did
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Did
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Swarm
+  /swarm/stats:
+    get:
+      summary: Get Swarm Stats
+      description: Global swarm statistics.
+      operationId: get_swarm_stats_swarm_stats_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      tags:
+      - Swarm
+  /swarm/seed:
+    post:
+      summary: Register Seed
+      description: Register a trusted seed agent. Requires ADMIN_KEY header.
+      operationId: register_seed_swarm_seed_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SeedRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Swarm
+  /swarm/propagate/{did}:
+    get:
+      summary: Propagate Trust
+      description: Force recompute trust score with Phase 2 algorithm.
+      operationId: propagate_trust_swarm_propagate__did__get
+      parameters:
+      - name: did
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Did
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Swarm
+components:
+  schemas:
+    SeedRequest:
+      properties:
+        did:
+          type: string
+          title: Did
+        label:
+          type: string
+          title: Label
+        base_score:
+          type: number
+          title: Base Score
+          default: 80.0
+      type: object
+      required:
+      - did
+      - label
+      title: SeedRequest
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+x-refined-from:
+- moltrust-ch-openapi.json
+- moltrust-ch-openapi.yml

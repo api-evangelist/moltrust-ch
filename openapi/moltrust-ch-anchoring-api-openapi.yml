@@ -1,0 +1,104 @@
+openapi: 3.2.0
+info:
+  title: Moltrust Ch Anchoring API
+  version: '2.5'
+  description: 'Operations tagged Anchoring across 2 of this provider''s published API definitions: moltrust-ch-openapi.json, moltrust-ch-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.moltrust.ch
+  description: Production. The served openapi.json omits servers[]; the base is stated by the provider at https://moltrust.ch/developers.html (quickstart), in the agent card supportedInterfaces[0].url (https://api.moltrust.ch/a2a) and in did.json service[].serviceEndpoint (https://api.moltrust.ch).
+tags:
+- name: Anchoring
+paths:
+  /anchors/batch:
+    post:
+      tags:
+      - Anchoring
+      summary: Anchors Batch
+      description: 'Merkle-batch a set of hashes: returns the root + per-leaf proof paths.
+
+        Optional on-chain submission uses ONLY the existing anchoring key (BASE_KEY);
+
+        the locked ERC-8004 wallet (0x9068…) is never used and no new wallet is configured.'
+      operationId: anchors_batch_anchors_batch_post
+      parameters:
+      - name: X-API-Key
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Api-Key
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnchorsBatchRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    AnchorsBatchRequest:
+      properties:
+        hashes:
+          items:
+            type: string
+          type: array
+          title: Hashes
+          description: Hex sha256 leaf hashes (optionally 0x-prefixed)
+        submit_onchain:
+          type: boolean
+          title: Submit Onchain
+          description: Submit the Merkle root on-chain via the existing anchoring key
+          default: false
+      type: object
+      required:
+      - hashes
+      title: AnchorsBatchRequest
+x-refined-from:
+- moltrust-ch-openapi.json
+- moltrust-ch-openapi.yml

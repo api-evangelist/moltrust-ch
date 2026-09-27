@@ -1,0 +1,256 @@
+openapi: 3.2.0
+info:
+  title: Moltrust Ch Music API
+  version: '2.5'
+  description: 'Operations tagged Music across 2 of this provider''s published API definitions: moltrust-ch-openapi.json, moltrust-ch-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.moltrust.ch
+  description: Production. The served openapi.json omits servers[]; the base is stated by the provider at https://moltrust.ch/developers.html (quickstart), in the agent card supportedInterfaces[0].url (https://api.moltrust.ch/a2a) and in did.json service[].serviceEndpoint (https://api.moltrust.ch).
+tags:
+- name: Music
+paths:
+  /music/credential/issue:
+    post:
+      summary: Issue Music Credential
+      description: Issue a VerifiedMusicCredential. Returns the credential with provenance.
+      operationId: issue_music_credential_music_credential_issue_post
+      parameters:
+      - name: X-API-Key
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Api-Key
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MusicCredentialRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Music
+  /music/credential/{credential_id}:
+    get:
+      summary: Get Music Credential
+      description: Retrieve a VerifiedMusicCredential by ID. Public endpoint.
+      operationId: get_music_credential_music_credential__credential_id__get
+      parameters:
+      - name: credential_id
+        in: path
+        required: true
+        schema:
+          type: string
+          maxLength: 64
+          title: Credential Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Music
+  /music/credential/agent/{did}:
+    get:
+      summary: Get Agent Music Credentials
+      description: List all music credentials for a given agent DID. Public endpoint.
+      operationId: get_agent_music_credentials_music_credential_agent__did__get
+      parameters:
+      - name: did
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Did
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Music
+  /music/credential/{credential_id}/revoke:
+    post:
+      summary: Revoke Music Credential
+      description: Revoke a music credential. Requires X-Admin-Key.
+      operationId: revoke_music_credential_music_credential__credential_id__revoke_post
+      parameters:
+      - name: credential_id
+        in: path
+        required: true
+        schema:
+          type: string
+          maxLength: 64
+          title: Credential Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MusicRevokeRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Music
+  /music/verify/{credential_id}:
+    get:
+      summary: Verify Music Credential
+      description: 'Public verification: returns validity + full credential + anchor status.'
+      operationId: verify_music_credential_music_verify__credential_id__get
+      parameters:
+      - name: credential_id
+        in: path
+        required: true
+        schema:
+          type: string
+          maxLength: 64
+          title: Credential Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Music
+components:
+  schemas:
+    MusicRevokeRequest:
+      properties:
+        reason:
+          type: string
+          maxLength: 512
+          title: Reason
+      type: object
+      required:
+      - reason
+      title: MusicRevokeRequest
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    MusicCredentialRequest:
+      properties:
+        agent_did:
+          type: string
+          maxLength: 128
+          title: Agent Did
+        tool:
+          type: string
+          maxLength: 128
+          title: Tool
+        human_oversight:
+          type: string
+          maxLength: 16
+          title: Human Oversight
+        genre:
+          type: string
+          maxLength: 64
+          title: Genre
+        rights:
+          type: string
+          maxLength: 64
+          title: Rights
+        track_title:
+          type: string
+          maxLength: 256
+          title: Track Title
+        track_description:
+          type: string
+          maxLength: 1024
+          title: Track Description
+        human_name:
+          type: string
+          maxLength: 128
+          title: Human Name
+        session:
+          type: string
+          maxLength: 128
+          title: Session
+        isrc:
+          type: string
+          maxLength: 15
+          title: Isrc
+      type: object
+      required:
+      - agent_did
+      - tool
+      - human_oversight
+      - rights
+      - track_title
+      title: MusicCredentialRequest
+x-refined-from:
+- moltrust-ch-openapi.json
+- moltrust-ch-openapi.yml

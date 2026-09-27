@@ -1,0 +1,27 @@
+openapi: 3.2.0
+info:
+  title: Moltrust Ch Interaction API
+  version: '2.5'
+  description: 'Operations tagged Interaction across 2 of this provider''s published API definitions: moltrust-ch-openapi.json, moltrust-ch-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.moltrust.ch
+  description: Production. The served openapi.json omits servers[]; the base is stated by the provider at https://moltrust.ch/developers.html (quickstart), in the agent card supportedInterfaces[0].url (https://api.moltrust.ch/a2a) and in did.json service[].serviceEndpoint (https://api.moltrust.ch).
+tags:
+- name: Interaction
+paths:
+  /interaction/validate-signing:
+    post:
+      summary: Validate Signing Endpoint
+      description: Validate interaction proof signing sequence. Tech Spec v0.2.2.
+      operationId: validate_signing_endpoint_interaction_validate_signing_post
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      tags:
+      - Interaction
+x-refined-from:
+- moltrust-ch-openapi.json
+- moltrust-ch-openapi.yml

@@ -1,0 +1,101 @@
+openapi: 3.2.0
+info:
+  title: Moltrust Ch Test Harness API
+  version: '2.5'
+  description: 'Operations tagged Test Harness across 2 of this provider''s published API definitions: moltrust-ch-openapi.json, moltrust-ch-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.moltrust.ch
+  description: Production. The served openapi.json omits servers[]; the base is stated by the provider at https://moltrust.ch/developers.html (quickstart), in the agent card supportedInterfaces[0].url (https://api.moltrust.ch/a2a) and in did.json service[].serviceEndpoint (https://api.moltrust.ch).
+tags:
+- name: Test Harness
+paths:
+  /test-harness/endorse:
+    post:
+      tags:
+      - Test Harness
+      summary: Test Harness Endorse
+      description: Record an endorsement via partner test harness. Requires partner-tier API key.
+      operationId: test_harness_endorse_test_harness_endorse_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TestHarnessEndorseRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    TestHarnessEndorseRequest:
+      properties:
+        endorser_did:
+          type: string
+          maxLength: 256
+          title: Endorser Did
+        target_did:
+          type: string
+          maxLength: 256
+          title: Target Did
+        weight:
+          type: number
+          title: Weight
+          default: 1.0
+        reason:
+          anyOf:
+          - type: string
+            maxLength: 200
+          - type: 'null'
+          title: Reason
+      type: object
+      required:
+      - endorser_did
+      - target_did
+      title: TestHarnessEndorseRequest
+x-refined-from:
+- moltrust-ch-openapi.json
+- moltrust-ch-openapi.yml

@@ -1,0 +1,206 @@
+openapi: 3.2.0
+info:
+  title: Moltrust Ch Delegation API
+  version: '2.5'
+  description: 'Operations tagged Delegation across 2 of this provider''s published API definitions: moltrust-ch-openapi.json, moltrust-ch-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.moltrust.ch
+  description: Production. The served openapi.json omits servers[]; the base is stated by the provider at https://moltrust.ch/developers.html (quickstart), in the agent card supportedInterfaces[0].url (https://api.moltrust.ch/a2a) and in did.json service[].serviceEndpoint (https://api.moltrust.ch).
+tags:
+- name: Delegation
+paths:
+  /delegation/configure:
+    post:
+      summary: Configure Delegation
+      description: Configure delegation permissions for an agent. Admin or agent owner.
+      operationId: configure_delegation_delegation_configure_post
+      parameters:
+      - name: X-API-Key
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Api-Key
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Delegation
+  /delegation/create:
+    post:
+      tags:
+      - Delegation
+      summary: Delegation Create
+      description: 'Mint a UCAN 0.10.0 delegation JWT (capabilities, attenuation, proof chain).
+
+        Bounded by the delegator''s agent_delegation_config.'
+      operationId: delegation_create_delegation_create_post
+      parameters:
+      - name: X-API-Key
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Api-Key
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DelegationCreateRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /delegation/verify:
+    post:
+      tags:
+      - Delegation
+      summary: Delegation Verify
+      description: 'Verify a UCAN JWT + embedded proof chain: signature, time bounds, iss/aud
+
+        chain alignment, attenuation monotonicity, and revocation.'
+      operationId: delegation_verify_delegation_verify_post
+      parameters:
+      - name: X-API-Key
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Api-Key
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DelegationVerifyRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    DelegationVerifyRequest:
+      properties:
+        token:
+          type: string
+          maxLength: 100000
+          title: Token
+        expected_audience:
+          anyOf:
+          - type: string
+            maxLength: 128
+          - type: 'null'
+          title: Expected Audience
+      type: object
+      required:
+      - token
+      title: DelegationVerifyRequest
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    DelegationCreateRequest:
+      properties:
+        delegator_did:
+          type: string
+          maxLength: 128
+          title: Delegator Did
+        audience_did:
+          type: string
+          maxLength: 128
+          title: Audience Did
+        capabilities:
+          additionalProperties: true
+          type: object
+          title: Capabilities
+          description: UCAN cap map {resource:{ability:[caveats]}}
+        ttl_seconds:
+          type: integer
+          maximum: 31536000.0
+          minimum: 1.0
+          title: Ttl Seconds
+          default: 3600
+        nonce:
+          anyOf:
+          - type: string
+            maxLength: 128
+          - type: 'null'
+          title: Nonce
+        facts:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Facts
+        proofs:
+          items:
+            type: string
+          type: array
+          title: Proofs
+          description: Embedded parent UCAN JWTs
+      type: object
+      required:
+      - delegator_did
+      - audience_did
+      - capabilities
+      title: DelegationCreateRequest
+x-refined-from:
+- moltrust-ch-openapi.json
+- moltrust-ch-openapi.yml

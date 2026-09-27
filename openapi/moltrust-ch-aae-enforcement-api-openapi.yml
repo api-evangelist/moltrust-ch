@@ -1,0 +1,305 @@
+openapi: 3.2.0
+info:
+  title: Moltrust Ch AAE Enforcement API
+  version: '2.5'
+  description: 'Operations tagged AAE Enforcement across 2 of this provider''s published API definitions: moltrust-ch-openapi.json, moltrust-ch-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.moltrust.ch
+  description: Production. The served openapi.json omits servers[]; the base is stated by the provider at https://moltrust.ch/developers.html (quickstart), in the agent card supportedInterfaces[0].url (https://api.moltrust.ch/a2a) and in did.json service[].serviceEndpoint (https://api.moltrust.ch).
+tags:
+- name: AAE Enforcement
+paths:
+  /vc/aae/challenge:
+    post:
+      tags:
+      - AAE Enforcement
+      summary: Aae Challenge
+      description: 'Issue a subject-binding challenge for one AAE (§5 Step 4).
+
+
+        Returns the members the subject agent signs back as a compact JWS: a fresh
+
+        128-bit nonce, the audience identifying this relying party, and the AAE id.
+
+        The nonce carries its own HMAC origin proof, so nothing is stored until the
+
+        response arrives and the nonce is spent.
+
+
+        Body: {"aae_id": ""}.'
+      operationId: aae_challenge_vc_aae_challenge_post
+      parameters:
+      - name: X-API-Key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Key
+      - name: X-MolTrust-DID
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Moltrust-Did
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /vc/aae/submit:
+    post:
+      tags:
+      - AAE Enforcement
+      summary: Aae Submit
+      description: 'Submit an AAE as a compact JWS (D-1 Acceptance-Gate). Verifies the issuer
+
+        signature + payload/schema (AAE §5 Step 1+2) and the subject-binding
+
+        challenge-response (§5 Step 4), fail-closed, then persists.
+
+        mandate/constraints/validity come from the VERIFIED payload, never from client claims.
+
+
+        Body: {"aae_jws": "", "subject_challenge_jws": "",
+
+        "ancestor_jws": ["", ...]}. The challenge nonce comes from
+
+        POST /vc/aae/challenge and is single-use. `ancestor_jws` carries the parent
+
+        AAEs of a delegated envelope inline; retrieval over delegator_aae_uri is deferred.
+
+        422 invalid/unverifiable, 409 single_use collision.'
+      operationId: aae_submit_vc_aae_submit_post
+      parameters:
+      - name: X-API-Key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Key
+      - name: X-MolTrust-DID
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Moltrust-Did
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /vc/aae/evaluate:
+    post:
+      tags:
+      - AAE Enforcement
+      summary: Aae Evaluate
+      description: 'Evaluate a geplante Aktion (action_context) gegen einen gespeicherten AAE-Envelope.
+
+
+        Boundary-Validierung (Defense-in-Depth zum fail-closed Core): nonce-missing->422,
+
+        Schema/Size/Format-Checks, agent_did==auth-principal, vc_idEnvelope-Binding.
+
+        Verdict (ALLOW/DENY) kommt signiert aus dem Evaluator-Core; das eval-row ist persistiert.'
+      operationId: aae_evaluate_vc_aae_evaluate_post
+      parameters:
+      - name: X-API-Key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Key
+      - name: X-MolTrust-DID
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Moltrust-Did
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /enforce/check:
+    post:
+      tags:
+      - AAE Enforcement
+      summary: Enforce Check Endpoint
+      description: 'Laufzeit-Check fuer constraint_mode=enforce. Mandat und Transaktion kommen im Request.
+
+
+        Der Kern (app/enforcement/enforce_check.py) liest keine Datenbank und haelt keinen
+
+        Zustand: das Verdikt haengt ausschliesslich an mandate + transaction. Wer beide hat,
+
+        rechnet den core_digest ohne diesen Server nach.
+
+
+        Fail-closed: fehlt ein gueltiges Mandat, ist die Antwort DENY — nicht 4xx und nicht
+
+        ein stiller Durchlauf. Der Aufrufer bekommt in beiden Faellen einen Record.
+
+
+        Jeder Grant traegt `type_fields` (Pflicht, enthaelt "verb") und deklariert damit, woraus
+
+        die Aktion besteht. `transaction.action` muss ein Objekt sein und genau diese Schluessel
+
+        tragen; Empfaenger und Betrag bleiben Geschwister der Aktion und laufen ueber Constraints.'
+      operationId: enforce_check_endpoint_enforce_check_post
+      parameters:
+      - name: X-API-Key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Key
+      - name: X-MolTrust-DID
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Moltrust-Did
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /enforce/ratify:
+    post:
+      tags:
+      - AAE Enforcement
+      summary: Enforce Ratify Endpoint
+      description: 'Ratifiziert einen DENY- oder PENDING-Record aus /enforce/check.
+
+
+        Der Vorgaenger wird NICHT veraendert. Zurueck kommt ein zweiter, eigenstaendiger Record,
+
+        der ihn per core_digest referenziert — Historie durch Anhaengen.
+
+
+        Der Kern (app/enforcement/ratify.py) liest keine Datenbank und haelt keinen Zustand. Wo
+
+        der Betreiber die Kette ablegt, ist seine Sache; MolTrust speichert sie nicht.
+
+
+        Die ratifizierende Autoritaet muss aus dem Mandat des Vorgaengers ableitbar sein und ihre
+
+        Signatur muss pruefbar sein. Ist sie das nicht, kommt ein Record mit status=REJECTED
+
+        zurueck (HTTP 200) — der Vorgaenger behaelt seinen Status. Ein nicht ratifizierbarer
+
+        Vorgaenger (etwa ein PERMIT) ist dagegen ein Aufrufer-Fehler: 422.'
+      operationId: enforce_ratify_endpoint_enforce_ratify_post
+      parameters:
+      - name: X-API-Key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Key
+      - name: X-MolTrust-DID
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Moltrust-Did
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+x-refined-from:
+- moltrust-ch-openapi.json
+- moltrust-ch-openapi.yml

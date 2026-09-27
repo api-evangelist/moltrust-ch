@@ -1,0 +1,97 @@
+openapi: 3.2.0
+info:
+  title: Moltrust Ch .well Known API
+  version: '2.5'
+  description: 'Operations tagged .well Known across 2 of this provider''s published API definitions: moltrust-ch-openapi.json, moltrust-ch-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.moltrust.ch
+  description: Production. The served openapi.json omits servers[]; the base is stated by the provider at https://moltrust.ch/developers.html (quickstart), in the agent card supportedInterfaces[0].url (https://api.moltrust.ch/a2a) and in did.json service[].serviceEndpoint (https://api.moltrust.ch).
+tags:
+- name: .well Known
+paths:
+  /.well-known/did.json:
+    get:
+      summary: Did Web Document
+      operationId: did_web_document__well_known_did_json_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      tags:
+      - .well Known
+  /.well-known/agent.json:
+    get:
+      summary: Well Known Agent Json Alias
+      description: 'Backward-compat alias for the legacy A2A discovery path.
+
+
+        Current A2A serves the Agent Card at /.well-known/agent-card.json (nginx
+
+        static). Pre-rename clients (e.g. @use-agently/sdk) still fetch
+
+        /.well-known/agent.json and 404 — nginx has no location for it, so it
+
+        falls through to the app. Serve the same public card here so those
+
+        clients can still discover MolTrust.'
+      operationId: well_known_agent_json_alias__well_known_agent_json_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      tags:
+      - .well Known
+  /.well-known/x402:
+    get:
+      summary: Well Known X402 Alias
+      description: 'Redirect the extension-less legacy path to the served x402 discovery
+
+        document. Clients fetch /.well-known/x402 (no .json) and 404; the document
+
+        is served at /.well-known/x402.json. nginx has no location for the bare
+
+        path, so it falls through to the app.'
+      operationId: well_known_x402_alias__well_known_x402_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      tags:
+      - .well Known
+  /.well-known/mcp.json:
+    get:
+      summary: Well Known Mcp Json
+      description: 'MCP server discovery document. Points MCP clients to the Streamable-HTTP
+
+        endpoint at /mcp. Static, analogous to /.well-known/agent-card.json.'
+      operationId: well_known_mcp_json__well_known_mcp_json_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      tags:
+      - .well Known
+  /.well-known/agent-registration.json:
+    get:
+      summary: Well Known Agent Registration
+      description: ERC-8004 domain verification endpoint.
+      operationId: well_known_agent_registration__well_known_agent_registration_json_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      tags:
+      - .well Known
+x-refined-from:
+- moltrust-ch-openapi.json
+- moltrust-ch-openapi.yml

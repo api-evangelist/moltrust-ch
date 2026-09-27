@@ -1,0 +1,66 @@
+openapi: 3.2.0
+info:
+  title: Moltrust Ch Output Provenance Admin API
+  version: '2.5'
+  description: 'Operations tagged Output Provenance Admin across 2 of this provider''s published API definitions: moltrust-ch-openapi.json, moltrust-ch-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.moltrust.ch
+  description: Production. The served openapi.json omits servers[]; the base is stated by the provider at https://moltrust.ch/developers.html (quickstart), in the agent card supportedInterfaces[0].url (https://api.moltrust.ch/a2a) and in did.json service[].serviceEndpoint (https://api.moltrust.ch).
+tags:
+- name: Output Provenance Admin
+paths:
+  /vc/ipr/admin/anchor:
+    post:
+      tags:
+      - Output Provenance Admin
+      summary: Ipr Admin Anchor
+      description: 'Admin: Trigger Merkle batch anchoring for all pending IPRs.'
+      operationId: ipr_admin_anchor_vc_ipr_admin_anchor_post
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /vc/ipr/admin/retry:
+    post:
+      tags:
+      - Output Provenance Admin
+      summary: Ipr Admin Retry
+      description: 'Admin: Reset failed IPRs back to pending.'
+      operationId: ipr_admin_retry_vc_ipr_admin_retry_post
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /vc/ipr/admin/reconcile:
+    post:
+      tags:
+      - Output Provenance Admin
+      summary: Ipr Admin Reconcile
+      description: 'Admin: Verify all anchored IPRs against chain and reset missing.'
+      operationId: ipr_admin_reconcile_vc_ipr_admin_reconcile_post
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /vc/ipr/admin/reanchor:
+    post:
+      tags:
+      - Output Provenance Admin
+      summary: Ipr Admin Reanchor
+      description: 'Admin: Force re-anchor a specific IPR.'
+      operationId: ipr_admin_reanchor_vc_ipr_admin_reanchor_post
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+x-refined-from:
+- moltrust-ch-openapi.json
+- moltrust-ch-openapi.yml

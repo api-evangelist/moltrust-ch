@@ -1,0 +1,118 @@
+openapi: 3.2.0
+info:
+  title: Moltrust Ch Trust API
+  version: '2.5'
+  description: 'Operations tagged Trust across 2 of this provider''s published API definitions: moltrust-ch-openapi.json, moltrust-ch-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.moltrust.ch
+  description: Production. The served openapi.json omits servers[]; the base is stated by the provider at https://moltrust.ch/developers.html (quickstart), in the agent card supportedInterfaces[0].url (https://api.moltrust.ch/a2a) and in did.json service[].serviceEndpoint (https://api.moltrust.ch).
+tags:
+- name: Trust
+paths:
+  /trust/gate/{did}:
+    get:
+      summary: Trust Gate
+      description: 'ALLOW/DENY a counter-party DID. F3 flywheel primitive.
+
+
+        Always returns HTTP 200; inspect `decision` in the body.
+
+
+        Decision tree:
+
+        1. Agent unknown → DENY agent_not_found
+
+        2. Phase 2 returns a real score:
+
+        score >= min_score → ALLOW (behavioral)
+
+        score = min_score → ALLOW (cold_start)
+
+        cold_start_score < min_score → DENY insufficient_trust_score (cold_start)'
+      operationId: trust_gate_trust_gate__did__get
+      parameters:
+      - name: did
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Did
+      - name: min_score
+        in: query
+        required: false
+        schema:
+          type: number
+          maximum: 100.0
+          minimum: 0.0
+          default: 50.0
+          title: Min Score
+      - name: context
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            maxLength: 100
+          - type: 'null'
+          title: Context
+      - name: allow_cold_start
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: false
+          title: Allow Cold Start
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Trust
+components:
+  schemas:
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+x-refined-from:
+- moltrust-ch-openapi.json
+- moltrust-ch-openapi.yml

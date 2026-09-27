@@ -1,0 +1,177 @@
+openapi: 3.2.0
+info:
+  title: Moltrust Ch Operators API
+  version: '2.5'
+  description: 'Operations tagged Operators across 2 of this provider''s published API definitions: moltrust-ch-openapi.json, moltrust-ch-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.moltrust.ch
+  description: Production. The served openapi.json omits servers[]; the base is stated by the provider at https://moltrust.ch/developers.html (quickstart), in the agent card supportedInterfaces[0].url (https://api.moltrust.ch/a2a) and in did.json service[].serviceEndpoint (https://api.moltrust.ch).
+tags:
+- name: Operators
+paths:
+  /operators/{operator_did}/agents/{agent_did}/budget-cap:
+    put:
+      summary: Set Budget Cap
+      operationId: set_budget_cap_operators__operator_did__agents__agent_did__budget_cap_put
+      parameters:
+      - name: operator_did
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Operator Did
+      - name: agent_did
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Agent Did
+      - name: X-API-Key
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Api-Key
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BudgetCapRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Operators
+    get:
+      summary: Get Budget Cap
+      operationId: get_budget_cap_operators__operator_did__agents__agent_did__budget_cap_get
+      parameters:
+      - name: operator_did
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Operator Did
+      - name: agent_did
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Agent Did
+      - name: X-API-Key
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Api-Key
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Operators
+  /operators/{operator_did}/budget-caps:
+    get:
+      summary: List Budget Caps
+      operationId: list_budget_caps_operators__operator_did__budget_caps_get
+      parameters:
+      - name: operator_did
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Operator Did
+      - name: X-API-Key
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Api-Key
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Operators
+components:
+  schemas:
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    BudgetCapRequest:
+      properties:
+        monthly_cap_chf:
+          type: number
+          minimum: 0.0
+          title: Monthly Cap Chf
+        warning_threshold:
+          type: number
+          maximum: 1.0
+          minimum: 0.0
+          title: Warning Threshold
+          default: 0.8
+      type: object
+      required:
+      - monthly_cap_chf
+      title: BudgetCapRequest
+x-refined-from:
+- moltrust-ch-openapi.json
+- moltrust-ch-openapi.yml

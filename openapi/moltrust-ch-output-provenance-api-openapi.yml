@@ -1,0 +1,223 @@
+openapi: 3.2.0
+info:
+  title: Moltrust Ch Output Provenance API
+  version: '2.5'
+  description: 'Operations tagged Output Provenance across 2 of this provider''s published API definitions: moltrust-ch-openapi.json, moltrust-ch-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.moltrust.ch
+  description: Production. The served openapi.json omits servers[]; the base is stated by the provider at https://moltrust.ch/developers.html (quickstart), in the agent card supportedInterfaces[0].url (https://api.moltrust.ch/a2a) and in did.json service[].serviceEndpoint (https://api.moltrust.ch).
+tags:
+- name: Output Provenance
+paths:
+  /vc/ipr/submit:
+    post:
+      tags:
+      - Output Provenance
+      summary: Ipr Submit
+      description: Submit an Interaction Proof Record.
+      operationId: ipr_submit_vc_ipr_submit_post
+      parameters:
+      - name: X-API-Key
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Api-Key
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /vc/ipr/stats:
+    get:
+      tags:
+      - Output Provenance
+      summary: Ipr Stats Endpoint
+      description: Get aggregate IPR statistics.
+      operationId: ipr_stats_endpoint_vc_ipr_stats_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /vc/ipr/agent/{did}:
+    get:
+      tags:
+      - Output Provenance
+      summary: Ipr By Agent
+      description: Get IPRs for an agent, newest first.
+      operationId: ipr_by_agent_vc_ipr_agent__did__get
+      parameters:
+      - name: did
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Did
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          default: 20
+          title: Limit
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+          default: 0
+          title: Offset
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /vc/ipr/{ipr_id}:
+    get:
+      tags:
+      - Output Provenance
+      summary: Ipr Get
+      description: Get a single IPR by ID.
+      operationId: ipr_get_vc_ipr__ipr_id__get
+      parameters:
+      - name: ipr_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Ipr Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /vc/ipr/{ipr_id}/status:
+    get:
+      tags:
+      - Output Provenance
+      summary: Ipr Status
+      description: Check DB vs chain consistency for an IPR.
+      operationId: ipr_status_vc_ipr__ipr_id__status_get
+      parameters:
+      - name: ipr_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Ipr Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /vc/ipr/verify:
+    post:
+      tags:
+      - Output Provenance
+      summary: Ipr Verify
+      description: 'Verify an IPR: check signature, anchor, and Merkle proof.'
+      operationId: ipr_verify_vc_ipr_verify_post
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /vc/ipr/{ipr_id}/outcome:
+    post:
+      tags:
+      - Output Provenance
+      summary: Ipr Outcome
+      description: Submit outcome feedback for confidence calibration.
+      operationId: ipr_outcome_vc_ipr__ipr_id__outcome_post
+      parameters:
+      - name: ipr_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Ipr Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+x-refined-from:
+- moltrust-ch-openapi.json
+- moltrust-ch-openapi.yml

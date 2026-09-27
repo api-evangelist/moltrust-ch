@@ -1,0 +1,105 @@
+openapi: 3.2.0
+info:
+  title: Moltrust Ch X402 API
+  version: '2.5'
+  description: 'Operations tagged X402 across 2 of this provider''s published API definitions: moltrust-ch-openapi.json, moltrust-ch-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.moltrust.ch
+  description: Production. The served openapi.json omits servers[]; the base is stated by the provider at https://moltrust.ch/developers.html (quickstart), in the agent card supportedInterfaces[0].url (https://api.moltrust.ch/a2a) and in did.json service[].serviceEndpoint (https://api.moltrust.ch).
+tags:
+- name: X402
+paths:
+  /x402/verify:
+    get:
+      summary: X402 Verify
+      description: Check if a DID has payment readiness (bound wallet + trust score).
+      operationId: x402_verify_x402_verify_get
+      parameters:
+      - name: did
+        in: query
+        required: true
+        schema:
+          type: string
+          maxLength: 128
+          title: Did
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - X402
+  /x402/stats:
+    get:
+      summary: X402 Stats
+      description: 'Stats on /x402/verify usage. Optional: filter by DID.'
+      operationId: x402_stats_x402_stats_get
+      parameters:
+      - name: did
+        in: query
+        required: false
+        schema:
+          type: string
+          maxLength: 128
+          title: Did
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - X402
+components:
+  schemas:
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+x-refined-from:
+- moltrust-ch-openapi.json
+- moltrust-ch-openapi.yml

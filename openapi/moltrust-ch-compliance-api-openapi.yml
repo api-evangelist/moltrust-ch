@@ -1,0 +1,407 @@
+openapi: 3.2.0
+info:
+  title: Moltrust Ch Compliance API
+  version: '2.5'
+  description: 'Operations tagged Compliance across 2 of this provider''s published API definitions: moltrust-ch-openapi.json, moltrust-ch-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.moltrust.ch
+  description: Production. The served openapi.json omits servers[]; the base is stated by the provider at https://moltrust.ch/developers.html (quickstart), in the agent card supportedInterfaces[0].url (https://api.moltrust.ch/a2a) and in did.json service[].serviceEndpoint (https://api.moltrust.ch).
+tags:
+- name: Compliance
+paths:
+  /compliance/assess:
+    post:
+      tags:
+      - Compliance
+      summary: Compliance Assess
+      description: 'Classify an AI system under the EU AI Act (Reg (EU) 2024/1689): risk tier
+
+        (prohibited/high/limited/minimal), obligations checklist and gap analysis.
+
+        Deterministic; every verdict is pinned to the verified spec-fakten.'
+      operationId: compliance_assess_compliance_assess_post
+      parameters:
+      - name: X-API-Key
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Api-Key
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ComplianceAssessRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /compliance/declaration:
+    post:
+      tags:
+      - Compliance
+      summary: Compliance Declaration
+      description: 'Issue an EU declaration of conformity (Annex V) as a signed W3C VC of type
+
+        MolTrustConformityDeclaration. credentialSubject fields map 1:1 to Annex V(1)-(8).'
+      operationId: compliance_declaration_compliance_declaration_post
+      parameters:
+      - name: X-API-Key
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Api-Key
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ComplianceDeclarationRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /compliance/report/{did}:
+    get:
+      tags:
+      - Compliance
+      summary: Compliance Report
+      description: 'Compliance report (HTML v1): identity, latest risk assessment, obligations,
+
+        gaps, conformity declarations, trust score, audit summary. `format=json` for machine use.'
+      operationId: compliance_report_compliance_report__did__get
+      parameters:
+      - name: did
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Did
+      - name: format
+        in: query
+        required: false
+        schema:
+          type: string
+          pattern: ^(html|json)$
+          default: html
+          title: Format
+      - name: X-API-Key
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Api-Key
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /compliance/incident:
+    post:
+      tags:
+      - Compliance
+      summary: Compliance Incident
+      description: 'Record an Art 73 serious incident with the verified staggered deadline
+
+        (2d critical-infra / 10d death / 15d general) and deadline status. Recording
+
+        only — no automatic authority dispatch (the Art 73 duty rests with the provider).'
+      operationId: compliance_incident_compliance_incident_post
+      parameters:
+      - name: X-API-Key
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Api-Key
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ComplianceIncidentRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    ComplianceDeclarationRequest:
+      properties:
+        subject_did:
+          type: string
+          maxLength: 128
+          title: Subject Did
+          description: DID of the AI system / agent
+        ai_system_name:
+          type: string
+          maxLength: 255
+          title: Ai System Name
+        ai_system_reference:
+          type: string
+          maxLength: 255
+          title: Ai System Reference
+        provider_name:
+          type: string
+          maxLength: 255
+          title: Provider Name
+        provider_address:
+          type: string
+          maxLength: 500
+          title: Provider Address
+        conformity_with_other_union_law:
+          anyOf:
+          - type: string
+            maxLength: 500
+          - type: 'null'
+          title: Conformity With Other Union Law
+        processes_personal_data:
+          type: boolean
+          title: Processes Personal Data
+          default: false
+        harmonised_standards:
+          items:
+            type: string
+          type: array
+          title: Harmonised Standards
+        notified_body:
+          anyOf:
+          - $ref: '#/components/schemas/NotifiedBodyInput'
+          - type: 'null'
+        place_of_issue:
+          type: string
+          maxLength: 255
+          title: Place Of Issue
+        signatory_name:
+          type: string
+          maxLength: 255
+          title: Signatory Name
+        signatory_function:
+          type: string
+          maxLength: 255
+          title: Signatory Function
+        on_behalf_of:
+          type: string
+          maxLength: 255
+          title: On Behalf Of
+        anchor:
+          type: boolean
+          title: Anchor
+          description: If true, return a content commitment (sha256) for later batch anchoring via /anchors/batch
+          default: false
+      type: object
+      required:
+      - subject_did
+      - ai_system_name
+      - ai_system_reference
+      - provider_name
+      - provider_address
+      - place_of_issue
+      - signatory_name
+      - signatory_function
+      - on_behalf_of
+      title: ComplianceDeclarationRequest
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    ComplianceIncidentRequest:
+      properties:
+        did:
+          type: string
+          maxLength: 128
+          title: Did
+        category:
+          type: string
+          title: Category
+          description: death|health_harm|critical_infrastructure|widespread_infringement|fundamental_rights|property_environment
+        severity:
+          type: string
+          title: Severity
+          default: high
+        description:
+          anyOf:
+          - type: string
+            maxLength: 4000
+          - type: 'null'
+          title: Description
+        awareness_date:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Awareness Date
+          description: ISO8601 UTC; defaults to now
+      type: object
+      required:
+      - did
+      - category
+      title: ComplianceIncidentRequest
+    NotifiedBodyInput:
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          title: Name
+        identification_number:
+          type: string
+          maxLength: 64
+          title: Identification Number
+        procedure:
+          type: string
+          maxLength: 500
+          title: Procedure
+        certificate:
+          type: string
+          maxLength: 255
+          title: Certificate
+      type: object
+      required:
+      - name
+      - identification_number
+      - procedure
+      - certificate
+      title: NotifiedBodyInput
+    ComplianceAssessRequest:
+      properties:
+        did:
+          anyOf:
+          - type: string
+            maxLength: 128
+          - type: 'null'
+          title: Did
+          description: Optional agent DID to attach the assessment to
+        use_case:
+          type: string
+          maxLength: 2000
+          title: Use Case
+          description: Description of the AI system's use case
+        intended_purpose:
+          type: string
+          maxLength: 2000
+          title: Intended Purpose
+          description: Intended purpose (Art 7(2)(a))
+        annex_iii_area:
+          anyOf:
+          - type: integer
+            maximum: 8.0
+            minimum: 1.0
+          - type: 'null'
+          title: Annex Iii Area
+          description: Annex III area 1-8, if known
+        is_annex_i_safety_component:
+          type: boolean
+          title: Is Annex I Safety Component
+          default: false
+        requires_third_party_conformity:
+          type: boolean
+          title: Requires Third Party Conformity
+          default: false
+        performs_profiling:
+          type: boolean
+          title: Performs Profiling
+          default: false
+        prohibited_flags:
+          items:
+            type: string
+          type: array
+          title: Prohibited Flags
+          description: Self-declared Art 5(1) flags
+        derogation_claim:
+          anyOf:
+          - type: string
+            maxLength: 64
+          - type: 'null'
+          title: Derogation Claim
+          description: 'Art 6(3): narrow_procedural|improve_human_result|detect_patterns_no_replace|preparatory_task'
+        interacts_with_humans:
+          type: boolean
+          title: Interacts With Humans
+          default: false
+        generates_synthetic_content:
+          type: boolean
+          title: Generates Synthetic Content
+          default: false
+        emotion_recognition:
+          type: boolean
+          title: Emotion Recognition
+          default: false
+        biometric_categorisation:
+          type: boolean
+          title: Biometric Categorisation
+          default: false
+        deep_fake:
+          type: boolean
+          title: Deep Fake
+          default: false
+      type: object
+      required:
+      - use_case
+      - intended_purpose
+      title: ComplianceAssessRequest
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+x-refined-from:
+- moltrust-ch-openapi.json
+- moltrust-ch-openapi.yml

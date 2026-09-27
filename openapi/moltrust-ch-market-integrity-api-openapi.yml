@@ -1,0 +1,324 @@
+openapi: 3.2.0
+info:
+  title: Moltrust Ch Market Integrity API
+  version: 1.5.0
+  contact:
+    name: CryptoKRI GmbH
+    url: https://moltrust.ch
+  license:
+    name: Apache-2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  description: 'Operations tagged market-integrity across 2 of this provider''s published API definitions: moltrust-ch-moltguard-openapi.json, moltrust-ch-moltguard-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.moltrust.ch/guard
+  description: Production
+security: []
+tags:
+- name: market-integrity
+  description: Polymarket/Kalshi integrity checks + feed + events
+paths:
+  /api/market/check-free/{marketId}:
+    get:
+      tags:
+      - market-integrity
+      summary: Market integrity check (free, rate-limited 1/10min)
+      description: Free-tier Polymarket/Kalshi integrity check. Rate-limited 1/10min per IP.
+      operationId: getMarketCheckFree
+      parameters:
+      - name: marketId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Polymarket condition_id or Kalshi market slug
+      responses:
+        '200':
+          description: Market check result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MarketCheckResult'
+        '429':
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RateLimitError'
+    servers:
+    - url: https://api.moltrust.ch/guard
+      description: Production
+  /api/market/check/{marketId}:
+    get:
+      tags:
+      - market-integrity
+      summary: Market integrity check (paid)
+      description: Polymarket/Kalshi integrity check — outcome anomalies, oracle manipulation, statistical irregularities.
+      operationId: getMarketCheckPaid
+      security:
+      - x402: []
+      x-moltrust-pricing:
+        amount: '0.05'
+        currency: USDC
+        chain: eip155:8453
+      parameters:
+      - name: marketId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Market check result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MarketCheckResult'
+        '402':
+          description: x402 payment required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentRequired'
+    servers:
+    - url: https://api.moltrust.ch/guard
+      description: Production
+  /api/market/feed:
+    get:
+      tags:
+      - market-integrity
+      summary: Aggregated market integrity feed (paid)
+      description: 'NOTE per BACKLOG: this endpoint is currently in BOTH X402_PRICES and X402_FREE_PATHS in moltguard middleware; live behaviour is free. Pricing-config will be consolidated at P2-followup. Spec reflects intent (paid $0.10).'
+      operationId: getMarketFeed
+      security:
+      - x402: []
+      x-moltrust-pricing:
+        amount: '0.10'
+        currency: USDC
+        chain: eip155:8453
+      responses:
+        '200':
+          description: Market feed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MarketFeedResult'
+    servers:
+    - url: https://api.moltrust.ch/guard
+      description: Production
+  /api/market/sample:
+    get:
+      tags:
+      - market-integrity
+      summary: Sample market integrity response (mock, no auth)
+      operationId: getMarketSample
+      responses:
+        '200':
+          description: Sample
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MarketSample'
+    servers:
+    - url: https://api.moltrust.ch/guard
+      description: Production
+  /events/feed:
+    get:
+      tags:
+      - market-integrity
+      summary: Polymarket events feed (free — anomaly + multi_outcome scanner output)
+      description: Refreshed every 6h by cron (30 */6 * * *) from ~/moltstack/agents/moltguard.py scanner. Returns last_scan, anomaly_count, multi_outcome_count, and events array.
+      operationId: getEventsFeed
+      responses:
+        '200':
+          description: Events feed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventsFeedResult'
+        '404':
+          description: Scan has not run yet
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    servers:
+    - url: https://api.moltrust.ch/guard
+      description: Production
+components:
+  schemas:
+    MarketSample:
+      type: object
+      description: Mock market integrity sample. No real API call.
+      additionalProperties: true
+      properties:
+        marketId:
+          type: string
+        integrityScore:
+          type: integer
+          minimum: 0
+          maximum: 100
+        flags:
+          type: array
+          items:
+            type: string
+        _meta:
+          $ref: '#/components/schemas/ScoreMeta'
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Short error code
+        message:
+          type: string
+          description: Human-readable detail
+      required:
+      - error
+    MarketFeedResult:
+      type: object
+      description: Aggregated market integrity feed across tracked markets.
+      additionalProperties: true
+      properties:
+        generatedAt:
+          type: string
+          format: date-time
+        markets:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+    MarketCheckResult:
+      type: object
+      description: Full market integrity check result (Polymarket/Kalshi).
+      additionalProperties: true
+      properties:
+        marketId:
+          type: string
+        integrityScore:
+          type: integer
+          minimum: 0
+          maximum: 100
+        spreadPct:
+          type: number
+        oracleVerified:
+          type: boolean
+        flags:
+          type: array
+          items:
+            type: string
+        _meta:
+          $ref: '#/components/schemas/ScoreMeta'
+    EventsFeedResult:
+      type: object
+      description: Polymarket events feed — anomaly + multi_outcome events from MoltGuard scanner. Refreshed every 6h by cron.
+      properties:
+        last_scan:
+          type: string
+          format: date-time
+        total_events_scanned:
+          type: integer
+        anomaly_count:
+          type: integer
+        multi_outcome_count:
+          type: integer
+        events:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+            properties:
+              slug:
+                type: string
+              title:
+                type: string
+              category:
+                type: string
+              flags:
+                type: array
+                items:
+                  type: string
+              volume:
+                type: number
+              markets_count:
+                type: integer
+              detected_at:
+                type: string
+                format: date-time
+              closed_at:
+                type: string
+                format: date-time
+              is_live:
+                type: boolean
+    ScoreMeta:
+      type: object
+      properties:
+        service:
+          type: string
+          enum:
+          - moltguard
+        version:
+          type: string
+        chain:
+          type: string
+          example: base-<block-number>
+        dataSource:
+          type: string
+          example: blockscout+rpc+moltrust
+        timestamp:
+          type: string
+          format: date-time
+        pricingTier:
+          type: string
+          enum:
+          - paid
+          - free-limited
+          - sample
+        note:
+          type: string
+    RateLimitError:
+      type: object
+      properties:
+        message:
+          type: string
+          example: 'Free tier: max 1 request(s) per 10 minutes. Use x402 paid endpoints for unlimited access.'
+    PaymentRequired:
+      type: object
+      description: x402 v2 challenge body. Returned with HTTP 402 when X-PAYMENT header is missing or invalid.
+      properties:
+        x402:
+          type: object
+          properties:
+            version:
+              type: integer
+              example: 2
+            accepts:
+              type: array
+              items:
+                type: object
+                properties:
+                  scheme:
+                    type: string
+                    example: exact
+                  network:
+                    type: string
+                    example: base
+                  maxAmountRequired:
+                    type: object
+                    properties:
+                      asset:
+                        type: string
+                        example: USDC
+                      amount:
+                        type: string
+                        description: USDC base units (6 decimals)
+                  payTo:
+                    type: string
+  securitySchemes:
+    x402:
+      type: apiKey
+      in: header
+      name: X-PAYMENT
+      description: 'x402 v2 payment receipt header. Format: "x402 <base64-encoded-receipt>". See https://x402.org/writing/x402-v2-launch.'
+x-refined-from:
+- moltrust-ch-moltguard-openapi.json
+- moltrust-ch-moltguard-openapi.yml
