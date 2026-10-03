@@ -1,14 +1,14 @@
 openapi: 3.2.0
 info:
-  title: Moltrust Ch Aae Evaluation API
+  title: MoltGuard Aae Evaluation API
   version: 1.5.0
+  description: 'Trust & Integrity Service for the x402 Agent Economy. Sub-API of MolTrust Trust Registry (api.moltrust.ch). See also: https://api.moltrust.ch/openapi.json (parent service).'
   contact:
     name: CryptoKRI GmbH
     url: https://moltrust.ch
   license:
     name: Apache-2.0
     url: https://www.apache.org/licenses/LICENSE-2.0
-  description: 'Operations tagged aae-evaluation across 2 of this provider''s published API definitions: moltrust-ch-moltguard-openapi.json, moltrust-ch-moltguard-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://api.moltrust.ch/guard
   description: Production
@@ -38,9 +38,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ActionCheckResult'
-    servers:
-    - url: https://api.moltrust.ch/guard
-      description: Production
   /api/action/events/{did}:
     get:
       tags:
@@ -60,9 +57,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ActionEvents'
-    servers:
-    - url: https://api.moltrust.ch/guard
-      description: Production
   /api/action/stats:
     get:
       tags:
@@ -76,9 +70,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ActionStats'
-    servers:
-    - url: https://api.moltrust.ch/guard
-      description: Production
   /governance/validate-capabilities:
     post:
       tags:
@@ -100,9 +91,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GovernanceValidateResult'
-    servers:
-    - url: https://api.moltrust.ch/guard
-      description: Production
   /vc/aae/evaluate:
     get:
       tags:
@@ -135,9 +123,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AAEEvalResult'
-    servers:
-    - url: https://api.moltrust.ch/guard
-      description: Production
   /vc/aae/info:
     get:
       tags:
@@ -151,11 +136,22 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AAEInfo'
-    servers:
-    - url: https://api.moltrust.ch/guard
-      description: Production
 components:
   schemas:
+    ActionStats:
+      type: object
+      additionalProperties: true
+      properties:
+        totalChecks:
+          type: integer
+        allowed:
+          type: integer
+        denied:
+          type: integer
+    AAEInfo:
+      type: object
+      additionalProperties: true
+      description: 'AAE-evaluation service info: schema URI, supported operations.'
     ActionEvents:
       type: array
       items:
@@ -171,20 +167,34 @@ components:
           timestamp:
             type: string
             format: date-time
-    AAEInfo:
+    GovernanceValidateResult:
       type: object
       additionalProperties: true
-      description: 'AAE-evaluation service info: schema URI, supported operations.'
-    ActionStats:
+      description: Capability-validation verdict (used by aeoess + MolTrust agents). Spend-ceiling + score-gate.
+      properties:
+        decision:
+          type: string
+          enum:
+          - permit
+          - deny
+        score:
+          type: number
+        reasons:
+          type: array
+          items:
+            type: string
+    ActionCheckResult:
       type: object
       additionalProperties: true
       properties:
-        totalChecks:
-          type: integer
         allowed:
+          type: boolean
+        riskScore:
           type: integer
-        denied:
-          type: integer
+        reasons:
+          type: array
+          items:
+            type: string
     AAEEvalResult:
       type: object
       additionalProperties: true
@@ -203,40 +213,9 @@ components:
         constraints:
           type: object
           additionalProperties: true
-    ActionCheckResult:
-      type: object
-      additionalProperties: true
-      properties:
-        allowed:
-          type: boolean
-        riskScore:
-          type: integer
-        reasons:
-          type: array
-          items:
-            type: string
-    GovernanceValidateResult:
-      type: object
-      additionalProperties: true
-      description: Capability-validation verdict (used by aeoess + MolTrust agents). Spend-ceiling + score-gate.
-      properties:
-        decision:
-          type: string
-          enum:
-          - permit
-          - deny
-        score:
-          type: number
-        reasons:
-          type: array
-          items:
-            type: string
   securitySchemes:
     x402:
       type: apiKey
       in: header
       name: X-PAYMENT
       description: 'x402 v2 payment receipt header. Format: "x402 <base64-encoded-receipt>". See https://x402.org/writing/x402-v2-launch.'
-x-refined-from:
-- moltrust-ch-moltguard-openapi.json
-- moltrust-ch-moltguard-openapi.yml

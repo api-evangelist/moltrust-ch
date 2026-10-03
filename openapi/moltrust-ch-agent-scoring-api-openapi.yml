@@ -1,14 +1,14 @@
 openapi: 3.2.0
 info:
-  title: Moltrust Ch Agent Scoring API
+  title: MoltGuard Agent Scoring API
   version: 1.5.0
+  description: 'Trust & Integrity Service for the x402 Agent Economy. Sub-API of MolTrust Trust Registry (api.moltrust.ch). See also: https://api.moltrust.ch/openapi.json (parent service).'
   contact:
     name: CryptoKRI GmbH
     url: https://moltrust.ch
   license:
     name: Apache-2.0
     url: https://www.apache.org/licenses/LICENSE-2.0
-  description: 'Operations tagged agent-scoring across 2 of this provider''s published API definitions: moltrust-ch-moltguard-openapi.json, moltrust-ch-moltguard-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://api.moltrust.ch/guard
   description: Production
@@ -57,9 +57,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PaymentRequired'
-    servers:
-    - url: https://api.moltrust.ch/guard
-      description: Production
   /api/agent/sample:
     get:
       tags:
@@ -74,9 +71,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AgentScoreSample'
-    servers:
-    - url: https://api.moltrust.ch/guard
-      description: Production
   /api/agent/score/{address}:
     get:
       tags:
@@ -117,9 +111,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PaymentRequired'
-    servers:
-    - url: https://api.moltrust.ch/guard
-      description: Production
   /api/agent/score-free/{address}:
     get:
       tags:
@@ -154,93 +145,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/RateLimitError'
-    servers:
-    - url: https://api.moltrust.ch/guard
-      description: Production
 components:
   schemas:
-    ScoreBreakdown:
-      type: object
-      description: Component breakdown of AgentScore. Sum of components clamped to [0,100].
-      properties:
-        walletAge:
-          type: integer
-        txCount:
-          type: integer
-        counterparties:
-          type: integer
-        usdcBalance:
-          type: integer
-        erc8004Registration:
-          type: integer
-        erc8004Reputation:
-          type: integer
-        sybilPenalty:
-          type: integer
-          description: Negative — penalty for sybil-cluster membership
-        credentialBonus:
-          type: integer
-          description: Positive — bonus for held VCs
-    ERC8004Data:
-      type: object
-      properties:
-        registered:
-          type: boolean
-        agentId:
-          type: string
-        tokenURI:
-          type:
-          - string
-          - 'null'
-        reputationScore:
-          type:
-          - number
-          - 'null'
-        available:
-          type: boolean
-    ScoreMeta:
-      type: object
-      properties:
-        service:
-          type: string
-          enum:
-          - moltguard
-        version:
-          type: string
-        chain:
-          type: string
-          example: base-<block-number>
-        dataSource:
-          type: string
-          example: blockscout+rpc+moltrust
-        timestamp:
-          type: string
-          format: date-time
-        pricingTier:
-          type: string
-          enum:
-          - paid
-          - free-limited
-          - sample
-        note:
-          type: string
-    MolTrustProfile:
-      type:
-      - object
-      - 'null'
-      properties:
-        did:
-          type: string
-        displayName:
-          type: string
-        verified:
-          type: boolean
-        reputationScore:
-          type: number
-        totalRatings:
-          type: integer
-        hasCredentials:
-          type: boolean
     WalletData:
       type: object
       properties:
@@ -268,26 +174,81 @@ components:
           - 'null'
         latestBlock:
           type: integer
-    AgentScoreSample:
+    ERC8004Data:
       type: object
-      description: Mock response for /api/agent/sample. Fixed wallet 0x000...000.
       properties:
-        wallet:
+        registered:
+          type: boolean
+        agentId:
           type: string
-          example: '0x0000000000000000000000000000000000000000'
-        score:
-          type: integer
-          minimum: 0
-          maximum: 100
-        breakdown:
-          $ref: '#/components/schemas/ScoreBreakdown'
-        _meta:
-          $ref: '#/components/schemas/ScoreMeta'
-      required:
-      - wallet
-      - score
-      - breakdown
-      - _meta
+        tokenURI:
+          type:
+          - string
+          - 'null'
+        reputationScore:
+          type:
+          - number
+          - 'null'
+        available:
+          type: boolean
+    PaymentRequired:
+      type: object
+      description: x402 v2 challenge body. Returned with HTTP 402 when X-PAYMENT header is missing or invalid.
+      properties:
+        x402:
+          type: object
+          properties:
+            version:
+              type: integer
+              example: 2
+            accepts:
+              type: array
+              items:
+                type: object
+                properties:
+                  scheme:
+                    type: string
+                    example: exact
+                  network:
+                    type: string
+                    example: base
+                  maxAmountRequired:
+                    type: object
+                    properties:
+                      asset:
+                        type: string
+                        example: USDC
+                      amount:
+                        type: string
+                        description: USDC base units (6 decimals)
+                  payTo:
+                    type: string
+    ScoreMeta:
+      type: object
+      properties:
+        service:
+          type: string
+          enum:
+          - moltguard
+        version:
+          type: string
+        chain:
+          type: string
+          example: base-<block-number>
+        dataSource:
+          type: string
+          example: blockscout+rpc+moltrust
+        timestamp:
+          type: string
+          format: date-time
+        pricingTier:
+          type: string
+          enum:
+          - paid
+          - free-limited
+          - sample
+        note:
+          type: string
     AgentDetail:
       type: object
       description: Paid full-detail response — score + breakdown + on-chain data + ERC-8004 + MolTrust profile.
@@ -310,6 +271,18 @@ components:
           $ref: '#/components/schemas/ERC8004Data'
         moltrust:
           $ref: '#/components/schemas/MolTrustProfile'
+    InvalidAddressError:
+      type: object
+      properties:
+        error:
+          type: string
+          enum:
+          - invalid_address
+        message:
+          type: string
+      required:
+      - error
+      - message
     AgentScoreFull:
       type: object
       description: Paid full-score response — includes breakdown.
@@ -345,62 +318,74 @@ components:
       - wallet
       - score
       - _meta
-    InvalidAddressError:
-      type: object
+    MolTrustProfile:
+      type:
+      - object
+      - 'null'
       properties:
-        error:
+        did:
           type: string
-          enum:
-          - invalid_address
-        message:
+        displayName:
           type: string
-      required:
-      - error
-      - message
+        verified:
+          type: boolean
+        reputationScore:
+          type: number
+        totalRatings:
+          type: integer
+        hasCredentials:
+          type: boolean
+    ScoreBreakdown:
+      type: object
+      description: Component breakdown of AgentScore. Sum of components clamped to [0,100].
+      properties:
+        walletAge:
+          type: integer
+        txCount:
+          type: integer
+        counterparties:
+          type: integer
+        usdcBalance:
+          type: integer
+        erc8004Registration:
+          type: integer
+        erc8004Reputation:
+          type: integer
+        sybilPenalty:
+          type: integer
+          description: Negative — penalty for sybil-cluster membership
+        credentialBonus:
+          type: integer
+          description: Positive — bonus for held VCs
     RateLimitError:
       type: object
       properties:
         message:
           type: string
           example: 'Free tier: max 1 request(s) per 10 minutes. Use x402 paid endpoints for unlimited access.'
-    PaymentRequired:
+    AgentScoreSample:
       type: object
-      description: x402 v2 challenge body. Returned with HTTP 402 when X-PAYMENT header is missing or invalid.
+      description: Mock response for /api/agent/sample. Fixed wallet 0x000...000.
       properties:
-        x402:
-          type: object
-          properties:
-            version:
-              type: integer
-              example: 2
-            accepts:
-              type: array
-              items:
-                type: object
-                properties:
-                  scheme:
-                    type: string
-                    example: exact
-                  network:
-                    type: string
-                    example: base
-                  maxAmountRequired:
-                    type: object
-                    properties:
-                      asset:
-                        type: string
-                        example: USDC
-                      amount:
-                        type: string
-                        description: USDC base units (6 decimals)
-                  payTo:
-                    type: string
+        wallet:
+          type: string
+          example: '0x0000000000000000000000000000000000000000'
+        score:
+          type: integer
+          minimum: 0
+          maximum: 100
+        breakdown:
+          $ref: '#/components/schemas/ScoreBreakdown'
+        _meta:
+          $ref: '#/components/schemas/ScoreMeta'
+      required:
+      - wallet
+      - score
+      - breakdown
+      - _meta
   securitySchemes:
     x402:
       type: apiKey
       in: header
       name: X-PAYMENT
       description: 'x402 v2 payment receipt header. Format: "x402 <base64-encoded-receipt>". See https://x402.org/writing/x402-v2-launch.'
-x-refined-from:
-- moltrust-ch-moltguard-openapi.json
-- moltrust-ch-moltguard-openapi.yml

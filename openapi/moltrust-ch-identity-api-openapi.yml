@@ -1,11 +1,7 @@
 openapi: 3.2.0
 info:
-  title: Moltrust Ch Identity API
+  title: MolTrust Identity API
   version: '2.5'
-  description: 'Operations tagged Identity across 2 of this provider''s published API definitions: moltrust-ch-openapi.json, moltrust-ch-openapi.yml. Each path carries the servers of the definition it was published in.'
-servers:
-- url: https://api.moltrust.ch
-  description: Production. The served openapi.json omits servers[]; the base is stated by the provider at https://moltrust.ch/developers.html (quickstart), in the agent card supportedInterfaces[0].url (https://api.moltrust.ch/a2a) and in did.json service[].serviceEndpoint (https://api.moltrust.ch).
 tags:
 - name: Identity
 paths:
@@ -883,60 +879,6 @@ paths:
       - Identity
 components:
   schemas:
-    RevokeRequest:
-      properties:
-        reason:
-          type: string
-          maxLength: 100
-          title: Reason
-          default: manual_revocation
-        cascade:
-          type: boolean
-          title: Cascade
-          description: Revoke all downstream delegated agents
-          default: false
-      type: object
-      title: RevokeRequest
-    ERC8004ValidateRequest:
-      properties:
-        erc8004_agent_id:
-          type: integer
-          minimum: 0.0
-          title: Erc8004 Agent Id
-        validation_type:
-          type: string
-          maxLength: 64
-          title: Validation Type
-          default: trust_assessment
-      type: object
-      required:
-      - erc8004_agent_id
-      title: ERC8004ValidateRequest
-    ERC8004RegisterRequest:
-      properties:
-        name:
-          type: string
-          maxLength: 128
-          title: Name
-        description:
-          type: string
-          maxLength: 1024
-          title: Description
-          default: ''
-        wallet_address:
-          type: string
-          maxLength: 64
-          title: Wallet Address
-        platform:
-          type: string
-          maxLength: 64
-          title: Platform
-          default: base
-      type: object
-      required:
-      - name
-      - wallet_address
-      title: ERC8004RegisterRequest
     AgentClassRequest:
       properties:
         agent_class:
@@ -966,6 +908,36 @@ components:
       required:
       - agent_class
       title: AgentClassRequest
+    ScoreImportRequest:
+      properties:
+        moltrust_did:
+          type: string
+          maxLength: 128
+          title: Moltrust Did
+        external_did:
+          type: string
+          maxLength: 256
+          title: External Did
+        external_score:
+          type: number
+          minimum: 0.0
+          title: External Score
+        external_system:
+          type: string
+          maxLength: 32
+          title: External System
+        proof:
+          type: string
+          maxLength: 512
+          title: Proof
+          default: ''
+      type: object
+      required:
+      - moltrust_did
+      - external_did
+      - external_score
+      - external_system
+      title: ScoreImportRequest
     PopRegisterRequest:
       properties:
         public_key:
@@ -1007,36 +979,127 @@ components:
       - signature
       - pow_nonce
       title: PopRegisterRequest
-    ScoreImportRequest:
+    ERC8004ValidateRequest:
       properties:
-        moltrust_did:
+        erc8004_agent_id:
+          type: integer
+          minimum: 0.0
+          title: Erc8004 Agent Id
+        validation_type:
           type: string
-          maxLength: 128
-          title: Moltrust Did
+          maxLength: 64
+          title: Validation Type
+          default: trust_assessment
+      type: object
+      required:
+      - erc8004_agent_id
+      title: ERC8004ValidateRequest
+    DIDBridgeRequest:
+      properties:
         external_did:
           type: string
           maxLength: 256
           title: External Did
-        external_score:
-          type: number
-          minimum: 0.0
-          title: External Score
-        external_system:
+        moltrust_did:
           type: string
-          maxLength: 32
-          title: External System
+          maxLength: 128
+          title: Moltrust Did
+        wallet_address:
+          type: string
+          maxLength: 64
+          title: Wallet Address
+        chain:
+          type: string
+          maxLength: 20
+          title: Chain
+          default: solana
         proof:
           type: string
           maxLength: 512
           title: Proof
-          default: ''
+        nonce:
+          type: string
+          maxLength: 64
+          title: Nonce
       type: object
       required:
-      - moltrust_did
       - external_did
-      - external_score
-      - external_system
-      title: ScoreImportRequest
+      - moltrust_did
+      - wallet_address
+      - proof
+      - nonce
+      title: DIDBridgeRequest
+    SimpleBridgeRequest:
+      properties:
+        external_did:
+          type: string
+          maxLength: 256
+          title: External Did
+        label:
+          type: string
+          maxLength: 128
+          title: Label
+          default: ''
+        platform:
+          type: string
+          maxLength: 32
+          title: Platform
+          default: external
+      type: object
+      required:
+      - external_did
+      title: SimpleBridgeRequest
+    ERC8004RegisterRequest:
+      properties:
+        name:
+          type: string
+          maxLength: 128
+          title: Name
+        description:
+          type: string
+          maxLength: 1024
+          title: Description
+          default: ''
+        wallet_address:
+          type: string
+          maxLength: 64
+          title: Wallet Address
+        platform:
+          type: string
+          maxLength: 64
+          title: Platform
+          default: base
+      type: object
+      required:
+      - name
+      - wallet_address
+      title: ERC8004RegisterRequest
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    SpiffeBindRequest:
+      properties:
+        spiffe_uri:
+          type: string
+          maxLength: 512
+          title: Spiffe Uri
+          description: SPIFFE URI, e.g. spiffe://moltrust.ch/agent/scanner
+        did:
+          type: string
+          maxLength: 128
+          title: Did
+          description: MolTrust DID to bind to
+      type: object
+      required:
+      - spiffe_uri
+      - did
+      title: SpiffeBindRequest
     ValidationError:
       properties:
         loc:
@@ -1093,70 +1156,6 @@ components:
       - wallet_signature
       - nonce
       title: WalletBindRequest
-    DIDBridgeRequest:
-      properties:
-        external_did:
-          type: string
-          maxLength: 256
-          title: External Did
-        moltrust_did:
-          type: string
-          maxLength: 128
-          title: Moltrust Did
-        wallet_address:
-          type: string
-          maxLength: 64
-          title: Wallet Address
-        chain:
-          type: string
-          maxLength: 20
-          title: Chain
-          default: solana
-        proof:
-          type: string
-          maxLength: 512
-          title: Proof
-        nonce:
-          type: string
-          maxLength: 64
-          title: Nonce
-      type: object
-      required:
-      - external_did
-      - moltrust_did
-      - wallet_address
-      - proof
-      - nonce
-      title: DIDBridgeRequest
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    SimpleBridgeRequest:
-      properties:
-        external_did:
-          type: string
-          maxLength: 256
-          title: External Did
-        label:
-          type: string
-          maxLength: 128
-          title: Label
-          default: ''
-        platform:
-          type: string
-          maxLength: 32
-          title: Platform
-          default: external
-      type: object
-      required:
-      - external_did
-      title: SimpleBridgeRequest
     RegisterRequest:
       properties:
         display_name:
@@ -1183,23 +1182,17 @@ components:
           default: false
       type: object
       title: RegisterRequest
-    SpiffeBindRequest:
+    RevokeRequest:
       properties:
-        spiffe_uri:
+        reason:
           type: string
-          maxLength: 512
-          title: Spiffe Uri
-          description: SPIFFE URI, e.g. spiffe://moltrust.ch/agent/scanner
-        did:
-          type: string
-          maxLength: 128
-          title: Did
-          description: MolTrust DID to bind to
+          maxLength: 100
+          title: Reason
+          default: manual_revocation
+        cascade:
+          type: boolean
+          title: Cascade
+          description: Revoke all downstream delegated agents
+          default: false
       type: object
-      required:
-      - spiffe_uri
-      - did
-      title: SpiffeBindRequest
-x-refined-from:
-- moltrust-ch-openapi.json
-- moltrust-ch-openapi.yml
+      title: RevokeRequest

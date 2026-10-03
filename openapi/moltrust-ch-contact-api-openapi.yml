@@ -1,11 +1,7 @@
 openapi: 3.2.0
 info:
-  title: Moltrust Ch Contact API
+  title: MolTrust Contact API
   version: '2.5'
-  description: 'Operations tagged Contact across 2 of this provider''s published API definitions: moltrust-ch-openapi.json, moltrust-ch-openapi.yml. Each path carries the servers of the definition it was published in.'
-servers:
-- url: https://api.moltrust.ch
-  description: Production. The served openapi.json omits servers[]; the base is stated by the provider at https://moltrust.ch/developers.html (quickstart), in the agent card supportedInterfaces[0].url (https://api.moltrust.ch/a2a) and in did.json service[].serviceEndpoint (https://api.moltrust.ch).
 tags:
 - name: Contact
 paths:
@@ -41,6 +37,15 @@ paths:
       - Contact
 components:
   schemas:
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     ValidationError:
       properties:
         loc:
@@ -67,15 +72,6 @@ components:
       - msg
       - type
       title: ValidationError
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
     ContactRequest:
       properties:
         name:
@@ -116,6 +112,3 @@ components:
         hidden, empty and out of the tab order. It is never echoed back and never
 
         appears in an error message.'
-x-refined-from:
-- moltrust-ch-openapi.json
-- moltrust-ch-openapi.yml

@@ -1,14 +1,14 @@
 openapi: 3.2.0
 info:
-  title: Moltrust Ch Shopping Vc API
+  title: MoltGuard Shopping Vc API
   version: 1.5.0
+  description: 'Trust & Integrity Service for the x402 Agent Economy. Sub-API of MolTrust Trust Registry (api.moltrust.ch). See also: https://api.moltrust.ch/openapi.json (parent service).'
   contact:
     name: CryptoKRI GmbH
     url: https://moltrust.ch
   license:
     name: Apache-2.0
     url: https://www.apache.org/licenses/LICENSE-2.0
-  description: 'Operations tagged shopping-vc across 2 of this provider''s published API definitions: moltrust-ch-moltguard-openapi.json, moltrust-ch-moltguard-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://api.moltrust.ch/guard
   description: Production
@@ -31,9 +31,6 @@ paths:
               schema:
                 type: object
                 additionalProperties: true
-    servers:
-    - url: https://api.moltrust.ch/guard
-      description: Production
   /shopping/receipt/{id}:
     get:
       tags:
@@ -53,9 +50,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ShoppingReceipt'
-    servers:
-    - url: https://api.moltrust.ch/guard
-      description: Production
   /shopping/schema:
     get:
       tags:
@@ -70,9 +64,6 @@ paths:
               schema:
                 type: object
                 additionalProperties: true
-    servers:
-    - url: https://api.moltrust.ch/guard
-      description: Production
   /shopping/verify:
     post:
       tags:
@@ -93,9 +84,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ShoppingVerifyResult'
-    servers:
-    - url: https://api.moltrust.ch/guard
-      description: Production
   /vc/buyer-agent/issue:
     post:
       tags:
@@ -127,52 +115,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PaymentRequired'
-    servers:
-    - url: https://api.moltrust.ch/guard
-      description: Production
 components:
   schemas:
-    ShoppingVerifyResult:
-      type: object
-      description: 10-step buyer-agent VC verification result.
-      additionalProperties: true
-      properties:
-        verified:
-          type: boolean
-        trustScore:
-          type: integer
-        decision:
-          type: string
-          enum:
-          - approve
-          - review
-          - reject
-        reasons:
-          type: array
-          items:
-            type: string
-    VCIssueRequestBase:
-      type: object
-      description: Base body for a VC issuance request. Specific VC types extend with type-specific fields.
-      additionalProperties: true
-    BuyerAgentCredential:
-      type: object
-      description: Issued BuyerAgentCredential (W3C VC).
-      additionalProperties: true
-    ShoppingReceipt:
-      type: object
-      description: Issued BuyerAgentCredential receipt — public form (no PII).
-      additionalProperties: true
-      properties:
-        receiptId:
-          type: string
-        credential_type:
-          type: string
-          enum:
-          - BuyerAgentCredential
-        issuanceDate:
-          type: string
-          format: date-time
     PaymentRequired:
       type: object
       description: x402 v2 challenge body. Returned with HTTP 402 when X-PAYMENT header is missing or invalid.
@@ -205,12 +149,50 @@ components:
                         description: USDC base units (6 decimals)
                   payTo:
                     type: string
+    ShoppingReceipt:
+      type: object
+      description: Issued BuyerAgentCredential receipt — public form (no PII).
+      additionalProperties: true
+      properties:
+        receiptId:
+          type: string
+        credential_type:
+          type: string
+          enum:
+          - BuyerAgentCredential
+        issuanceDate:
+          type: string
+          format: date-time
+    BuyerAgentCredential:
+      type: object
+      description: Issued BuyerAgentCredential (W3C VC).
+      additionalProperties: true
+    VCIssueRequestBase:
+      type: object
+      description: Base body for a VC issuance request. Specific VC types extend with type-specific fields.
+      additionalProperties: true
+    ShoppingVerifyResult:
+      type: object
+      description: 10-step buyer-agent VC verification result.
+      additionalProperties: true
+      properties:
+        verified:
+          type: boolean
+        trustScore:
+          type: integer
+        decision:
+          type: string
+          enum:
+          - approve
+          - review
+          - reject
+        reasons:
+          type: array
+          items:
+            type: string
   securitySchemes:
     x402:
       type: apiKey
       in: header
       name: X-PAYMENT
       description: 'x402 v2 payment receipt header. Format: "x402 <base64-encoded-receipt>". See https://x402.org/writing/x402-v2-launch.'
-x-refined-from:
-- moltrust-ch-moltguard-openapi.json
-- moltrust-ch-moltguard-openapi.yml

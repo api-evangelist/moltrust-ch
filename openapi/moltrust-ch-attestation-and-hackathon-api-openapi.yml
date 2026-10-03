@@ -1,14 +1,14 @@
 openapi: 3.2.0
 info:
-  title: Moltrust Ch Attestation And Hackathon API
+  title: MoltGuard Attestation And Hackathon API
   version: 1.5.0
+  description: 'Trust & Integrity Service for the x402 Agent Economy. Sub-API of MolTrust Trust Registry (api.moltrust.ch). See also: https://api.moltrust.ch/openapi.json (parent service).'
   contact:
     name: CryptoKRI GmbH
     url: https://moltrust.ch
   license:
     name: Apache-2.0
     url: https://www.apache.org/licenses/LICENSE-2.0
-  description: 'Operations tagged attestation-and-hackathon across 2 of this provider''s published API definitions: moltrust-ch-moltguard-openapi.json, moltrust-ch-moltguard-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://api.moltrust.ch/guard
   description: Production
@@ -37,9 +37,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/WalletAttestResult'
-    servers:
-    - url: https://api.moltrust.ch/guard
-      description: Production
   /api/wallet/attest/{did}:
     get:
       tags:
@@ -59,9 +56,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/WalletAttestResult'
-    servers:
-    - url: https://api.moltrust.ch/guard
-      description: Production
   /hackathon/register:
     post:
       tags:
@@ -89,9 +83,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/RateLimitError'
-    servers:
-    - url: https://api.moltrust.ch/guard
-      description: Production
   /hackathon/stats:
     get:
       tags:
@@ -105,9 +96,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HackathonStats'
-    servers:
-    - url: https://api.moltrust.ch/guard
-      description: Production
   /vc/challenge:
     get:
       tags:
@@ -121,9 +109,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/VCChallenge'
-    servers:
-    - url: https://api.moltrust.ch/guard
-      description: Production
   /vc/register-key:
     post:
       tags:
@@ -144,9 +129,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/VCKeyRegisterResult'
-    servers:
-    - url: https://api.moltrust.ch/guard
-      description: Production
   /vc/verify-binding:
     post:
       tags:
@@ -167,22 +149,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/VCBindingResult'
-    servers:
-    - url: https://api.moltrust.ch/guard
-      description: Production
 components:
   schemas:
-    VCChallenge:
-      type: object
-      additionalProperties: true
-      properties:
-        challenge:
-          type: string
-        nonce:
-          type: string
-        expiresAt:
-          type: string
-          format: date-time
     VCBindingResult:
       type: object
       additionalProperties: true
@@ -197,16 +165,6 @@ components:
           type: boolean
         did:
           type: string
-    HackathonRegisterResult:
-      type: object
-      additionalProperties: true
-      properties:
-        apiKey:
-          type: string
-          description: Hackathon-tier API key (bypasses x402)
-        expiresAt:
-          type: string
-          format: date-time
     WalletAttestResult:
       type: object
       additionalProperties: true
@@ -219,6 +177,17 @@ components:
           type: string
         signature:
           type: string
+    VCChallenge:
+      type: object
+      additionalProperties: true
+      properties:
+        challenge:
+          type: string
+        nonce:
+          type: string
+        expiresAt:
+          type: string
+          format: date-time
     HackathonStats:
       type: object
       additionalProperties: true
@@ -227,6 +196,16 @@ components:
           type: integer
         activeKeys:
           type: integer
+    HackathonRegisterResult:
+      type: object
+      additionalProperties: true
+      properties:
+        apiKey:
+          type: string
+          description: Hackathon-tier API key (bypasses x402)
+        expiresAt:
+          type: string
+          format: date-time
     RateLimitError:
       type: object
       properties:
@@ -239,6 +218,3 @@ components:
       in: header
       name: X-PAYMENT
       description: 'x402 v2 payment receipt header. Format: "x402 <base64-encoded-receipt>". See https://x402.org/writing/x402-v2-launch.'
-x-refined-from:
-- moltrust-ch-moltguard-openapi.json
-- moltrust-ch-moltguard-openapi.yml

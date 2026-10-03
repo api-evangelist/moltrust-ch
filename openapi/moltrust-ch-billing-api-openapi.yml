@@ -1,11 +1,7 @@
 openapi: 3.2.0
 info:
-  title: Moltrust Ch Billing API
+  title: MolTrust Billing API
   version: '2.5'
-  description: 'Operations tagged billing across 2 of this provider''s published API definitions: moltrust-ch-openapi.json, moltrust-ch-openapi.yml. Each path carries the servers of the definition it was published in.'
-servers:
-- url: https://api.moltrust.ch
-  description: Production. The served openapi.json omits servers[]; the base is stated by the provider at https://moltrust.ch/developers.html (quickstart), in the agent card supportedInterfaces[0].url (https://api.moltrust.ch/a2a) and in did.json service[].serviceEndpoint (https://api.moltrust.ch).
 tags:
 - name: Billing
 paths:
@@ -165,15 +161,6 @@ components:
       - msg
       - type
       title: ValidationError
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
     PortalRequest:
       properties:
         customer_id:
@@ -230,6 +217,12 @@ components:
       required:
       - tier
       title: CheckoutRequest
-x-refined-from:
-- moltrust-ch-openapi.json
-- moltrust-ch-openapi.yml
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError

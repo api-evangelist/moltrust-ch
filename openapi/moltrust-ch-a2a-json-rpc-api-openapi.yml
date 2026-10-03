@@ -1,11 +1,7 @@
 openapi: 3.2.0
 info:
-  title: 'Moltrust Ch A2A: JSON-RPC API'
+  title: 'MolTrust A2A: JSON-RPC API'
   version: '2.5'
-  description: 'Operations tagged A2A: JSON-RPC across 2 of this provider''s published API definitions: moltrust-ch-openapi.json, moltrust-ch-openapi.yml. Each path carries the servers of the definition it was published in.'
-servers:
-- url: https://api.moltrust.ch
-  description: Production. The served openapi.json omits servers[]; the base is stated by the provider at https://moltrust.ch/developers.html (quickstart), in the agent card supportedInterfaces[0].url (https://api.moltrust.ch/a2a) and in did.json service[].serviceEndpoint (https://api.moltrust.ch).
 tags:
 - name: 'A2A: JSON-RPC'
 paths:
@@ -68,20 +64,48 @@ paths:
         example: '1.0'
 components:
   schemas:
-    SendMessageConfiguration:
+    Part:
+      allOf:
+      - type: object
+        properties:
+          metadata:
+            type: object
+          filename:
+            type: string
+          media_type:
+            type: string
+      - oneOf:
+        - type: object
+          properties:
+            text:
+              type: string
+          required:
+          - text
+        - type: object
+          properties:
+            raw:
+              type: string
+              format: byte
+          required:
+          - raw
+        - type: object
+          properties:
+            url:
+              type: string
+          required:
+          - url
+        - type: object
+          properties:
+            data: {}
+          required:
+          - data
+    AuthenticationInfo:
       type: object
       properties:
-        accepted_output_modes:
-          type: array
-          items:
-            type: string
-        task_push_notification_config:
-          $ref: '#/components/schemas/TaskPushNotificationConfig'
-        history_length:
-          type: integer
-          format: int32
-        return_immediately:
-          type: boolean
+        scheme:
+          type: string
+        credentials:
+          type: string
     Message:
       type: object
       properties:
@@ -111,6 +135,23 @@ components:
           type: array
           items:
             type: string
+    GetExtendedAgentCardRequest:
+      type: object
+      properties:
+        tenant:
+          type: string
+    ListTaskPushNotificationConfigsRequest:
+      type: object
+      properties:
+        tenant:
+          type: string
+        task_id:
+          type: string
+        page_size:
+          type: integer
+          format: int32
+        page_token:
+          type: string
     SubscribeToTaskRequest:
       type: object
       properties:
@@ -118,15 +159,54 @@ components:
           type: string
         id:
           type: string
-    SendMessageRequest:
+    GetTaskPushNotificationConfigRequest:
       type: object
       properties:
         tenant:
           type: string
-        message:
-          $ref: '#/components/schemas/Message'
-        configuration:
-          $ref: '#/components/schemas/SendMessageConfiguration'
+        task_id:
+          type: string
+        id:
+          type: string
+    ListTasksRequest:
+      type: object
+      properties:
+        tenant:
+          type: string
+        context_id:
+          type: string
+        status:
+          type: string
+          enum:
+          - TASK_STATE_UNSPECIFIED
+          - TASK_STATE_SUBMITTED
+          - TASK_STATE_WORKING
+          - TASK_STATE_COMPLETED
+          - TASK_STATE_FAILED
+          - TASK_STATE_CANCELED
+          - TASK_STATE_INPUT_REQUIRED
+          - TASK_STATE_REJECTED
+          - TASK_STATE_AUTH_REQUIRED
+        page_size:
+          type: integer
+          format: int32
+        page_token:
+          type: string
+        history_length:
+          type: integer
+          format: int32
+        status_timestamp_after:
+          type: string
+          format: date-time
+        include_artifacts:
+          type: boolean
+    CancelTaskRequest:
+      type: object
+      properties:
+        tenant:
+          type: string
+        id:
+          type: string
         metadata:
           type: object
     TaskPushNotificationConfig:
@@ -144,6 +224,50 @@ components:
           type: string
         authentication:
           $ref: '#/components/schemas/AuthenticationInfo'
+    DeleteTaskPushNotificationConfigRequest:
+      type: object
+      properties:
+        tenant:
+          type: string
+        task_id:
+          type: string
+        id:
+          type: string
+    SendMessageRequest:
+      type: object
+      properties:
+        tenant:
+          type: string
+        message:
+          $ref: '#/components/schemas/Message'
+        configuration:
+          $ref: '#/components/schemas/SendMessageConfiguration'
+        metadata:
+          type: object
+    GetTaskRequest:
+      type: object
+      properties:
+        tenant:
+          type: string
+        id:
+          type: string
+        history_length:
+          type: integer
+          format: int32
+    SendMessageConfiguration:
+      type: object
+      properties:
+        accepted_output_modes:
+          type: array
+          items:
+            type: string
+        task_push_notification_config:
+          $ref: '#/components/schemas/TaskPushNotificationConfig'
+        history_length:
+          type: integer
+          format: int32
+        return_immediately:
+          type: boolean
     A2ARequest:
       type: object
       required:
@@ -185,134 +309,3 @@ components:
           - $ref: '#/components/schemas/DeleteTaskPushNotificationConfigRequest'
           - $ref: '#/components/schemas/SubscribeToTaskRequest'
           - $ref: '#/components/schemas/GetExtendedAgentCardRequest'
-    Part:
-      allOf:
-      - type: object
-        properties:
-          metadata:
-            type: object
-          filename:
-            type: string
-          media_type:
-            type: string
-      - oneOf:
-        - type: object
-          properties:
-            text:
-              type: string
-          required:
-          - text
-        - type: object
-          properties:
-            raw:
-              type: string
-              format: byte
-          required:
-          - raw
-        - type: object
-          properties:
-            url:
-              type: string
-          required:
-          - url
-        - type: object
-          properties:
-            data: {}
-          required:
-          - data
-    DeleteTaskPushNotificationConfigRequest:
-      type: object
-      properties:
-        tenant:
-          type: string
-        task_id:
-          type: string
-        id:
-          type: string
-    GetExtendedAgentCardRequest:
-      type: object
-      properties:
-        tenant:
-          type: string
-    ListTasksRequest:
-      type: object
-      properties:
-        tenant:
-          type: string
-        context_id:
-          type: string
-        status:
-          type: string
-          enum:
-          - TASK_STATE_UNSPECIFIED
-          - TASK_STATE_SUBMITTED
-          - TASK_STATE_WORKING
-          - TASK_STATE_COMPLETED
-          - TASK_STATE_FAILED
-          - TASK_STATE_CANCELED
-          - TASK_STATE_INPUT_REQUIRED
-          - TASK_STATE_REJECTED
-          - TASK_STATE_AUTH_REQUIRED
-        page_size:
-          type: integer
-          format: int32
-        page_token:
-          type: string
-        history_length:
-          type: integer
-          format: int32
-        status_timestamp_after:
-          type: string
-          format: date-time
-        include_artifacts:
-          type: boolean
-    GetTaskRequest:
-      type: object
-      properties:
-        tenant:
-          type: string
-        id:
-          type: string
-        history_length:
-          type: integer
-          format: int32
-    CancelTaskRequest:
-      type: object
-      properties:
-        tenant:
-          type: string
-        id:
-          type: string
-        metadata:
-          type: object
-    AuthenticationInfo:
-      type: object
-      properties:
-        scheme:
-          type: string
-        credentials:
-          type: string
-    GetTaskPushNotificationConfigRequest:
-      type: object
-      properties:
-        tenant:
-          type: string
-        task_id:
-          type: string
-        id:
-          type: string
-    ListTaskPushNotificationConfigsRequest:
-      type: object
-      properties:
-        tenant:
-          type: string
-        task_id:
-          type: string
-        page_size:
-          type: integer
-          format: int32
-        page_token:
-          type: string
-x-refined-from:
-- moltrust-ch-openapi.json
-- moltrust-ch-openapi.yml

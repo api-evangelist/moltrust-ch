@@ -1,14 +1,14 @@
 openapi: 3.2.0
 info:
-  title: Moltrust Ch Salesguard API
+  title: MoltGuard Salesguard API
   version: 1.5.0
+  description: 'Trust & Integrity Service for the x402 Agent Economy. Sub-API of MolTrust Trust Registry (api.moltrust.ch). See also: https://api.moltrust.ch/openapi.json (parent service).'
   contact:
     name: CryptoKRI GmbH
     url: https://moltrust.ch
   license:
     name: Apache-2.0
     url: https://www.apache.org/licenses/LICENSE-2.0
-  description: 'Operations tagged salesguard across 2 of this provider''s published API definitions: moltrust-ch-moltguard-openapi.json, moltrust-ch-moltguard-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://api.moltrust.ch/guard
   description: Production
@@ -37,9 +37,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SalesguardRegResult'
-    servers:
-    - url: https://api.moltrust.ch/guard
-      description: Production
   /salesguard/product/register:
     post:
       tags:
@@ -60,9 +57,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SalesguardRegResult'
-    servers:
-    - url: https://api.moltrust.ch/guard
-      description: Production
   /salesguard/reseller/authorize:
     post:
       tags:
@@ -83,9 +77,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SalesguardRegResult'
-    servers:
-    - url: https://api.moltrust.ch/guard
-      description: Production
   /salesguard/reseller/verify/{reseller_did}:
     get:
       tags:
@@ -105,9 +96,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SalesguardVerifyResult'
-    servers:
-    - url: https://api.moltrust.ch/guard
-      description: Production
   /salesguard/verify/{product_id}:
     get:
       tags:
@@ -127,11 +115,16 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SalesguardVerifyResult'
-    servers:
-    - url: https://api.moltrust.ch/guard
-      description: Production
 components:
   schemas:
+    SalesguardRegResult:
+      type: object
+      additionalProperties: true
+      properties:
+        ok:
+          type: boolean
+        id:
+          type: string
     SalesguardVerifyResult:
       type: object
       additionalProperties: true
@@ -141,20 +134,9 @@ components:
         provenance:
           type: object
           additionalProperties: true
-    SalesguardRegResult:
-      type: object
-      additionalProperties: true
-      properties:
-        ok:
-          type: boolean
-        id:
-          type: string
   securitySchemes:
     x402:
       type: apiKey
       in: header
       name: X-PAYMENT
       description: 'x402 v2 payment receipt header. Format: "x402 <base64-encoded-receipt>". See https://x402.org/writing/x402-v2-launch.'
-x-refined-from:
-- moltrust-ch-moltguard-openapi.json
-- moltrust-ch-moltguard-openapi.yml

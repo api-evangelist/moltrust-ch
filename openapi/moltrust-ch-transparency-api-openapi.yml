@@ -1,14 +1,14 @@
 openapi: 3.2.0
 info:
-  title: Moltrust Ch Transparency API
+  title: MoltGuard Transparency API
   version: 1.5.0
+  description: 'Trust & Integrity Service for the x402 Agent Economy. Sub-API of MolTrust Trust Registry (api.moltrust.ch). See also: https://api.moltrust.ch/openapi.json (parent service).'
   contact:
     name: CryptoKRI GmbH
     url: https://moltrust.ch
   license:
     name: Apache-2.0
     url: https://www.apache.org/licenses/LICENSE-2.0
-  description: 'Operations tagged transparency across 2 of this provider''s published API definitions: moltrust-ch-moltguard-openapi.json, moltrust-ch-moltguard-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://api.moltrust.ch/guard
   description: Production
@@ -31,9 +31,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Health'
-    servers:
-    - url: https://api.moltrust.ch/guard
-      description: Production
   /api/info:
     get:
       tags:
@@ -48,9 +45,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiInfo'
-    servers:
-    - url: https://api.moltrust.ch/guard
-      description: Production
   /transparency/latest:
     get:
       tags:
@@ -77,9 +71,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-    servers:
-    - url: https://api.moltrust.ch/guard
-      description: Production
   /transparency/history:
     get:
       tags:
@@ -97,9 +88,6 @@ paths:
                 items:
                   $ref: '#/components/schemas/TrustProofHistoryEntry'
                 maxItems: 12
-    servers:
-    - url: https://api.moltrust.ch/guard
-      description: Production
   /transparency/verify/{hash}:
     get:
       tags:
@@ -127,120 +115,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/VerifyHashResponseNotFound'
-    servers:
-    - url: https://api.moltrust.ch/guard
-      description: Production
 components:
   schemas:
-    Error:
-      type: object
-      properties:
-        error:
-          type: string
-          description: Short error code
-        message:
-          type: string
-          description: Human-readable detail
-      required:
-      - error
-    VerifyHashResponseNotFound:
-      type: object
-      properties:
-        verified:
-          type: boolean
-          enum:
-          - false
-        message:
-          type: string
-      required:
-      - verified
-    TrustProofHistoryEntry:
-      type: object
-      description: Abbreviated TrustProof for history list — even more public-only than the latest.
-      properties:
-        id:
-          type: string
-        issuanceDate:
-          type: string
-          format: date-time
-        expirationDate:
-          type: string
-          format: date-time
-        vertical:
-          type: string
-        pass_rate:
-          type: number
-        tests_run:
-          type: integer
-        anchor_tx:
-          type: string
-    TrustProofSummary:
-      type: object
-      description: Sanitized TrustProof — public metadata only. No raw prompts/outputs/test inputs.
-      properties:
-        id:
-          type: string
-          description: sha256 proofHash from credentialSubject
-        type:
-          type: array
-          items:
-            type: string
-        issuer:
-          type: string
-          description: DID of the issuer
-        issuanceDate:
-          type: string
-          format: date-time
-        expirationDate:
-          type: string
-          format: date-time
-        credential_type:
-          type: string
-          enum:
-          - TrustProof
-        vertical:
-          type: string
-          description: Vertical the proof applies to
-        pass_rate:
-          type: number
-          description: Fraction of tests passed (0..1)
-        avg_integrity_score:
-          type: number
-        tests_passed:
-          type: integer
-        tests_run:
-          type: integer
-        dimensions:
-          type: array
-          items:
-            type: string
-        anchor_tx:
-          type: string
-          description: On-chain anchor transaction hash
-        network:
-          type: string
-          example: base
-        proof:
-          type: object
-          properties:
-            type:
-              type: string
-            created:
-              type: string
-              format: date-time
-    Health:
-      type: object
-      properties:
-        status:
-          type: string
-          enum:
-          - ok
-        timestamp:
-          type: string
-          format: date-time
-      required:
-      - status
-      - timestamp
     ApiInfo:
       type: object
       description: Self-documentation of MoltGuard service capabilities + pricing.
@@ -307,6 +183,60 @@ components:
       - network
       - x402_enabled
       - endpoints
+    TrustProofSummary:
+      type: object
+      description: Sanitized TrustProof — public metadata only. No raw prompts/outputs/test inputs.
+      properties:
+        id:
+          type: string
+          description: sha256 proofHash from credentialSubject
+        type:
+          type: array
+          items:
+            type: string
+        issuer:
+          type: string
+          description: DID of the issuer
+        issuanceDate:
+          type: string
+          format: date-time
+        expirationDate:
+          type: string
+          format: date-time
+        credential_type:
+          type: string
+          enum:
+          - TrustProof
+        vertical:
+          type: string
+          description: Vertical the proof applies to
+        pass_rate:
+          type: number
+          description: Fraction of tests passed (0..1)
+        avg_integrity_score:
+          type: number
+        tests_passed:
+          type: integer
+        tests_run:
+          type: integer
+        dimensions:
+          type: array
+          items:
+            type: string
+        anchor_tx:
+          type: string
+          description: On-chain anchor transaction hash
+        network:
+          type: string
+          example: base
+        proof:
+          type: object
+          properties:
+            type:
+              type: string
+            created:
+              type: string
+              format: date-time
     VerifyHashResponseOk:
       type: object
       properties:
@@ -329,12 +259,64 @@ components:
           example: base
       required:
       - verified
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Short error code
+        message:
+          type: string
+          description: Human-readable detail
+      required:
+      - error
+    TrustProofHistoryEntry:
+      type: object
+      description: Abbreviated TrustProof for history list — even more public-only than the latest.
+      properties:
+        id:
+          type: string
+        issuanceDate:
+          type: string
+          format: date-time
+        expirationDate:
+          type: string
+          format: date-time
+        vertical:
+          type: string
+        pass_rate:
+          type: number
+        tests_run:
+          type: integer
+        anchor_tx:
+          type: string
+    VerifyHashResponseNotFound:
+      type: object
+      properties:
+        verified:
+          type: boolean
+          enum:
+          - false
+        message:
+          type: string
+      required:
+      - verified
+    Health:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - ok
+        timestamp:
+          type: string
+          format: date-time
+      required:
+      - status
+      - timestamp
   securitySchemes:
     x402:
       type: apiKey
       in: header
       name: X-PAYMENT
       description: 'x402 v2 payment receipt header. Format: "x402 <base64-encoded-receipt>". See https://x402.org/writing/x402-v2-launch.'
-x-refined-from:
-- moltrust-ch-moltguard-openapi.json
-- moltrust-ch-moltguard-openapi.yml

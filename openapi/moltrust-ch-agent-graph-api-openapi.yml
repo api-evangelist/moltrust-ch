@@ -1,14 +1,14 @@
 openapi: 3.2.0
 info:
-  title: Moltrust Ch Agent Graph API
+  title: MoltGuard Agent Graph API
   version: 1.5.0
+  description: 'Trust & Integrity Service for the x402 Agent Economy. Sub-API of MolTrust Trust Registry (api.moltrust.ch). See also: https://api.moltrust.ch/openapi.json (parent service).'
   contact:
     name: CryptoKRI GmbH
     url: https://moltrust.ch
   license:
     name: Apache-2.0
     url: https://www.apache.org/licenses/LICENSE-2.0
-  description: 'Operations tagged agent-graph across 2 of this provider''s published API definitions: moltrust-ch-moltguard-openapi.json, moltrust-ch-moltguard-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://api.moltrust.ch/guard
   description: Production
@@ -36,9 +36,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GraphNeighbours'
-    servers:
-    - url: https://api.moltrust.ch/guard
-      description: Production
   /api/graph/score/{fromDid}/{toDid}:
     get:
       tags:
@@ -63,9 +60,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GraphScoreEdge'
-    servers:
-    - url: https://api.moltrust.ch/guard
-      description: Production
   /api/graph/stats:
     get:
       tags:
@@ -79,11 +73,29 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GraphStats'
-    servers:
-    - url: https://api.moltrust.ch/guard
-      description: Production
 components:
   schemas:
+    GraphStats:
+      type: object
+      additionalProperties: true
+      properties:
+        totalNodes:
+          type: integer
+        totalEdges:
+          type: integer
+        avgDegree:
+          type: number
+    GraphNeighbours:
+      type: object
+      additionalProperties: true
+      properties:
+        did:
+          type: string
+        neighbours:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
     GraphScoreEdge:
       type: object
       additionalProperties: true
@@ -96,33 +108,9 @@ components:
           type: number
         edgeType:
           type: string
-    GraphNeighbours:
-      type: object
-      additionalProperties: true
-      properties:
-        did:
-          type: string
-        neighbours:
-          type: array
-          items:
-            type: object
-            additionalProperties: true
-    GraphStats:
-      type: object
-      additionalProperties: true
-      properties:
-        totalNodes:
-          type: integer
-        totalEdges:
-          type: integer
-        avgDegree:
-          type: number
   securitySchemes:
     x402:
       type: apiKey
       in: header
       name: X-PAYMENT
       description: 'x402 v2 payment receipt header. Format: "x402 <base64-encoded-receipt>". See https://x402.org/writing/x402-v2-launch.'
-x-refined-from:
-- moltrust-ch-moltguard-openapi.json
-- moltrust-ch-moltguard-openapi.yml

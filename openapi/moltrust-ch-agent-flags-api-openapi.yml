@@ -1,14 +1,14 @@
 openapi: 3.2.0
 info:
-  title: Moltrust Ch Agent Flags API
+  title: MoltGuard Agent Flags API
   version: 1.5.0
+  description: 'Trust & Integrity Service for the x402 Agent Economy. Sub-API of MolTrust Trust Registry (api.moltrust.ch). See also: https://api.moltrust.ch/openapi.json (parent service).'
   contact:
     name: CryptoKRI GmbH
     url: https://moltrust.ch
   license:
     name: Apache-2.0
     url: https://www.apache.org/licenses/LICENSE-2.0
-  description: 'Operations tagged agent-flags across 2 of this provider''s published API definitions: moltrust-ch-moltguard-openapi.json, moltrust-ch-moltguard-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://api.moltrust.ch/guard
   description: Production
@@ -30,9 +30,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/FlagList'
-    servers:
-    - url: https://api.moltrust.ch/guard
-      description: Production
   /api/flags/record:
     post:
       tags:
@@ -53,9 +50,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/FlagRecordResult'
-    servers:
-    - url: https://api.moltrust.ch/guard
-      description: Production
   /api/flags/track-record:
     get:
       tags:
@@ -69,9 +63,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/FlagTrackRecord'
-    servers:
-    - url: https://api.moltrust.ch/guard
-      description: Production
   /api/flags/{flagId}:
     get:
       tags:
@@ -97,11 +88,16 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-    servers:
-    - url: https://api.moltrust.ch/guard
-      description: Production
 components:
   schemas:
+    FlagRecordResult:
+      type: object
+      additionalProperties: true
+      properties:
+        ok:
+          type: boolean
+        flagId:
+          type: string
     Error:
       type: object
       properties:
@@ -113,10 +109,6 @@ components:
           description: Human-readable detail
       required:
       - error
-    FlagList:
-      type: array
-      items:
-        $ref: '#/components/schemas/FlagSummary'
     FlagTrackRecord:
       type: object
       additionalProperties: true
@@ -127,6 +119,10 @@ components:
           type: integer
         openCount:
           type: integer
+    FlagList:
+      type: array
+      items:
+        $ref: '#/components/schemas/FlagSummary'
     FlagSummary:
       type: object
       additionalProperties: true
@@ -140,20 +136,9 @@ components:
         createdAt:
           type: string
           format: date-time
-    FlagRecordResult:
-      type: object
-      additionalProperties: true
-      properties:
-        ok:
-          type: boolean
-        flagId:
-          type: string
   securitySchemes:
     x402:
       type: apiKey
       in: header
       name: X-PAYMENT
       description: 'x402 v2 payment receipt header. Format: "x402 <base64-encoded-receipt>". See https://x402.org/writing/x402-v2-launch.'
-x-refined-from:
-- moltrust-ch-moltguard-openapi.json
-- moltrust-ch-moltguard-openapi.yml

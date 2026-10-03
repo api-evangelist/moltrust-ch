@@ -1,11 +1,7 @@
 openapi: 3.2.0
 info:
-  title: Moltrust Ch Skill API
+  title: MolTrust Skill API
   version: '2.5'
-  description: 'Operations tagged Skill across 2 of this provider''s published API definitions: moltrust-ch-openapi.json, moltrust-ch-openapi.yml. Each path carries the servers of the definition it was published in.'
-servers:
-- url: https://api.moltrust.ch
-  description: Production. The served openapi.json omits servers[]; the base is stated by the provider at https://moltrust.ch/developers.html (quickstart), in the agent card supportedInterfaces[0].url (https://api.moltrust.ch/a2a) and in did.json service[].serviceEndpoint (https://api.moltrust.ch).
 tags:
 - name: Skill
 paths:
@@ -172,29 +168,6 @@ components:
       - msg
       - type
       title: ValidationError
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    InteractionProofRequest:
-      properties:
-        api_key:
-          type: string
-          title: Api Key
-        interaction_payload:
-          additionalProperties: true
-          type: object
-          title: Interaction Payload
-      type: object
-      required:
-      - api_key
-      - interaction_payload
-      title: InteractionProofRequest
     EndorseRequest:
       properties:
         api_key:
@@ -224,6 +197,26 @@ components:
       - evidence_timestamp
       - vertical
       title: EndorseRequest
-x-refined-from:
-- moltrust-ch-openapi.json
-- moltrust-ch-openapi.yml
+    InteractionProofRequest:
+      properties:
+        api_key:
+          type: string
+          title: Api Key
+        interaction_payload:
+          additionalProperties: true
+          type: object
+          title: Interaction Payload
+      type: object
+      required:
+      - api_key
+      - interaction_payload
+      title: InteractionProofRequest
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError

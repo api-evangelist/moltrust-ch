@@ -1,14 +1,14 @@
 openapi: 3.2.0
 info:
-  title: Moltrust Ch Prediction Markets API
+  title: MoltGuard Prediction Markets API
   version: 1.5.0
+  description: 'Trust & Integrity Service for the x402 Agent Economy. Sub-API of MolTrust Trust Registry (api.moltrust.ch). See also: https://api.moltrust.ch/openapi.json (parent service).'
   contact:
     name: CryptoKRI GmbH
     url: https://moltrust.ch
   license:
     name: Apache-2.0
     url: https://www.apache.org/licenses/LICENSE-2.0
-  description: 'Operations tagged prediction-markets across 2 of this provider''s published API definitions: moltrust-ch-moltguard-openapi.json, moltrust-ch-moltguard-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://api.moltrust.ch/guard
   description: Production
@@ -49,9 +49,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PaymentRequired'
-    servers:
-    - url: https://api.moltrust.ch/guard
-      description: Production
   /prediction/leaderboard:
     get:
       tags:
@@ -65,9 +62,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PredictionLeaderboard'
-    servers:
-    - url: https://api.moltrust.ch/guard
-      description: Production
   /prediction/wallet-link:
     post:
       tags:
@@ -88,9 +82,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PredictionWalletLink'
-    servers:
-    - url: https://api.moltrust.ch/guard
-      description: Production
   /prediction/wallet/{address}:
     get:
       tags:
@@ -111,9 +102,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PredictionWalletInfo'
-    servers:
-    - url: https://api.moltrust.ch/guard
-      description: Production
   /radar/clusters:
     get:
       tags:
@@ -154,9 +142,6 @@ paths:
             application/json:
               schema:
                 type: object
-    servers:
-    - url: https://api.moltrust.ch/guard
-      description: Production
   /radar/operators:
     get:
       tags:
@@ -171,9 +156,6 @@ paths:
             application/json:
               schema:
                 type: object
-    servers:
-    - url: https://api.moltrust.ch/guard
-      description: Production
   /radar/market/{id}:
     get:
       tags:
@@ -206,9 +188,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PaymentRequired'
-    servers:
-    - url: https://api.moltrust.ch/guard
-      description: Production
   /vc/prediction/issue:
     post:
       tags:
@@ -240,41 +219,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PaymentRequired'
-    servers:
-    - url: https://api.moltrust.ch/guard
-      description: Production
 components:
   schemas:
-    PredictionWalletLink:
-      type: object
-      additionalProperties: true
-      properties:
-        ok:
-          type: boolean
-        did:
-          type: string
-        address:
-          type: string
-    PredictionTrackCredential:
-      type: object
-      additionalProperties: true
-      description: Issued PredictionTrackCredential (W3C VC) — wallet-DID bridge with on-chain track record.
-    PredictionLeaderboard:
-      type: array
-      items:
-        type: object
-        additionalProperties: true
-        properties:
-          did:
-            type: string
-          score:
-            type: number
-          rank:
-            type: integer
-    VCIssueRequestBase:
-      type: object
-      description: Base body for a VC issuance request. Specific VC types extend with type-specific fields.
-      additionalProperties: true
     PredictionWalletInfo:
       type: object
       additionalProperties: true
@@ -285,6 +231,16 @@ components:
           type:
           - string
           - 'null'
+    PredictionWalletLink:
+      type: object
+      additionalProperties: true
+      properties:
+        ok:
+          type: boolean
+        did:
+          type: string
+        address:
+          type: string
     PaymentRequired:
       type: object
       description: x402 v2 challenge body. Returned with HTTP 402 when X-PAYMENT header is missing or invalid.
@@ -329,12 +285,29 @@ components:
           type: array
           items:
             type: string
+    VCIssueRequestBase:
+      type: object
+      description: Base body for a VC issuance request. Specific VC types extend with type-specific fields.
+      additionalProperties: true
+    PredictionLeaderboard:
+      type: array
+      items:
+        type: object
+        additionalProperties: true
+        properties:
+          did:
+            type: string
+          score:
+            type: number
+          rank:
+            type: integer
+    PredictionTrackCredential:
+      type: object
+      additionalProperties: true
+      description: Issued PredictionTrackCredential (W3C VC) — wallet-DID bridge with on-chain track record.
   securitySchemes:
     x402:
       type: apiKey
       in: header
       name: X-PAYMENT
       description: 'x402 v2 payment receipt header. Format: "x402 <base64-encoded-receipt>". See https://x402.org/writing/x402-v2-launch.'
-x-refined-from:
-- moltrust-ch-moltguard-openapi.json
-- moltrust-ch-moltguard-openapi.yml

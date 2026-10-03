@@ -1,11 +1,7 @@
 openapi: 3.2.0
 info:
-  title: Moltrust Ch Reseller Admin API
+  title: MolTrust Reseller Admin API
   version: '2.5'
-  description: 'Operations tagged reseller-admin across 2 of this provider''s published API definitions: moltrust-ch-openapi.json, moltrust-ch-openapi.yml. Each path carries the servers of the definition it was published in.'
-servers:
-- url: https://api.moltrust.ch
-  description: Production. The served openapi.json omits servers[]; the base is stated by the provider at https://moltrust.ch/developers.html (quickstart), in the agent card supportedInterfaces[0].url (https://api.moltrust.ch/a2a) and in did.json service[].serviceEndpoint (https://api.moltrust.ch).
 tags:
 - name: reseller-admin
 paths:
@@ -215,6 +211,15 @@ components:
       required:
       - code
       title: CodeBody
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     ValidationError:
       properties:
         loc:
@@ -241,6 +246,15 @@ components:
       - msg
       - type
       title: ValidationError
+    AssignBody:
+      properties:
+        did:
+          type: string
+          title: Did
+      type: object
+      required:
+      - did
+      title: AssignBody
     InvoiceBody:
       properties:
         finalize:
@@ -281,24 +295,3 @@ components:
       - password
       - wholesale_price_cents
       title: CreateBody
-    AssignBody:
-      properties:
-        did:
-          type: string
-          title: Did
-      type: object
-      required:
-      - did
-      title: AssignBody
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-x-refined-from:
-- moltrust-ch-openapi.json
-- moltrust-ch-openapi.yml

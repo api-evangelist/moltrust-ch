@@ -1,11 +1,7 @@
 openapi: 3.2.0
 info:
-  title: Moltrust Ch Delegation API
+  title: MolTrust Delegation API
   version: '2.5'
-  description: 'Operations tagged Delegation across 2 of this provider''s published API definitions: moltrust-ch-openapi.json, moltrust-ch-openapi.yml. Each path carries the servers of the definition it was published in.'
-servers:
-- url: https://api.moltrust.ch
-  description: Production. The served openapi.json omits servers[]; the base is stated by the provider at https://moltrust.ch/developers.html (quickstart), in the agent card supportedInterfaces[0].url (https://api.moltrust.ch/a2a) and in did.json service[].serviceEndpoint (https://api.moltrust.ch).
 tags:
 - name: Delegation
 paths:
@@ -105,57 +101,6 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    DelegationVerifyRequest:
-      properties:
-        token:
-          type: string
-          maxLength: 100000
-          title: Token
-        expected_audience:
-          anyOf:
-          - type: string
-            maxLength: 128
-          - type: 'null'
-          title: Expected Audience
-      type: object
-      required:
-      - token
-      title: DelegationVerifyRequest
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-        input:
-          title: Input
-        ctx:
-          type: object
-          title: Context
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
     DelegationCreateRequest:
       properties:
         delegator_did:
@@ -201,6 +146,54 @@ components:
       - audience_did
       - capabilities
       title: DelegationCreateRequest
-x-refined-from:
-- moltrust-ch-openapi.json
-- moltrust-ch-openapi.yml
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    DelegationVerifyRequest:
+      properties:
+        token:
+          type: string
+          maxLength: 100000
+          title: Token
+        expected_audience:
+          anyOf:
+          - type: string
+            maxLength: 128
+          - type: 'null'
+          title: Expected Audience
+      type: object
+      required:
+      - token
+      title: DelegationVerifyRequest
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError

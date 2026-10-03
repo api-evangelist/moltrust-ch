@@ -1,14 +1,14 @@
 openapi: 3.2.0
 info:
-  title: Moltrust Ch Skill Verification API
+  title: MoltGuard Skill Verification API
   version: 1.5.0
+  description: 'Trust & Integrity Service for the x402 Agent Economy. Sub-API of MolTrust Trust Registry (api.moltrust.ch). See also: https://api.moltrust.ch/openapi.json (parent service).'
   contact:
     name: CryptoKRI GmbH
     url: https://moltrust.ch
   license:
     name: Apache-2.0
     url: https://www.apache.org/licenses/LICENSE-2.0
-  description: 'Operations tagged skill-verification across 2 of this provider''s published API definitions: moltrust-ch-moltguard-openapi.json, moltrust-ch-moltguard-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://api.moltrust.ch/guard
   description: Production
@@ -30,9 +30,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AuditChecks'
-    servers:
-    - url: https://api.moltrust.ch/guard
-      description: Production
   /audit/version:
     get:
       tags:
@@ -46,9 +43,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AuditVersion'
-    servers:
-    - url: https://api.moltrust.ch/guard
-      description: Production
   /skill/anchor/{skillHash}:
     get:
       tags:
@@ -69,9 +63,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SkillAnchorResult'
-    servers:
-    - url: https://api.moltrust.ch/guard
-      description: Production
   /skill/audit:
     get:
       tags:
@@ -106,9 +97,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/RateLimitError'
-    servers:
-    - url: https://api.moltrust.ch/guard
-      description: Production
   /skill/info:
     get:
       tags:
@@ -122,9 +110,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SkillInfo'
-    servers:
-    - url: https://api.moltrust.ch/guard
-      description: Production
   /skill/schema:
     get:
       tags:
@@ -138,9 +123,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SkillSchema'
-    servers:
-    - url: https://api.moltrust.ch/guard
-      description: Production
   /skill/verify/did/{did}:
     get:
       tags:
@@ -161,9 +143,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SkillVerifyResult'
-    servers:
-    - url: https://api.moltrust.ch/guard
-      description: Production
   /skill/verify/{skillHash}:
     get:
       tags:
@@ -183,9 +162,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SkillVerifyResult'
-    servers:
-    - url: https://api.moltrust.ch/guard
-      description: Production
   /vc/skill/issue:
     post:
       tags:
@@ -218,49 +194,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PaymentRequired'
-    servers:
-    - url: https://api.moltrust.ch/guard
-      description: Production
 components:
   schemas:
-    SkillAnchorResult:
-      type: object
-      description: On-chain anchor lookup for a skillHash.
-      properties:
-        skillHash:
-          type: string
-        anchored:
-          type: boolean
-        tx:
-          type:
-          - string
-          - 'null'
-        block:
-          type:
-          - integer
-          - 'null'
-        network:
-          type: string
-          example: base
-    SkillAuditResult:
-      type: object
-      description: GitHub-repo skill audit result. 8 security/integrity checks, deductive scoring from 100.
-      properties:
-        repositoryUrl:
-          type: string
-        score:
-          type: integer
-          minimum: 0
-          maximum: 100
-        findings:
-          type: array
-          items:
-            $ref: '#/components/schemas/AuditFinding'
-        auditorVersion:
-          type: string
-        passedAt:
-          type: string
-          format: date-time
     AuditFinding:
       type: object
       properties:
@@ -282,65 +217,33 @@ components:
           type: integer
         line:
           type: integer
-    AuditChecks:
+    SkillSchema:
       type: object
-      description: List of audit checks performed by the skill auditor.
+      description: VerifiedSkillCredential JSON-LD schema doc.
       additionalProperties: true
     VerifiedSkillCredential:
       type: object
       description: Issued W3C VC — VerifiedSkillCredential type.
       additionalProperties: true
-    SkillVerifyResult:
+    SkillAuditResult:
       type: object
-      description: Verification of an issued VerifiedSkillCredential by skillHash or DID.
+      description: GitHub-repo skill audit result. 8 security/integrity checks, deductive scoring from 100.
       properties:
-        verified:
-          type: boolean
-        skillHash:
+        repositoryUrl:
           type: string
-        credential:
-          type:
-          - object
-          - 'null'
-          additionalProperties: true
-        anchor_tx:
-          type:
-          - string
-          - 'null'
-        issuanceDate:
-          type:
-          - string
-          - 'null'
+        score:
+          type: integer
+          minimum: 0
+          maximum: 100
+        findings:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditFinding'
+        auditorVersion:
+          type: string
+        passedAt:
+          type: string
           format: date-time
-    SkillSchema:
-      type: object
-      description: VerifiedSkillCredential JSON-LD schema doc.
-      additionalProperties: true
-    VCIssueRequestBase:
-      type: object
-      description: Base body for a VC issuance request. Specific VC types extend with type-specific fields.
-      additionalProperties: true
-    AuditVersion:
-      type: object
-      description: Auditor version metadata. Used by CONFORMANCE drift-check.
-      properties:
-        version:
-          type: string
-          example: 1.2.0
-        rules:
-          type: integer
-        patterns:
-          type: integer
-    SkillInfo:
-      type: object
-      description: 'Skill-verification service info: capabilities, pricing, endpoint pointers.'
-      additionalProperties: true
-    RateLimitError:
-      type: object
-      properties:
-        message:
-          type: string
-          example: 'Free tier: max 1 request(s) per 10 minutes. Use x402 paid endpoints for unlimited access.'
     PaymentRequired:
       type: object
       description: x402 v2 challenge body. Returned with HTTP 402 when X-PAYMENT header is missing or invalid.
@@ -373,12 +276,79 @@ components:
                         description: USDC base units (6 decimals)
                   payTo:
                     type: string
+    AuditChecks:
+      type: object
+      description: List of audit checks performed by the skill auditor.
+      additionalProperties: true
+    SkillInfo:
+      type: object
+      description: 'Skill-verification service info: capabilities, pricing, endpoint pointers.'
+      additionalProperties: true
+    VCIssueRequestBase:
+      type: object
+      description: Base body for a VC issuance request. Specific VC types extend with type-specific fields.
+      additionalProperties: true
+    SkillAnchorResult:
+      type: object
+      description: On-chain anchor lookup for a skillHash.
+      properties:
+        skillHash:
+          type: string
+        anchored:
+          type: boolean
+        tx:
+          type:
+          - string
+          - 'null'
+        block:
+          type:
+          - integer
+          - 'null'
+        network:
+          type: string
+          example: base
+    AuditVersion:
+      type: object
+      description: Auditor version metadata. Used by CONFORMANCE drift-check.
+      properties:
+        version:
+          type: string
+          example: 1.2.0
+        rules:
+          type: integer
+        patterns:
+          type: integer
+    RateLimitError:
+      type: object
+      properties:
+        message:
+          type: string
+          example: 'Free tier: max 1 request(s) per 10 minutes. Use x402 paid endpoints for unlimited access.'
+    SkillVerifyResult:
+      type: object
+      description: Verification of an issued VerifiedSkillCredential by skillHash or DID.
+      properties:
+        verified:
+          type: boolean
+        skillHash:
+          type: string
+        credential:
+          type:
+          - object
+          - 'null'
+          additionalProperties: true
+        anchor_tx:
+          type:
+          - string
+          - 'null'
+        issuanceDate:
+          type:
+          - string
+          - 'null'
+          format: date-time
   securitySchemes:
     x402:
       type: apiKey
       in: header
       name: X-PAYMENT
       description: 'x402 v2 payment receipt header. Format: "x402 <base64-encoded-receipt>". See https://x402.org/writing/x402-v2-launch.'
-x-refined-from:
-- moltrust-ch-moltguard-openapi.json
-- moltrust-ch-moltguard-openapi.yml

@@ -1,11 +1,7 @@
 openapi: 3.2.0
 info:
-  title: Moltrust Ch Music API
+  title: MolTrust Music API
   version: '2.5'
-  description: 'Operations tagged Music across 2 of this provider''s published API definitions: moltrust-ch-openapi.json, moltrust-ch-openapi.yml. Each path carries the servers of the definition it was published in.'
-servers:
-- url: https://api.moltrust.ch
-  description: Production. The served openapi.json omits servers[]; the base is stated by the provider at https://moltrust.ch/developers.html (quickstart), in the agent card supportedInterfaces[0].url (https://api.moltrust.ch/a2a) and in did.json service[].serviceEndpoint (https://api.moltrust.ch).
 tags:
 - name: Music
 paths:
@@ -156,16 +152,6 @@ paths:
       - Music
 components:
   schemas:
-    MusicRevokeRequest:
-      properties:
-        reason:
-          type: string
-          maxLength: 512
-          title: Reason
-      type: object
-      required:
-      - reason
-      title: MusicRevokeRequest
     ValidationError:
       properties:
         loc:
@@ -192,15 +178,6 @@ components:
       - msg
       - type
       title: ValidationError
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
     MusicCredentialRequest:
       properties:
         agent_did:
@@ -251,6 +228,22 @@ components:
       - rights
       - track_title
       title: MusicCredentialRequest
-x-refined-from:
-- moltrust-ch-openapi.json
-- moltrust-ch-openapi.yml
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    MusicRevokeRequest:
+      properties:
+        reason:
+          type: string
+          maxLength: 512
+          title: Reason
+      type: object
+      required:
+      - reason
+      title: MusicRevokeRequest
