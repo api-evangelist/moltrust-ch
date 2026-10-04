@@ -134,6 +134,8 @@ apis:
   humanURL: https://api.moltrust.ch/docs
   baseURL: https://api.moltrust.ch
   tags:
+  - A2A
+  tags_raw:
   - A2a
   properties:
   - type: OpenAPI
@@ -566,6 +568,8 @@ apis:
   humanURL: https://api.moltrust.ch/docs
   baseURL: https://api.moltrust.ch
   tags:
+  - Attestation
+  tags_raw:
   - Attestations
   properties:
   - type: OpenAPI
@@ -602,6 +606,8 @@ apis:
   humanURL: https://api.moltrust.ch/docs
   baseURL: https://api.moltrust.ch
   tags:
+  - Authentication
+  tags_raw:
   - Auth
   properties:
   - type: OpenAPI
@@ -746,6 +752,8 @@ apis:
   humanURL: https://api.moltrust.ch/docs
   baseURL: https://api.moltrust.ch
   tags:
+  - Billing
+  tags_raw:
   - billing
   properties:
   - type: OpenAPI
@@ -782,6 +790,8 @@ apis:
   humanURL: https://api.moltrust.ch/docs
   baseURL: https://api.moltrust.ch
   tags:
+  - CAEP
+  tags_raw:
   - caep
   properties:
   - type: OpenAPI
@@ -890,6 +900,8 @@ apis:
   humanURL: https://api.moltrust.ch/docs
   baseURL: https://api.moltrust.ch
   tags:
+  - Credential Issuance
+  tags_raw:
   - credential-issuance
   properties:
   - type: OpenAPI
@@ -962,6 +974,8 @@ apis:
   humanURL: https://api.moltrust.ch/docs
   baseURL: https://api.moltrust.ch
   tags:
+  - Credit
+  tags_raw:
   - Credits
   properties:
   - type: OpenAPI
@@ -1286,6 +1300,8 @@ apis:
   humanURL: https://api.moltrust.ch/docs
   baseURL: https://api.moltrust.ch
   tags:
+  - Operator
+  tags_raw:
   - Operators
   properties:
   - type: OpenAPI
@@ -1395,6 +1411,8 @@ apis:
   humanURL: https://api.moltrust.ch/docs
   baseURL: https://api.moltrust.ch
   tags:
+  - Payments
+  tags_raw:
   - Payment
   properties:
   - type: OpenAPI
@@ -1431,6 +1449,8 @@ apis:
   humanURL: https://api.moltrust.ch/docs
   baseURL: https://api.moltrust.ch
   tags:
+  - Prediction Markets
+  tags_raw:
   - prediction-markets
   properties:
   - type: OpenAPI
@@ -1539,6 +1559,8 @@ apis:
   humanURL: https://api.moltrust.ch/docs
   baseURL: https://api.moltrust.ch
   tags:
+  - Reseller
+  tags_raw:
   - reseller
   properties:
   - type: OpenAPI
@@ -2043,6 +2065,8 @@ apis:
   humanURL: https://api.moltrust.ch/docs
   baseURL: https://api.moltrust.ch
   tags:
+  - Transparency
+  tags_raw:
   - transparency
   properties:
   - type: OpenAPI
@@ -2187,6 +2211,8 @@ apis:
   humanURL: https://api.moltrust.ch/docs
   baseURL: https://api.moltrust.ch
   tags:
+  - Wallets
+  tags_raw:
   - Wallet
   properties:
   - type: OpenAPI
@@ -2223,6 +2249,8 @@ apis:
   humanURL: https://api.moltrust.ch/docs
   baseURL: https://api.moltrust.ch
   tags:
+  - Webhook
+  tags_raw:
   - Webhooks
   properties:
   - type: OpenAPI
@@ -2295,6 +2323,8 @@ apis:
   humanURL: https://api.moltrust.ch/docs
   baseURL: https://api.moltrust.ch
   tags:
+  - x402
+  tags_raw:
   - X402
   properties:
   - type: OpenAPI
@@ -2331,6 +2361,9 @@ maintainers:
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: CapabilityMap
+  url: capabilities/moltrust-ch-capability-edges.yml
+  name: MolTrust Business Capability Map
 - type: Overlay
   url: overlays/moltrust-ch-openapi-overlay.yaml
 - type: Overlay
