@@ -131,75 +131,6 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
-    PaymentRequired:
-      type: object
-      description: x402 v2 challenge body. Returned with HTTP 402 when X-PAYMENT header is missing or invalid.
-      properties:
-        x402:
-          type: object
-          properties:
-            version:
-              type: integer
-              example: 2
-            accepts:
-              type: array
-              items:
-                type: object
-                properties:
-                  scheme:
-                    type: string
-                    example: exact
-                  network:
-                    type: string
-                    example: base
-                  maxAmountRequired:
-                    type: object
-                    properties:
-                      asset:
-                        type: string
-                        example: USDC
-                      amount:
-                        type: string
-                        description: USDC base units (6 decimals)
-                  payTo:
-                    type: string
-    ScoreMeta:
-      type: object
-      properties:
-        service:
-          type: string
-          enum:
-          - moltguard
-        version:
-          type: string
-        chain:
-          type: string
-          example: base-<block-number>
-        dataSource:
-          type: string
-          example: blockscout+rpc+moltrust
-        timestamp:
-          type: string
-          format: date-time
-        pricingTier:
-          type: string
-          enum:
-          - paid
-          - free-limited
-          - sample
-        note:
-          type: string
-    Error:
-      type: object
-      properties:
-        error:
-          type: string
-          description: Short error code
-        message:
-          type: string
-          description: Human-readable detail
-      required:
-      - error
     MarketCheckResult:
       type: object
       description: Full market integrity check result (Polymarket/Kalshi).
@@ -221,36 +152,17 @@ components:
             type: string
         _meta:
           $ref: '#/components/schemas/ScoreMeta'
-    MarketFeedResult:
+    Error:
       type: object
-      description: Aggregated market integrity feed across tracked markets.
-      additionalProperties: true
       properties:
-        generatedAt:
+        error:
           type: string
-          format: date-time
-        markets:
-          type: array
-          items:
-            type: object
-            additionalProperties: true
-    MarketSample:
-      type: object
-      description: Mock market integrity sample. No real API call.
-      additionalProperties: true
-      properties:
-        marketId:
+          description: Short error code
+        message:
           type: string
-        integrityScore:
-          type: integer
-          minimum: 0
-          maximum: 100
-        flags:
-          type: array
-          items:
-            type: string
-        _meta:
-          $ref: '#/components/schemas/ScoreMeta'
+          description: Human-readable detail
+      required:
+      - error
     EventsFeedResult:
       type: object
       description: Polymarket events feed — anomaly + multi_outcome events from MoltGuard scanner. Refreshed every 6h by cron.
@@ -292,6 +204,94 @@ components:
                 format: date-time
               is_live:
                 type: boolean
+    MarketFeedResult:
+      type: object
+      description: Aggregated market integrity feed across tracked markets.
+      additionalProperties: true
+      properties:
+        generatedAt:
+          type: string
+          format: date-time
+        markets:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+    PaymentRequired:
+      type: object
+      description: x402 v2 challenge body. Returned with HTTP 402 when X-PAYMENT header is missing or invalid.
+      properties:
+        x402:
+          type: object
+          properties:
+            version:
+              type: integer
+              example: 2
+            accepts:
+              type: array
+              items:
+                type: object
+                properties:
+                  scheme:
+                    type: string
+                    example: exact
+                  network:
+                    type: string
+                    example: base
+                  maxAmountRequired:
+                    type: object
+                    properties:
+                      asset:
+                        type: string
+                        example: USDC
+                      amount:
+                        type: string
+                        description: USDC base units (6 decimals)
+                  payTo:
+                    type: string
+    MarketSample:
+      type: object
+      description: Mock market integrity sample. No real API call.
+      additionalProperties: true
+      properties:
+        marketId:
+          type: string
+        integrityScore:
+          type: integer
+          minimum: 0
+          maximum: 100
+        flags:
+          type: array
+          items:
+            type: string
+        _meta:
+          $ref: '#/components/schemas/ScoreMeta'
+    ScoreMeta:
+      type: object
+      properties:
+        service:
+          type: string
+          enum:
+          - moltguard
+        version:
+          type: string
+        chain:
+          type: string
+          example: base-<block-number>
+        dataSource:
+          type: string
+          example: blockscout+rpc+moltrust
+        timestamp:
+          type: string
+          format: date-time
+        pricingTier:
+          type: string
+          enum:
+          - paid
+          - free-limited
+          - sample
+        note:
+          type: string
     RateLimitError:
       type: object
       properties:

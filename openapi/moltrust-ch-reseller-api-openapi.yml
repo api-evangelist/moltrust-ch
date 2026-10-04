@@ -102,15 +102,15 @@ paths:
               schema: {}
 components:
   schemas:
-    HTTPValidationError:
+    OnboardBody:
       properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
+        did:
+          type: string
+          title: Did
       type: object
-      title: HTTPValidationError
+      required:
+      - did
+      title: OnboardBody
     ValidationError:
       properties:
         loc:
@@ -137,6 +137,15 @@ components:
       - msg
       - type
       title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     LoginBody:
       properties:
         login:
@@ -150,12 +159,3 @@ components:
       - login
       - password
       title: LoginBody
-    OnboardBody:
-      properties:
-        did:
-          type: string
-          title: Did
-      type: object
-      required:
-      - did
-      title: OnboardBody

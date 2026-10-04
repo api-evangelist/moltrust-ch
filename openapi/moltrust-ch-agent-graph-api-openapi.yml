@@ -75,6 +75,18 @@ paths:
                 $ref: '#/components/schemas/GraphStats'
 components:
   schemas:
+    GraphScoreEdge:
+      type: object
+      additionalProperties: true
+      properties:
+        fromDid:
+          type: string
+        toDid:
+          type: string
+        score:
+          type: number
+        edgeType:
+          type: string
     GraphStats:
       type: object
       additionalProperties: true
@@ -96,18 +108,6 @@ components:
           items:
             type: object
             additionalProperties: true
-    GraphScoreEdge:
-      type: object
-      additionalProperties: true
-      properties:
-        fromDid:
-          type: string
-        toDid:
-          type: string
-        score:
-          type: number
-        edgeType:
-          type: string
   securitySchemes:
     x402:
       type: apiKey

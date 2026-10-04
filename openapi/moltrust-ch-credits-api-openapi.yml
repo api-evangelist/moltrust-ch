@@ -239,6 +239,22 @@ paths:
       - Credits
 components:
   schemas:
+    DepositRequest:
+      properties:
+        tx_hash:
+          type: string
+          maxLength: 70
+          minLength: 64
+          title: Tx Hash
+        did:
+          type: string
+          maxLength: 128
+          title: Did
+      type: object
+      required:
+      - tx_hash
+      - did
+      title: DepositRequest
     ValidationError:
       properties:
         loc:
@@ -274,19 +290,3 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
-    DepositRequest:
-      properties:
-        tx_hash:
-          type: string
-          maxLength: 70
-          minLength: 64
-          title: Tx Hash
-        did:
-          type: string
-          maxLength: 128
-          title: Did
-      type: object
-      required:
-      - tx_hash
-      - did
-      title: DepositRequest

@@ -151,6 +151,14 @@ paths:
                 $ref: '#/components/schemas/VCBindingResult'
 components:
   schemas:
+    HackathonStats:
+      type: object
+      additionalProperties: true
+      properties:
+        totalParticipants:
+          type: integer
+        activeKeys:
+          type: integer
     VCBindingResult:
       type: object
       additionalProperties: true
@@ -165,6 +173,16 @@ components:
           type: boolean
         did:
           type: string
+    HackathonRegisterResult:
+      type: object
+      additionalProperties: true
+      properties:
+        apiKey:
+          type: string
+          description: Hackathon-tier API key (bypasses x402)
+        expiresAt:
+          type: string
+          format: date-time
     WalletAttestResult:
       type: object
       additionalProperties: true
@@ -185,24 +203,6 @@ components:
           type: string
         nonce:
           type: string
-        expiresAt:
-          type: string
-          format: date-time
-    HackathonStats:
-      type: object
-      additionalProperties: true
-      properties:
-        totalParticipants:
-          type: integer
-        activeKeys:
-          type: integer
-    HackathonRegisterResult:
-      type: object
-      additionalProperties: true
-      properties:
-        apiKey:
-          type: string
-          description: Hackathon-tier API key (bypasses x402)
         expiresAt:
           type: string
           format: date-time

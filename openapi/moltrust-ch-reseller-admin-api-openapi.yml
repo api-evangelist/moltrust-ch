@@ -202,6 +202,15 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
+    AssignBody:
+      properties:
+        did:
+          type: string
+          title: Did
+      type: object
+      required:
+      - did
+      title: AssignBody
     CodeBody:
       properties:
         code:
@@ -211,15 +220,6 @@ components:
       required:
       - code
       title: CodeBody
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
     ValidationError:
       properties:
         loc:
@@ -246,23 +246,15 @@ components:
       - msg
       - type
       title: ValidationError
-    AssignBody:
+    HTTPValidationError:
       properties:
-        did:
-          type: string
-          title: Did
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
       type: object
-      required:
-      - did
-      title: AssignBody
-    InvoiceBody:
-      properties:
-        finalize:
-          type: boolean
-          title: Finalize
-          default: false
-      type: object
-      title: InvoiceBody
+      title: HTTPValidationError
     CreateBody:
       properties:
         login:
@@ -295,3 +287,11 @@ components:
       - password
       - wholesale_price_cents
       title: CreateBody
+    InvoiceBody:
+      properties:
+        finalize:
+          type: boolean
+          title: Finalize
+          default: false
+      type: object
+      title: InvoiceBody

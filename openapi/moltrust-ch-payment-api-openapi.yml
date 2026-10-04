@@ -38,6 +38,22 @@ paths:
       - Payment
 components:
   schemas:
+    LightningInvoiceRequest:
+      properties:
+        amount_sats:
+          type: integer
+          maximum: 10000000.0
+          minimum: 1.0
+          title: Amount Sats
+        description:
+          type: string
+          maxLength: 128
+          title: Description
+          default: MolTrust
+      type: object
+      required:
+      - amount_sats
+      title: LightningInvoiceRequest
     ValidationError:
       properties:
         loc:
@@ -64,22 +80,6 @@ components:
       - msg
       - type
       title: ValidationError
-    LightningInvoiceRequest:
-      properties:
-        amount_sats:
-          type: integer
-          maximum: 10000000.0
-          minimum: 1.0
-          title: Amount Sats
-        description:
-          type: string
-          maxLength: 128
-          title: Description
-          default: MolTrust
-      type: object
-      required:
-      - amount_sats
-      title: LightningInvoiceRequest
     HTTPValidationError:
       properties:
         detail:

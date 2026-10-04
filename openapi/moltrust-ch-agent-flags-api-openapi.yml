@@ -90,14 +90,6 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
-    FlagRecordResult:
-      type: object
-      additionalProperties: true
-      properties:
-        ok:
-          type: boolean
-        flagId:
-          type: string
     Error:
       type: object
       properties:
@@ -119,6 +111,14 @@ components:
           type: integer
         openCount:
           type: integer
+    FlagRecordResult:
+      type: object
+      additionalProperties: true
+      properties:
+        ok:
+          type: boolean
+        flagId:
+          type: string
     FlagList:
       type: array
       items:

@@ -122,18 +122,6 @@ components:
       - msg
       - type
       title: ValidationError
-    ReputationBatchRequest:
-      properties:
-        dids:
-          items:
-            type: string
-          type: array
-          title: Dids
-          description: DIDs to score (max 500)
-      type: object
-      required:
-      - dids
-      title: ReputationBatchRequest
     HTTPValidationError:
       properties:
         detail:
@@ -164,3 +152,15 @@ components:
       - to_did
       - score
       title: RateRequest
+    ReputationBatchRequest:
+      properties:
+        dids:
+          items:
+            type: string
+          type: array
+          title: Dids
+          description: DIDs to score (max 500)
+      type: object
+      required:
+      - dids
+      title: ReputationBatchRequest

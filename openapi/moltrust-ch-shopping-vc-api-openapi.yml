@@ -117,6 +117,14 @@ paths:
                 $ref: '#/components/schemas/PaymentRequired'
 components:
   schemas:
+    BuyerAgentCredential:
+      type: object
+      description: Issued BuyerAgentCredential (W3C VC).
+      additionalProperties: true
+    VCIssueRequestBase:
+      type: object
+      description: Base body for a VC issuance request. Specific VC types extend with type-specific fields.
+      additionalProperties: true
     PaymentRequired:
       type: object
       description: x402 v2 challenge body. Returned with HTTP 402 when X-PAYMENT header is missing or invalid.
@@ -163,14 +171,6 @@ components:
         issuanceDate:
           type: string
           format: date-time
-    BuyerAgentCredential:
-      type: object
-      description: Issued BuyerAgentCredential (W3C VC).
-      additionalProperties: true
-    VCIssueRequestBase:
-      type: object
-      description: Base body for a VC issuance request. Specific VC types extend with type-specific fields.
-      additionalProperties: true
     ShoppingVerifyResult:
       type: object
       description: 10-step buyer-agent VC verification result.

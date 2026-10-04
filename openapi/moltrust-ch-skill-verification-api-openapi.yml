@@ -196,6 +196,40 @@ paths:
                 $ref: '#/components/schemas/PaymentRequired'
 components:
   schemas:
+    VerifiedSkillCredential:
+      type: object
+      description: Issued W3C VC — VerifiedSkillCredential type.
+      additionalProperties: true
+    AuditChecks:
+      type: object
+      description: List of audit checks performed by the skill auditor.
+      additionalProperties: true
+    SkillVerifyResult:
+      type: object
+      description: Verification of an issued VerifiedSkillCredential by skillHash or DID.
+      properties:
+        verified:
+          type: boolean
+        skillHash:
+          type: string
+        credential:
+          type:
+          - object
+          - 'null'
+          additionalProperties: true
+        anchor_tx:
+          type:
+          - string
+          - 'null'
+        issuanceDate:
+          type:
+          - string
+          - 'null'
+          format: date-time
+    SkillSchema:
+      type: object
+      description: VerifiedSkillCredential JSON-LD schema doc.
+      additionalProperties: true
     AuditFinding:
       type: object
       properties:
@@ -217,33 +251,44 @@ components:
           type: integer
         line:
           type: integer
-    SkillSchema:
+    VCIssueRequestBase:
       type: object
-      description: VerifiedSkillCredential JSON-LD schema doc.
+      description: Base body for a VC issuance request. Specific VC types extend with type-specific fields.
       additionalProperties: true
-    VerifiedSkillCredential:
+    AuditVersion:
       type: object
-      description: Issued W3C VC — VerifiedSkillCredential type.
-      additionalProperties: true
-    SkillAuditResult:
-      type: object
-      description: GitHub-repo skill audit result. 8 security/integrity checks, deductive scoring from 100.
+      description: Auditor version metadata. Used by CONFORMANCE drift-check.
       properties:
-        repositoryUrl:
+        version:
           type: string
-        score:
+          example: 1.2.0
+        rules:
           type: integer
-          minimum: 0
-          maximum: 100
-        findings:
-          type: array
-          items:
-            $ref: '#/components/schemas/AuditFinding'
-        auditorVersion:
+        patterns:
+          type: integer
+    SkillAnchorResult:
+      type: object
+      description: On-chain anchor lookup for a skillHash.
+      properties:
+        skillHash:
           type: string
-        passedAt:
+        anchored:
+          type: boolean
+        tx:
+          type:
+          - string
+          - 'null'
+        block:
+          type:
+          - integer
+          - 'null'
+        network:
           type: string
-          format: date-time
+          example: base
+    SkillInfo:
+      type: object
+      description: 'Skill-verification service info: capabilities, pricing, endpoint pointers.'
+      additionalProperties: true
     PaymentRequired:
       type: object
       description: x402 v2 challenge body. Returned with HTTP 402 when X-PAYMENT header is missing or invalid.
@@ -276,75 +321,30 @@ components:
                         description: USDC base units (6 decimals)
                   payTo:
                     type: string
-    AuditChecks:
-      type: object
-      description: List of audit checks performed by the skill auditor.
-      additionalProperties: true
-    SkillInfo:
-      type: object
-      description: 'Skill-verification service info: capabilities, pricing, endpoint pointers.'
-      additionalProperties: true
-    VCIssueRequestBase:
-      type: object
-      description: Base body for a VC issuance request. Specific VC types extend with type-specific fields.
-      additionalProperties: true
-    SkillAnchorResult:
-      type: object
-      description: On-chain anchor lookup for a skillHash.
-      properties:
-        skillHash:
-          type: string
-        anchored:
-          type: boolean
-        tx:
-          type:
-          - string
-          - 'null'
-        block:
-          type:
-          - integer
-          - 'null'
-        network:
-          type: string
-          example: base
-    AuditVersion:
-      type: object
-      description: Auditor version metadata. Used by CONFORMANCE drift-check.
-      properties:
-        version:
-          type: string
-          example: 1.2.0
-        rules:
-          type: integer
-        patterns:
-          type: integer
     RateLimitError:
       type: object
       properties:
         message:
           type: string
           example: 'Free tier: max 1 request(s) per 10 minutes. Use x402 paid endpoints for unlimited access.'
-    SkillVerifyResult:
+    SkillAuditResult:
       type: object
-      description: Verification of an issued VerifiedSkillCredential by skillHash or DID.
+      description: GitHub-repo skill audit result. 8 security/integrity checks, deductive scoring from 100.
       properties:
-        verified:
-          type: boolean
-        skillHash:
+        repositoryUrl:
           type: string
-        credential:
-          type:
-          - object
-          - 'null'
-          additionalProperties: true
-        anchor_tx:
-          type:
-          - string
-          - 'null'
-        issuanceDate:
-          type:
-          - string
-          - 'null'
+        score:
+          type: integer
+          minimum: 0
+          maximum: 100
+        findings:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditFinding'
+        auditorVersion:
+          type: string
+        passedAt:
+          type: string
           format: date-time
   securitySchemes:
     x402:

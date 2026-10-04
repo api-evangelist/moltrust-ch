@@ -148,25 +148,6 @@ components:
           type: integer
         denied:
           type: integer
-    AAEInfo:
-      type: object
-      additionalProperties: true
-      description: 'AAE-evaluation service info: schema URI, supported operations.'
-    ActionEvents:
-      type: array
-      items:
-        type: object
-        additionalProperties: true
-        properties:
-          eventId:
-            type: string
-          did:
-            type: string
-          action:
-            type: string
-          timestamp:
-            type: string
-            format: date-time
     GovernanceValidateResult:
       type: object
       additionalProperties: true
@@ -183,18 +164,10 @@ components:
           type: array
           items:
             type: string
-    ActionCheckResult:
+    AAEInfo:
       type: object
       additionalProperties: true
-      properties:
-        allowed:
-          type: boolean
-        riskScore:
-          type: integer
-        reasons:
-          type: array
-          items:
-            type: string
+      description: 'AAE-evaluation service info: schema URI, supported operations.'
     AAEEvalResult:
       type: object
       additionalProperties: true
@@ -213,6 +186,33 @@ components:
         constraints:
           type: object
           additionalProperties: true
+    ActionEvents:
+      type: array
+      items:
+        type: object
+        additionalProperties: true
+        properties:
+          eventId:
+            type: string
+          did:
+            type: string
+          action:
+            type: string
+          timestamp:
+            type: string
+            format: date-time
+    ActionCheckResult:
+      type: object
+      additionalProperties: true
+      properties:
+        allowed:
+          type: boolean
+        riskScore:
+          type: integer
+        reasons:
+          type: array
+          items:
+            type: string
   securitySchemes:
     x402:
       type: apiKey

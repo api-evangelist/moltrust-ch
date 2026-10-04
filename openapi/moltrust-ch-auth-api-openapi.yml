@@ -143,15 +143,6 @@ paths:
       - Auth
 components:
   schemas:
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
     ValidationError:
       properties:
         loc:
@@ -178,17 +169,6 @@ components:
       - msg
       - type
       title: ValidationError
-    MoltbookAuthRequest:
-      properties:
-        token:
-          type: string
-          maxLength: 512
-          minLength: 10
-          title: Token
-      type: object
-      required:
-      - token
-      title: MoltbookAuthRequest
     DidSignupRequest:
       properties:
         public_key:
@@ -224,3 +204,23 @@ components:
       required:
       - email
       title: SignupRequest
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    MoltbookAuthRequest:
+      properties:
+        token:
+          type: string
+          maxLength: 512
+          minLength: 10
+          title: Token
+      type: object
+      required:
+      - token
+      title: MoltbookAuthRequest

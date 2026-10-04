@@ -146,6 +146,22 @@ components:
       - audience_did
       - capabilities
       title: DelegationCreateRequest
+    DelegationVerifyRequest:
+      properties:
+        token:
+          type: string
+          maxLength: 100000
+          title: Token
+        expected_audience:
+          anyOf:
+          - type: string
+            maxLength: 128
+          - type: 'null'
+          title: Expected Audience
+      type: object
+      required:
+      - token
+      title: DelegationVerifyRequest
     ValidationError:
       properties:
         loc:
@@ -172,22 +188,6 @@ components:
       - msg
       - type
       title: ValidationError
-    DelegationVerifyRequest:
-      properties:
-        token:
-          type: string
-          maxLength: 100000
-          title: Token
-        expected_audience:
-          anyOf:
-          - type: string
-            maxLength: 128
-          - type: 'null'
-          title: Expected Audience
-      type: object
-      required:
-      - token
-      title: DelegationVerifyRequest
     HTTPValidationError:
       properties:
         detail:

@@ -136,12 +136,22 @@ paths:
                 $ref: '#/components/schemas/PaymentRequired'
 components:
   schemas:
-    TravelVerifyResult:
+    VCIssueRequestBase:
+      type: object
+      description: Base body for a VC issuance request. Specific VC types extend with type-specific fields.
+      additionalProperties: true
+    TravelReceipt:
       type: object
       additionalProperties: true
       properties:
-        verified:
-          type: boolean
+        receiptId:
+          type: string
+    TravelTrip:
+      type: object
+      additionalProperties: true
+      properties:
+        tripId:
+          type: string
     PaymentRequired:
       type: object
       description: x402 v2 challenge body. Returned with HTTP 402 when X-PAYMENT header is missing or invalid.
@@ -178,22 +188,12 @@ components:
       type: object
       additionalProperties: true
       description: Issued TravelAgentCredential (W3C VC).
-    TravelTrip:
+    TravelVerifyResult:
       type: object
       additionalProperties: true
       properties:
-        tripId:
-          type: string
-    TravelReceipt:
-      type: object
-      additionalProperties: true
-      properties:
-        receiptId:
-          type: string
-    VCIssueRequestBase:
-      type: object
-      description: Base body for a VC issuance request. Specific VC types extend with type-specific fields.
-      additionalProperties: true
+        verified:
+          type: boolean
   securitySchemes:
     x402:
       type: apiKey

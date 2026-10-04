@@ -879,210 +879,6 @@ paths:
       - Identity
 components:
   schemas:
-    AgentClassRequest:
-      properties:
-        agent_class:
-          type: string
-          title: Agent Class
-          description: 'One of: orchestrator, autonomous, human_initiated, copilot'
-        agent_framework:
-          anyOf:
-          - type: string
-            maxLength: 100
-          - type: 'null'
-          title: Agent Framework
-          description: e.g. langgraph, crewai, autogen
-        agent_version:
-          anyOf:
-          - type: string
-            maxLength: 50
-          - type: 'null'
-          title: Agent Version
-        publisher:
-          anyOf:
-          - type: string
-            maxLength: 255
-          - type: 'null'
-          title: Publisher
-      type: object
-      required:
-      - agent_class
-      title: AgentClassRequest
-    ScoreImportRequest:
-      properties:
-        moltrust_did:
-          type: string
-          maxLength: 128
-          title: Moltrust Did
-        external_did:
-          type: string
-          maxLength: 256
-          title: External Did
-        external_score:
-          type: number
-          minimum: 0.0
-          title: External Score
-        external_system:
-          type: string
-          maxLength: 32
-          title: External System
-        proof:
-          type: string
-          maxLength: 512
-          title: Proof
-          default: ''
-      type: object
-      required:
-      - moltrust_did
-      - external_did
-      - external_score
-      - external_system
-      title: ScoreImportRequest
-    PopRegisterRequest:
-      properties:
-        public_key:
-          type: string
-          maxLength: 64
-          minLength: 64
-          title: Public Key
-          description: Ed25519 public key, 64 hex chars
-        challenge:
-          type: string
-          maxLength: 256
-          title: Challenge
-          description: Challenge from GET /identity/register-challenge
-        signature:
-          type: string
-          maxLength: 256
-          title: Signature
-          description: base64url Ed25519 signature over the challenge string
-        pow_nonce:
-          type: string
-          maxLength: 64
-          title: Pow Nonce
-          description: 'PoW nonce: sha256(pow_seed || nonce) must have >= difficulty_bits leading zero bits'
-        display_name:
-          type: string
-          maxLength: 64
-          minLength: 1
-          title: Display Name
-          default: anonymous
-        platform:
-          type: string
-          maxLength: 32
-          title: Platform
-          default: a2a
-      type: object
-      required:
-      - public_key
-      - challenge
-      - signature
-      - pow_nonce
-      title: PopRegisterRequest
-    ERC8004ValidateRequest:
-      properties:
-        erc8004_agent_id:
-          type: integer
-          minimum: 0.0
-          title: Erc8004 Agent Id
-        validation_type:
-          type: string
-          maxLength: 64
-          title: Validation Type
-          default: trust_assessment
-      type: object
-      required:
-      - erc8004_agent_id
-      title: ERC8004ValidateRequest
-    DIDBridgeRequest:
-      properties:
-        external_did:
-          type: string
-          maxLength: 256
-          title: External Did
-        moltrust_did:
-          type: string
-          maxLength: 128
-          title: Moltrust Did
-        wallet_address:
-          type: string
-          maxLength: 64
-          title: Wallet Address
-        chain:
-          type: string
-          maxLength: 20
-          title: Chain
-          default: solana
-        proof:
-          type: string
-          maxLength: 512
-          title: Proof
-        nonce:
-          type: string
-          maxLength: 64
-          title: Nonce
-      type: object
-      required:
-      - external_did
-      - moltrust_did
-      - wallet_address
-      - proof
-      - nonce
-      title: DIDBridgeRequest
-    SimpleBridgeRequest:
-      properties:
-        external_did:
-          type: string
-          maxLength: 256
-          title: External Did
-        label:
-          type: string
-          maxLength: 128
-          title: Label
-          default: ''
-        platform:
-          type: string
-          maxLength: 32
-          title: Platform
-          default: external
-      type: object
-      required:
-      - external_did
-      title: SimpleBridgeRequest
-    ERC8004RegisterRequest:
-      properties:
-        name:
-          type: string
-          maxLength: 128
-          title: Name
-        description:
-          type: string
-          maxLength: 1024
-          title: Description
-          default: ''
-        wallet_address:
-          type: string
-          maxLength: 64
-          title: Wallet Address
-        platform:
-          type: string
-          maxLength: 64
-          title: Platform
-          default: base
-      type: object
-      required:
-      - name
-      - wallet_address
-      title: ERC8004RegisterRequest
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
     SpiffeBindRequest:
       properties:
         spiffe_uri:
@@ -1126,6 +922,145 @@ components:
       - msg
       - type
       title: ValidationError
+    PopRegisterRequest:
+      properties:
+        public_key:
+          type: string
+          maxLength: 64
+          minLength: 64
+          title: Public Key
+          description: Ed25519 public key, 64 hex chars
+        challenge:
+          type: string
+          maxLength: 256
+          title: Challenge
+          description: Challenge from GET /identity/register-challenge
+        signature:
+          type: string
+          maxLength: 256
+          title: Signature
+          description: base64url Ed25519 signature over the challenge string
+        pow_nonce:
+          type: string
+          maxLength: 64
+          title: Pow Nonce
+          description: 'PoW nonce: sha256(pow_seed || nonce) must have >= difficulty_bits leading zero bits'
+        display_name:
+          type: string
+          maxLength: 64
+          minLength: 1
+          title: Display Name
+          default: anonymous
+        platform:
+          type: string
+          maxLength: 32
+          title: Platform
+          default: a2a
+      type: object
+      required:
+      - public_key
+      - challenge
+      - signature
+      - pow_nonce
+      title: PopRegisterRequest
+    RevokeRequest:
+      properties:
+        reason:
+          type: string
+          maxLength: 100
+          title: Reason
+          default: manual_revocation
+        cascade:
+          type: boolean
+          title: Cascade
+          description: Revoke all downstream delegated agents
+          default: false
+      type: object
+      title: RevokeRequest
+    DIDBridgeRequest:
+      properties:
+        external_did:
+          type: string
+          maxLength: 256
+          title: External Did
+        moltrust_did:
+          type: string
+          maxLength: 128
+          title: Moltrust Did
+        wallet_address:
+          type: string
+          maxLength: 64
+          title: Wallet Address
+        chain:
+          type: string
+          maxLength: 20
+          title: Chain
+          default: solana
+        proof:
+          type: string
+          maxLength: 512
+          title: Proof
+        nonce:
+          type: string
+          maxLength: 64
+          title: Nonce
+      type: object
+      required:
+      - external_did
+      - moltrust_did
+      - wallet_address
+      - proof
+      - nonce
+      title: DIDBridgeRequest
+    AgentClassRequest:
+      properties:
+        agent_class:
+          type: string
+          title: Agent Class
+          description: 'One of: orchestrator, autonomous, human_initiated, copilot'
+        agent_framework:
+          anyOf:
+          - type: string
+            maxLength: 100
+          - type: 'null'
+          title: Agent Framework
+          description: e.g. langgraph, crewai, autogen
+        agent_version:
+          anyOf:
+          - type: string
+            maxLength: 50
+          - type: 'null'
+          title: Agent Version
+        publisher:
+          anyOf:
+          - type: string
+            maxLength: 255
+          - type: 'null'
+          title: Publisher
+      type: object
+      required:
+      - agent_class
+      title: AgentClassRequest
+    SimpleBridgeRequest:
+      properties:
+        external_did:
+          type: string
+          maxLength: 256
+          title: External Did
+        label:
+          type: string
+          maxLength: 128
+          title: Label
+          default: ''
+        platform:
+          type: string
+          maxLength: 32
+          title: Platform
+          default: external
+      type: object
+      required:
+      - external_did
+      title: SimpleBridgeRequest
     WalletBindRequest:
       properties:
         did:
@@ -1182,17 +1117,82 @@ components:
           default: false
       type: object
       title: RegisterRequest
-    RevokeRequest:
+    ERC8004RegisterRequest:
       properties:
-        reason:
+        name:
           type: string
-          maxLength: 100
-          title: Reason
-          default: manual_revocation
-        cascade:
-          type: boolean
-          title: Cascade
-          description: Revoke all downstream delegated agents
-          default: false
+          maxLength: 128
+          title: Name
+        description:
+          type: string
+          maxLength: 1024
+          title: Description
+          default: ''
+        wallet_address:
+          type: string
+          maxLength: 64
+          title: Wallet Address
+        platform:
+          type: string
+          maxLength: 64
+          title: Platform
+          default: base
       type: object
-      title: RevokeRequest
+      required:
+      - name
+      - wallet_address
+      title: ERC8004RegisterRequest
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ScoreImportRequest:
+      properties:
+        moltrust_did:
+          type: string
+          maxLength: 128
+          title: Moltrust Did
+        external_did:
+          type: string
+          maxLength: 256
+          title: External Did
+        external_score:
+          type: number
+          minimum: 0.0
+          title: External Score
+        external_system:
+          type: string
+          maxLength: 32
+          title: External System
+        proof:
+          type: string
+          maxLength: 512
+          title: Proof
+          default: ''
+      type: object
+      required:
+      - moltrust_did
+      - external_did
+      - external_score
+      - external_system
+      title: ScoreImportRequest
+    ERC8004ValidateRequest:
+      properties:
+        erc8004_agent_id:
+          type: integer
+          minimum: 0.0
+          title: Erc8004 Agent Id
+        validation_type:
+          type: string
+          maxLength: 64
+          title: Validation Type
+          default: trust_assessment
+      type: object
+      required:
+      - erc8004_agent_id
+      title: ERC8004ValidateRequest

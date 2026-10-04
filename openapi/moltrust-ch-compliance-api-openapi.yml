@@ -155,15 +155,6 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
     ComplianceDeclarationRequest:
       properties:
         subject_did:
@@ -265,62 +256,6 @@ components:
       - msg
       - type
       title: ValidationError
-    ComplianceIncidentRequest:
-      properties:
-        did:
-          type: string
-          maxLength: 128
-          title: Did
-        category:
-          type: string
-          title: Category
-          description: death|health_harm|critical_infrastructure|widespread_infringement|fundamental_rights|property_environment
-        severity:
-          type: string
-          title: Severity
-          default: high
-        description:
-          anyOf:
-          - type: string
-            maxLength: 4000
-          - type: 'null'
-          title: Description
-        awareness_date:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Awareness Date
-          description: ISO8601 UTC; defaults to now
-      type: object
-      required:
-      - did
-      - category
-      title: ComplianceIncidentRequest
-    NotifiedBodyInput:
-      properties:
-        name:
-          type: string
-          maxLength: 255
-          title: Name
-        identification_number:
-          type: string
-          maxLength: 64
-          title: Identification Number
-        procedure:
-          type: string
-          maxLength: 500
-          title: Procedure
-        certificate:
-          type: string
-          maxLength: 255
-          title: Certificate
-      type: object
-      required:
-      - name
-      - identification_number
-      - procedure
-      - certificate
-      title: NotifiedBodyInput
     ComplianceAssessRequest:
       properties:
         did:
@@ -398,3 +333,68 @@ components:
       - use_case
       - intended_purpose
       title: ComplianceAssessRequest
+    NotifiedBodyInput:
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          title: Name
+        identification_number:
+          type: string
+          maxLength: 64
+          title: Identification Number
+        procedure:
+          type: string
+          maxLength: 500
+          title: Procedure
+        certificate:
+          type: string
+          maxLength: 255
+          title: Certificate
+      type: object
+      required:
+      - name
+      - identification_number
+      - procedure
+      - certificate
+      title: NotifiedBodyInput
+    ComplianceIncidentRequest:
+      properties:
+        did:
+          type: string
+          maxLength: 128
+          title: Did
+        category:
+          type: string
+          title: Category
+          description: death|health_harm|critical_infrastructure|widespread_infringement|fundamental_rights|property_environment
+        severity:
+          type: string
+          title: Severity
+          default: high
+        description:
+          anyOf:
+          - type: string
+            maxLength: 4000
+          - type: 'null'
+          title: Description
+        awareness_date:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Awareness Date
+          description: ISO8601 UTC; defaults to now
+      type: object
+      required:
+      - did
+      - category
+      title: ComplianceIncidentRequest
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError

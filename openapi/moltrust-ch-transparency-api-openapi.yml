@@ -117,6 +117,126 @@ paths:
                 $ref: '#/components/schemas/VerifyHashResponseNotFound'
 components:
   schemas:
+    VerifyHashResponseOk:
+      type: object
+      properties:
+        verified:
+          type: boolean
+          enum:
+          - true
+        issuanceDate:
+          type: string
+          format: date-time
+        expirationDate:
+          type: string
+          format: date-time
+        vertical:
+          type: string
+        anchor_tx:
+          type: string
+        network:
+          type: string
+          example: base
+      required:
+      - verified
+    TrustProofHistoryEntry:
+      type: object
+      description: Abbreviated TrustProof for history list — even more public-only than the latest.
+      properties:
+        id:
+          type: string
+        issuanceDate:
+          type: string
+          format: date-time
+        expirationDate:
+          type: string
+          format: date-time
+        vertical:
+          type: string
+        pass_rate:
+          type: number
+        tests_run:
+          type: integer
+        anchor_tx:
+          type: string
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Short error code
+        message:
+          type: string
+          description: Human-readable detail
+      required:
+      - error
+    Health:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - ok
+        timestamp:
+          type: string
+          format: date-time
+      required:
+      - status
+      - timestamp
+    TrustProofSummary:
+      type: object
+      description: Sanitized TrustProof — public metadata only. No raw prompts/outputs/test inputs.
+      properties:
+        id:
+          type: string
+          description: sha256 proofHash from credentialSubject
+        type:
+          type: array
+          items:
+            type: string
+        issuer:
+          type: string
+          description: DID of the issuer
+        issuanceDate:
+          type: string
+          format: date-time
+        expirationDate:
+          type: string
+          format: date-time
+        credential_type:
+          type: string
+          enum:
+          - TrustProof
+        vertical:
+          type: string
+          description: Vertical the proof applies to
+        pass_rate:
+          type: number
+          description: Fraction of tests passed (0..1)
+        avg_integrity_score:
+          type: number
+        tests_passed:
+          type: integer
+        tests_run:
+          type: integer
+        dimensions:
+          type: array
+          items:
+            type: string
+        anchor_tx:
+          type: string
+          description: On-chain anchor transaction hash
+        network:
+          type: string
+          example: base
+        proof:
+          type: object
+          properties:
+            type:
+              type: string
+            created:
+              type: string
+              format: date-time
     ApiInfo:
       type: object
       description: Self-documentation of MoltGuard service capabilities + pricing.
@@ -183,113 +303,6 @@ components:
       - network
       - x402_enabled
       - endpoints
-    TrustProofSummary:
-      type: object
-      description: Sanitized TrustProof — public metadata only. No raw prompts/outputs/test inputs.
-      properties:
-        id:
-          type: string
-          description: sha256 proofHash from credentialSubject
-        type:
-          type: array
-          items:
-            type: string
-        issuer:
-          type: string
-          description: DID of the issuer
-        issuanceDate:
-          type: string
-          format: date-time
-        expirationDate:
-          type: string
-          format: date-time
-        credential_type:
-          type: string
-          enum:
-          - TrustProof
-        vertical:
-          type: string
-          description: Vertical the proof applies to
-        pass_rate:
-          type: number
-          description: Fraction of tests passed (0..1)
-        avg_integrity_score:
-          type: number
-        tests_passed:
-          type: integer
-        tests_run:
-          type: integer
-        dimensions:
-          type: array
-          items:
-            type: string
-        anchor_tx:
-          type: string
-          description: On-chain anchor transaction hash
-        network:
-          type: string
-          example: base
-        proof:
-          type: object
-          properties:
-            type:
-              type: string
-            created:
-              type: string
-              format: date-time
-    VerifyHashResponseOk:
-      type: object
-      properties:
-        verified:
-          type: boolean
-          enum:
-          - true
-        issuanceDate:
-          type: string
-          format: date-time
-        expirationDate:
-          type: string
-          format: date-time
-        vertical:
-          type: string
-        anchor_tx:
-          type: string
-        network:
-          type: string
-          example: base
-      required:
-      - verified
-    Error:
-      type: object
-      properties:
-        error:
-          type: string
-          description: Short error code
-        message:
-          type: string
-          description: Human-readable detail
-      required:
-      - error
-    TrustProofHistoryEntry:
-      type: object
-      description: Abbreviated TrustProof for history list — even more public-only than the latest.
-      properties:
-        id:
-          type: string
-        issuanceDate:
-          type: string
-          format: date-time
-        expirationDate:
-          type: string
-          format: date-time
-        vertical:
-          type: string
-        pass_rate:
-          type: number
-        tests_run:
-          type: integer
-        anchor_tx:
-          type: string
     VerifyHashResponseNotFound:
       type: object
       properties:
@@ -301,19 +314,6 @@ components:
           type: string
       required:
       - verified
-    Health:
-      type: object
-      properties:
-        status:
-          type: string
-          enum:
-          - ok
-        timestamp:
-          type: string
-          format: date-time
-      required:
-      - status
-      - timestamp
   securitySchemes:
     x402:
       type: apiKey

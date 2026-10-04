@@ -221,16 +221,18 @@ paths:
                 $ref: '#/components/schemas/PaymentRequired'
 components:
   schemas:
-    PredictionWalletInfo:
-      type: object
-      additionalProperties: true
-      properties:
-        address:
-          type: string
-        linkedDid:
-          type:
-          - string
-          - 'null'
+    PredictionLeaderboard:
+      type: array
+      items:
+        type: object
+        additionalProperties: true
+        properties:
+          did:
+            type: string
+          score:
+            type: number
+          rank:
+            type: integer
     PredictionWalletLink:
       type: object
       additionalProperties: true
@@ -241,6 +243,32 @@ components:
           type: string
         address:
           type: string
+    PredictionWalletInfo:
+      type: object
+      additionalProperties: true
+      properties:
+        address:
+          type: string
+        linkedDid:
+          type:
+          - string
+          - 'null'
+    PredictionIntegrity:
+      type: object
+      additionalProperties: true
+      properties:
+        marketId:
+          type: string
+        integrityScore:
+          type: integer
+        flags:
+          type: array
+          items:
+            type: string
+    VCIssueRequestBase:
+      type: object
+      description: Base body for a VC issuance request. Specific VC types extend with type-specific fields.
+      additionalProperties: true
     PaymentRequired:
       type: object
       description: x402 v2 challenge body. Returned with HTTP 402 when X-PAYMENT header is missing or invalid.
@@ -273,34 +301,6 @@ components:
                         description: USDC base units (6 decimals)
                   payTo:
                     type: string
-    PredictionIntegrity:
-      type: object
-      additionalProperties: true
-      properties:
-        marketId:
-          type: string
-        integrityScore:
-          type: integer
-        flags:
-          type: array
-          items:
-            type: string
-    VCIssueRequestBase:
-      type: object
-      description: Base body for a VC issuance request. Specific VC types extend with type-specific fields.
-      additionalProperties: true
-    PredictionLeaderboard:
-      type: array
-      items:
-        type: object
-        additionalProperties: true
-        properties:
-          did:
-            type: string
-          score:
-            type: number
-          rank:
-            type: integer
     PredictionTrackCredential:
       type: object
       additionalProperties: true
