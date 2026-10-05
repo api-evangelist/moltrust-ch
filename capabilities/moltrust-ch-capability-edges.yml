@@ -1,0 +1,101 @@
+slug: moltrust-ch
+provider: MolTrust
+generated_by: planning/capability-mapping/scripts/classify_capabilities.py
+model: claude-opus-5
+frame:
+- Software & Technology
+min_confidence: 0.7
+capability_model:
+  source: https://github.com/vincentmakes/turbo-ea-capabilities
+  license: CC-BY-4.0
+  attribution: Turbo EA Capabilities by Vincent Verdet — Turbo EA, https://github.com/vincentmakes/turbo-ea-capabilities,
+    CC BY 4.0
+  notice: NOTICE
+edge_count: 8
+edges:
+- tag: Identity
+  spec_file: moltrust-ch-identity-api-openapi.yml
+  capability_id: BC-620.20
+  capability_id_l1: BC-620
+  capability_name: Identity & Access Management
+  confidence: 0.85
+  evidence: POST /identity/register  Register Agent; GET /identity/verify/{did}  Verify Agent; GET /identity/resolve/{did}  Resolve
+    Did; GET /identity/key/{did}  Get Agent Public Key; schemas RevokeRequest, WalletBindRequest, SpiffeBindRequest
+  reason: Registration, resolution, key retrieval, binding and revocation of DID-based identities (including
+    SPIFFE and wallet binding) is squarely identity and access management for non-human principals.
+- tag: Billing
+  spec_file: moltrust-ch-billing-api-openapi.yml
+  capability_id: BC-4250
+  capability_id_l1: BC-4250
+  capability_name: Subscription Billing & Revenue Management
+  confidence: 0.78
+  evidence: GET /billing/plans "List Plans", POST /billing/checkout "Create Checkout", GET /billing/subscription/{customer_id}
+    "Get Subscription", POST /billing/webhook "Stripe Webhook"
+  reason: Operations cover plan listing, Stripe checkout, customer billing portal and subscription retrieval
+    — recurring-revenue billing for the SaaS offering. Spread across plan design, payment collection and
+    subscription lookup, so no single L2 is named.
+- tag: Compliance
+  spec_file: moltrust-ch-compliance-api-openapi.yml
+  capability_id: BC-130.10
+  capability_id_l1: BC-130
+  capability_name: Regulatory Compliance Management
+  confidence: 0.75
+  evidence: 'POST /compliance/assess ... POST /compliance/declaration ... GET /compliance/report/{did}
+    ... POST /compliance/incident; vendor: "EU AI Act compliance endpoints (risk cla...)"; schema NotifiedBodyInput'
+  reason: Operations perform regulatory conformity assessment, declarations of conformity, compliance
+    reporting and incident notification against a specific regulation (EU AI Act), with a 'NotifiedBody'
+    schema — this is sector-specific regulatory compliance management, not generic risk or audit tooling.
+- tag: credential-issuance
+  spec_file: moltrust-ch-credential-issuance-api-openapi.yml
+  capability_id: BC-620.20
+  capability_id_l1: BC-620
+  capability_name: Identity & Access Management
+  confidence: 0.75
+  evidence: POST /api/credential/issue  Issue a generic W3C Verifiable Credential (paid); POST /api/credential/verify  Verify
+    a W3C VC + AAE delegation chain (free)
+  reason: Issuance and verification of W3C Verifiable Credentials plus delegation-chain (UCAN/AAE) validation
+    is digital identity credential and authorisation management — Identity & Access Management for autonomous
+    agents.
+- tag: AWS Marketplace
+  spec_file: moltrust-ch-aws-marketplace-api-openapi.yml
+  capability_id: BC-4270.70
+  capability_id_l1: BC-4270
+  capability_name: Software Marketplace Listing Management
+  confidence: 0.72
+  evidence: POST /aws/fulfillment "Aws Fulfillment" (tag "AWS Marketplace")
+  reason: Single endpoint handling AWS Marketplace fulfilment callbacks, i.e. stewardship of the offering's
+    listing/entitlement fulfilment on a cloud marketplace. Only one operation, so confidence is held below
+    0.8.
+- tag: Auth
+  spec_file: moltrust-ch-auth-api-openapi.yml
+  capability_id: BC-4270.40
+  capability_id_l1: BC-4270
+  capability_name: Developer Identity & Credential Management
+  confidence: 0.72
+  evidence: POST /auth/signup "Signup For Api Key", GET /auth/github "Github Auth Start", POST /auth/signup-did
+    "Signup By Signature"
+  reason: Operations issue API keys to integrators and federate developer sign-in via GitHub OAuth/DID
+    signature — developer credential issuance for the platform. Alternative reading as generic end-user
+    authentication plumbing keeps confidence moderate.
+- tag: aae-evaluation
+  spec_file: moltrust-ch-aae-evaluation-api-openapi.yml
+  capability_id: BC-620.20
+  capability_id_l1: BC-620
+  capability_name: Identity & Access Management
+  confidence: 0.72
+  evidence: POST /api/action/check  Check whether an action is permitted for a DID (free); POST /governance/validate-capabilities  Validate
+    an agent's authorized capabilities
+  reason: The operations evaluate authorization envelopes and decide whether an identified principal (DID)
+    may perform an action, with event logs of those decisions — authorization/access management. Some
+    ambiguity with AI-agent governance framing.
+- tag: Credentials
+  spec_file: moltrust-ch-credentials-api-openapi.yml
+  capability_id: BC-620.20
+  capability_id_l1: BC-620
+  capability_name: Identity & Access Management
+  confidence: 0.7
+  evidence: POST /credentials/issue  Issue Vc; POST /credentials/verify  Verify Vc; POST /credentials/verify-chain  Verify
+    Delegation Chain Endpoint
+  reason: Issuance and verification of W3C Verifiable Credentials and delegation chains for agent identities
+    is credential/federation machinery — identity and access management. Not HR credentials or professional
+    certification.
