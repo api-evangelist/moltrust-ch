@@ -1,0 +1,12 @@
+{
+ "url": "https://api.moltrust.ch/guard/openapi.json",
+ "requested_url": "https://api.moltrust.ch/guard/openapi.json",
+ "status": 200,
+ "content_type": "application/json",
+ "bytes": 55262,
+ "sha256": "722a10c910fe731e8097895815c1d6866b58abcfcec638a4266e45edf58cb281",
+ "fetched_at": "2026-10-04",
+ "fetched_by": "APIEvangelist-Harvest/1.0 (+https://apievangelist.com)",
+ "match": "byte-identical",
+ "note": "Re-fetched from the provider by verify-openapi-sources.py; the archived file is byte-identical to what the provider serves."
+}
