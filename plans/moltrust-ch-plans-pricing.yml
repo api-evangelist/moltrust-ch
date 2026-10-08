@@ -127,3 +127,42 @@ discrepancies:
   note: The credit-quota tiers were replaced by per-agent pricing; /billing/plans is the live truth.
 notes: A buyer can cost an integration from public information and an agent can budget against this API from machine-readable
   endpoints (/billing/plans, /credits/pricing, /.well-known/x402.json) - unusual in this catalog.
+x-canonical:
+  generated: '2026-10-08'
+  vocabulary: all/0-working/economics/plans-canonical.yml
+  models:
+  - hybrid
+  - metered
+  - negotiated
+  units: []
+  plans:
+  - name: Free
+    access: other
+    model: metered
+    model_how: derived
+    units: []
+    periods: []
+  - name: Base
+    access: other
+    model: hybrid
+    model_how: derived
+    units: []
+    periods: []
+  - name: Scale
+    access: other
+    model: hybrid
+    model_how: derived
+    units: []
+    periods: []
+  - name: One-off audit / handover
+    access: other
+    model: unstated
+    model_how: derived
+    units: []
+    periods: []
+  - name: Enterprise
+    access: other
+    model: negotiated
+    model_how: derived
+    units: []
+    periods: []
