@@ -102,23 +102,6 @@ paths:
       - Swarm
 components:
   schemas:
-    SeedRequest:
-      properties:
-        did:
-          type: string
-          title: Did
-        label:
-          type: string
-          title: Label
-        base_score:
-          type: number
-          title: Base Score
-          default: 80.0
-      type: object
-      required:
-      - did
-      - label
-      title: SeedRequest
     ValidationError:
       properties:
         loc:
@@ -145,6 +128,23 @@ components:
       - msg
       - type
       title: ValidationError
+    SeedRequest:
+      properties:
+        did:
+          type: string
+          title: Did
+        label:
+          type: string
+          title: Label
+        base_score:
+          type: number
+          title: Base Score
+          default: 80.0
+      type: object
+      required:
+      - did
+      - label
+      title: SeedRequest
     HTTPValidationError:
       properties:
         detail:

@@ -90,17 +90,19 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
-    Error:
+    FlagSummary:
       type: object
+      additionalProperties: true
       properties:
-        error:
+        flagId:
           type: string
-          description: Short error code
-        message:
+        severity:
           type: string
-          description: Human-readable detail
-      required:
-      - error
+        target:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
     FlagTrackRecord:
       type: object
       additionalProperties: true
@@ -123,19 +125,17 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/FlagSummary'
-    FlagSummary:
+    Error:
       type: object
-      additionalProperties: true
       properties:
-        flagId:
+        error:
           type: string
-        severity:
+          description: Short error code
+        message:
           type: string
-        target:
-          type: string
-        createdAt:
-          type: string
-          format: date-time
+          description: Human-readable detail
+      required:
+      - error
   securitySchemes:
     x402:
       type: apiKey

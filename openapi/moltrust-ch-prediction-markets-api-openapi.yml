@@ -221,28 +221,14 @@ paths:
                 $ref: '#/components/schemas/PaymentRequired'
 components:
   schemas:
-    PredictionLeaderboard:
-      type: array
-      items:
-        type: object
-        additionalProperties: true
-        properties:
-          did:
-            type: string
-          score:
-            type: number
-          rank:
-            type: integer
-    PredictionWalletLink:
+    PredictionTrackCredential:
       type: object
       additionalProperties: true
-      properties:
-        ok:
-          type: boolean
-        did:
-          type: string
-        address:
-          type: string
+      description: Issued PredictionTrackCredential (W3C VC) — wallet-DID bridge with on-chain track record.
+    VCIssueRequestBase:
+      type: object
+      description: Base body for a VC issuance request. Specific VC types extend with type-specific fields.
+      additionalProperties: true
     PredictionWalletInfo:
       type: object
       additionalProperties: true
@@ -253,22 +239,6 @@ components:
           type:
           - string
           - 'null'
-    PredictionIntegrity:
-      type: object
-      additionalProperties: true
-      properties:
-        marketId:
-          type: string
-        integrityScore:
-          type: integer
-        flags:
-          type: array
-          items:
-            type: string
-    VCIssueRequestBase:
-      type: object
-      description: Base body for a VC issuance request. Specific VC types extend with type-specific fields.
-      additionalProperties: true
     PaymentRequired:
       type: object
       description: x402 v2 challenge body. Returned with HTTP 402 when X-PAYMENT header is missing or invalid.
@@ -301,10 +271,40 @@ components:
                         description: USDC base units (6 decimals)
                   payTo:
                     type: string
-    PredictionTrackCredential:
+    PredictionWalletLink:
       type: object
       additionalProperties: true
-      description: Issued PredictionTrackCredential (W3C VC) — wallet-DID bridge with on-chain track record.
+      properties:
+        ok:
+          type: boolean
+        did:
+          type: string
+        address:
+          type: string
+    PredictionIntegrity:
+      type: object
+      additionalProperties: true
+      properties:
+        marketId:
+          type: string
+        integrityScore:
+          type: integer
+        flags:
+          type: array
+          items:
+            type: string
+    PredictionLeaderboard:
+      type: array
+      items:
+        type: object
+        additionalProperties: true
+        properties:
+          did:
+            type: string
+          score:
+            type: number
+          rank:
+            type: integer
   securitySchemes:
     x402:
       type: apiKey

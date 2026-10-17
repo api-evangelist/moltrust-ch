@@ -142,35 +142,6 @@ paths:
       - Skill
 components:
   schemas:
-    EndorseRequest:
-      properties:
-        api_key:
-          type: string
-          title: Api Key
-        endorsed_did:
-          type: string
-          title: Endorsed Did
-        skill:
-          type: string
-          title: Skill
-        evidence_hash:
-          type: string
-          title: Evidence Hash
-        evidence_timestamp:
-          type: string
-          title: Evidence Timestamp
-        vertical:
-          type: string
-          title: Vertical
-      type: object
-      required:
-      - api_key
-      - endorsed_did
-      - skill
-      - evidence_hash
-      - evidence_timestamp
-      - vertical
-      title: EndorseRequest
     ValidationError:
       properties:
         loc:
@@ -220,3 +191,32 @@ components:
       - api_key
       - interaction_payload
       title: InteractionProofRequest
+    EndorseRequest:
+      properties:
+        api_key:
+          type: string
+          title: Api Key
+        endorsed_did:
+          type: string
+          title: Endorsed Did
+        skill:
+          type: string
+          title: Skill
+        evidence_hash:
+          type: string
+          title: Evidence Hash
+        evidence_timestamp:
+          type: string
+          title: Evidence Timestamp
+        vertical:
+          type: string
+          title: Vertical
+      type: object
+      required:
+      - api_key
+      - endorsed_did
+      - skill
+      - evidence_hash
+      - evidence_timestamp
+      - vertical
+      title: EndorseRequest

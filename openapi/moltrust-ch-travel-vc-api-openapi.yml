@@ -136,6 +136,12 @@ paths:
                 $ref: '#/components/schemas/PaymentRequired'
 components:
   schemas:
+    TravelVerifyResult:
+      type: object
+      additionalProperties: true
+      properties:
+        verified:
+          type: boolean
     VCIssueRequestBase:
       type: object
       description: Base body for a VC issuance request. Specific VC types extend with type-specific fields.
@@ -146,6 +152,10 @@ components:
       properties:
         receiptId:
           type: string
+    TravelAgentCredential:
+      type: object
+      additionalProperties: true
+      description: Issued TravelAgentCredential (W3C VC).
     TravelTrip:
       type: object
       additionalProperties: true
@@ -184,16 +194,6 @@ components:
                         description: USDC base units (6 decimals)
                   payTo:
                     type: string
-    TravelAgentCredential:
-      type: object
-      additionalProperties: true
-      description: Issued TravelAgentCredential (W3C VC).
-    TravelVerifyResult:
-      type: object
-      additionalProperties: true
-      properties:
-        verified:
-          type: boolean
   securitySchemes:
     x402:
       type: apiKey

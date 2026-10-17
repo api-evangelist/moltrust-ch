@@ -64,41 +64,122 @@ paths:
         example: '1.0'
 components:
   schemas:
-    TaskPushNotificationConfig:
+    CancelTaskRequest:
       type: object
       properties:
         tenant:
           type: string
         id:
           type: string
-        task_id:
-          type: string
-        url:
-          type: string
-        token:
-          type: string
-        authentication:
-          $ref: '#/components/schemas/AuthenticationInfo'
-    DeleteTaskPushNotificationConfigRequest:
-      type: object
-      properties:
-        tenant:
-          type: string
-        task_id:
-          type: string
-        id:
-          type: string
-    SendMessageRequest:
-      type: object
-      properties:
-        tenant:
-          type: string
-        message:
-          $ref: '#/components/schemas/Message'
-        configuration:
-          $ref: '#/components/schemas/SendMessageConfiguration'
         metadata:
           type: object
+    Part:
+      allOf:
+      - type: object
+        properties:
+          metadata:
+            type: object
+          filename:
+            type: string
+          media_type:
+            type: string
+      - oneOf:
+        - type: object
+          properties:
+            text:
+              type: string
+          required:
+          - text
+        - type: object
+          properties:
+            raw:
+              type: string
+              format: byte
+          required:
+          - raw
+        - type: object
+          properties:
+            url:
+              type: string
+          required:
+          - url
+        - type: object
+          properties:
+            data: {}
+          required:
+          - data
+    GetTaskRequest:
+      type: object
+      properties:
+        tenant:
+          type: string
+        id:
+          type: string
+        history_length:
+          type: integer
+          format: int32
+    AuthenticationInfo:
+      type: object
+      properties:
+        scheme:
+          type: string
+        credentials:
+          type: string
+    GetExtendedAgentCardRequest:
+      type: object
+      properties:
+        tenant:
+          type: string
+    Message:
+      type: object
+      properties:
+        message_id:
+          type: string
+        context_id:
+          type: string
+        task_id:
+          type: string
+        role:
+          type: string
+          enum:
+          - ROLE_UNSPECIFIED
+          - ROLE_USER
+          - ROLE_AGENT
+        parts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Part'
+        metadata:
+          type: object
+        extensions:
+          type: array
+          items:
+            type: string
+        reference_task_ids:
+          type: array
+          items:
+            type: string
+    SubscribeToTaskRequest:
+      type: object
+      properties:
+        tenant:
+          type: string
+        id:
+          type: string
+    SendMessageConfiguration:
+      type: object
+      properties:
+        accepted_output_modes:
+          type: array
+          items:
+            type: string
+        task_push_notification_config:
+          $ref: '#/components/schemas/TaskPushNotificationConfig'
+        history_length:
+          type: integer
+          format: int32
+        return_immediately:
+          type: boolean
     A2ARequest:
       type: object
       required:
@@ -149,108 +230,6 @@ components:
           type: string
         id:
           type: string
-    SendMessageConfiguration:
-      type: object
-      properties:
-        accepted_output_modes:
-          type: array
-          items:
-            type: string
-        task_push_notification_config:
-          $ref: '#/components/schemas/TaskPushNotificationConfig'
-        history_length:
-          type: integer
-          format: int32
-        return_immediately:
-          type: boolean
-    ListTaskPushNotificationConfigsRequest:
-      type: object
-      properties:
-        tenant:
-          type: string
-        task_id:
-          type: string
-        page_size:
-          type: integer
-          format: int32
-        page_token:
-          type: string
-    Message:
-      type: object
-      properties:
-        message_id:
-          type: string
-        context_id:
-          type: string
-        task_id:
-          type: string
-        role:
-          type: string
-          enum:
-          - ROLE_UNSPECIFIED
-          - ROLE_USER
-          - ROLE_AGENT
-        parts:
-          type: array
-          items:
-            $ref: '#/components/schemas/Part'
-        metadata:
-          type: object
-        extensions:
-          type: array
-          items:
-            type: string
-        reference_task_ids:
-          type: array
-          items:
-            type: string
-    GetExtendedAgentCardRequest:
-      type: object
-      properties:
-        tenant:
-          type: string
-    AuthenticationInfo:
-      type: object
-      properties:
-        scheme:
-          type: string
-        credentials:
-          type: string
-    Part:
-      allOf:
-      - type: object
-        properties:
-          metadata:
-            type: object
-          filename:
-            type: string
-          media_type:
-            type: string
-      - oneOf:
-        - type: object
-          properties:
-            text:
-              type: string
-          required:
-          - text
-        - type: object
-          properties:
-            raw:
-              type: string
-              format: byte
-          required:
-          - raw
-        - type: object
-          properties:
-            url:
-              type: string
-          required:
-          - url
-        - type: object
-          properties:
-            data: {}
-          required:
-          - data
     ListTasksRequest:
       type: object
       properties:
@@ -283,29 +262,50 @@ components:
           format: date-time
         include_artifacts:
           type: boolean
-    GetTaskRequest:
+    SendMessageRequest:
       type: object
       properties:
         tenant:
           type: string
-        id:
-          type: string
-        history_length:
-          type: integer
-          format: int32
-    CancelTaskRequest:
-      type: object
-      properties:
-        tenant:
-          type: string
-        id:
-          type: string
+        message:
+          $ref: '#/components/schemas/Message'
+        configuration:
+          $ref: '#/components/schemas/SendMessageConfiguration'
         metadata:
           type: object
-    SubscribeToTaskRequest:
+    ListTaskPushNotificationConfigsRequest:
+      type: object
+      properties:
+        tenant:
+          type: string
+        task_id:
+          type: string
+        page_size:
+          type: integer
+          format: int32
+        page_token:
+          type: string
+    DeleteTaskPushNotificationConfigRequest:
+      type: object
+      properties:
+        tenant:
+          type: string
+        task_id:
+          type: string
+        id:
+          type: string
+    TaskPushNotificationConfig:
       type: object
       properties:
         tenant:
           type: string
         id:
           type: string
+        task_id:
+          type: string
+        url:
+          type: string
+        token:
+          type: string
+        authentication:
+          $ref: '#/components/schemas/AuthenticationInfo'

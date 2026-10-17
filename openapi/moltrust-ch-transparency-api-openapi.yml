@@ -117,6 +117,39 @@ paths:
                 $ref: '#/components/schemas/VerifyHashResponseNotFound'
 components:
   schemas:
+    Health:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - ok
+        timestamp:
+          type: string
+          format: date-time
+      required:
+      - status
+      - timestamp
+    TrustProofHistoryEntry:
+      type: object
+      description: Abbreviated TrustProof for history list — even more public-only than the latest.
+      properties:
+        id:
+          type: string
+        issuanceDate:
+          type: string
+          format: date-time
+        expirationDate:
+          type: string
+          format: date-time
+        vertical:
+          type: string
+        pass_rate:
+          type: number
+        tests_run:
+          type: integer
+        anchor_tx:
+          type: string
     VerifyHashResponseOk:
       type: object
       properties:
@@ -139,50 +172,6 @@ components:
           example: base
       required:
       - verified
-    TrustProofHistoryEntry:
-      type: object
-      description: Abbreviated TrustProof for history list — even more public-only than the latest.
-      properties:
-        id:
-          type: string
-        issuanceDate:
-          type: string
-          format: date-time
-        expirationDate:
-          type: string
-          format: date-time
-        vertical:
-          type: string
-        pass_rate:
-          type: number
-        tests_run:
-          type: integer
-        anchor_tx:
-          type: string
-    Error:
-      type: object
-      properties:
-        error:
-          type: string
-          description: Short error code
-        message:
-          type: string
-          description: Human-readable detail
-      required:
-      - error
-    Health:
-      type: object
-      properties:
-        status:
-          type: string
-          enum:
-          - ok
-        timestamp:
-          type: string
-          format: date-time
-      required:
-      - status
-      - timestamp
     TrustProofSummary:
       type: object
       description: Sanitized TrustProof — public metadata only. No raw prompts/outputs/test inputs.
@@ -237,6 +226,17 @@ components:
             created:
               type: string
               format: date-time
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Short error code
+        message:
+          type: string
+          description: Human-readable detail
+      required:
+      - error
     ApiInfo:
       type: object
       description: Self-documentation of MoltGuard service capabilities + pricing.

@@ -138,36 +138,6 @@ paths:
                 $ref: '#/components/schemas/AAEInfo'
 components:
   schemas:
-    ActionStats:
-      type: object
-      additionalProperties: true
-      properties:
-        totalChecks:
-          type: integer
-        allowed:
-          type: integer
-        denied:
-          type: integer
-    GovernanceValidateResult:
-      type: object
-      additionalProperties: true
-      description: Capability-validation verdict (used by aeoess + MolTrust agents). Spend-ceiling + score-gate.
-      properties:
-        decision:
-          type: string
-          enum:
-          - permit
-          - deny
-        score:
-          type: number
-        reasons:
-          type: array
-          items:
-            type: string
-    AAEInfo:
-      type: object
-      additionalProperties: true
-      description: 'AAE-evaluation service info: schema URI, supported operations.'
     AAEEvalResult:
       type: object
       additionalProperties: true
@@ -186,6 +156,20 @@ components:
         constraints:
           type: object
           additionalProperties: true
+    ActionStats:
+      type: object
+      additionalProperties: true
+      properties:
+        totalChecks:
+          type: integer
+        allowed:
+          type: integer
+        denied:
+          type: integer
+    AAEInfo:
+      type: object
+      additionalProperties: true
+      description: 'AAE-evaluation service info: schema URI, supported operations.'
     ActionEvents:
       type: array
       items:
@@ -209,6 +193,22 @@ components:
           type: boolean
         riskScore:
           type: integer
+        reasons:
+          type: array
+          items:
+            type: string
+    GovernanceValidateResult:
+      type: object
+      additionalProperties: true
+      description: Capability-validation verdict (used by aeoess + MolTrust agents). Spend-ceiling + score-gate.
+      properties:
+        decision:
+          type: string
+          enum:
+          - permit
+          - deny
+        score:
+          type: number
         reasons:
           type: array
           items:

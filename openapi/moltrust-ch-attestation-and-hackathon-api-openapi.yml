@@ -151,28 +151,6 @@ paths:
                 $ref: '#/components/schemas/VCBindingResult'
 components:
   schemas:
-    HackathonStats:
-      type: object
-      additionalProperties: true
-      properties:
-        totalParticipants:
-          type: integer
-        activeKeys:
-          type: integer
-    VCBindingResult:
-      type: object
-      additionalProperties: true
-      properties:
-        verified:
-          type: boolean
-    VCKeyRegisterResult:
-      type: object
-      additionalProperties: true
-      properties:
-        ok:
-          type: boolean
-        did:
-          type: string
     HackathonRegisterResult:
       type: object
       additionalProperties: true
@@ -183,6 +161,45 @@ components:
         expiresAt:
           type: string
           format: date-time
+    RateLimitError:
+      type: object
+      properties:
+        message:
+          type: string
+          example: 'Free tier: max 1 request(s) per 10 minutes. Use x402 paid endpoints for unlimited access.'
+    VCChallenge:
+      type: object
+      additionalProperties: true
+      properties:
+        challenge:
+          type: string
+        nonce:
+          type: string
+        expiresAt:
+          type: string
+          format: date-time
+    HackathonStats:
+      type: object
+      additionalProperties: true
+      properties:
+        totalParticipants:
+          type: integer
+        activeKeys:
+          type: integer
+    VCKeyRegisterResult:
+      type: object
+      additionalProperties: true
+      properties:
+        ok:
+          type: boolean
+        did:
+          type: string
+    VCBindingResult:
+      type: object
+      additionalProperties: true
+      properties:
+        verified:
+          type: boolean
     WalletAttestResult:
       type: object
       additionalProperties: true
@@ -195,23 +212,6 @@ components:
           type: string
         signature:
           type: string
-    VCChallenge:
-      type: object
-      additionalProperties: true
-      properties:
-        challenge:
-          type: string
-        nonce:
-          type: string
-        expiresAt:
-          type: string
-          format: date-time
-    RateLimitError:
-      type: object
-      properties:
-        message:
-          type: string
-          example: 'Free tier: max 1 request(s) per 10 minutes. Use x402 paid endpoints for unlimited access.'
   securitySchemes:
     x402:
       type: apiKey

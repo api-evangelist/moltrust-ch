@@ -118,6 +118,32 @@ paths:
       - Violation
 components:
   schemas:
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
     HTTPValidationError:
       properties:
         detail:
@@ -127,6 +153,22 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
+    ViolationReversalRequest:
+      properties:
+        adjudicator_reference:
+          anyOf:
+          - type: string
+            maxLength: 256
+          - type: 'null'
+          title: Adjudicator Reference
+        reversal_date:
+          anyOf:
+          - type: string
+            maxLength: 64
+          - type: 'null'
+          title: Reversal Date
+      type: object
+      title: ViolationReversalRequest
     ViolationRecordRequest:
       properties:
         agent_did:
@@ -170,45 +212,3 @@ components:
       - violation_type
       - confirmed_at
       title: ViolationRecordRequest
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-        input:
-          title: Input
-        ctx:
-          type: object
-          title: Context
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    ViolationReversalRequest:
-      properties:
-        adjudicator_reference:
-          anyOf:
-          - type: string
-            maxLength: 256
-          - type: 'null'
-          title: Adjudicator Reference
-        reversal_date:
-          anyOf:
-          - type: string
-            maxLength: 64
-          - type: 'null'
-          title: Reversal Date
-      type: object
-      title: ViolationReversalRequest

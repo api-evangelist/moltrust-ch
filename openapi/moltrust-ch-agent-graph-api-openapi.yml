@@ -87,16 +87,6 @@ components:
           type: number
         edgeType:
           type: string
-    GraphStats:
-      type: object
-      additionalProperties: true
-      properties:
-        totalNodes:
-          type: integer
-        totalEdges:
-          type: integer
-        avgDegree:
-          type: number
     GraphNeighbours:
       type: object
       additionalProperties: true
@@ -108,6 +98,16 @@ components:
           items:
             type: object
             additionalProperties: true
+    GraphStats:
+      type: object
+      additionalProperties: true
+      properties:
+        totalNodes:
+          type: integer
+        totalEdges:
+          type: integer
+        avgDegree:
+          type: number
   securitySchemes:
     x402:
       type: apiKey

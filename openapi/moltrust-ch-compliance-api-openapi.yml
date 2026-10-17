@@ -155,107 +155,31 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    ComplianceDeclarationRequest:
+    NotifiedBodyInput:
       properties:
-        subject_did:
-          type: string
-          maxLength: 128
-          title: Subject Did
-          description: DID of the AI system / agent
-        ai_system_name:
+        name:
           type: string
           maxLength: 255
-          title: Ai System Name
-        ai_system_reference:
+          title: Name
+        identification_number:
           type: string
-          maxLength: 255
-          title: Ai System Reference
-        provider_name:
-          type: string
-          maxLength: 255
-          title: Provider Name
-        provider_address:
+          maxLength: 64
+          title: Identification Number
+        procedure:
           type: string
           maxLength: 500
-          title: Provider Address
-        conformity_with_other_union_law:
-          anyOf:
-          - type: string
-            maxLength: 500
-          - type: 'null'
-          title: Conformity With Other Union Law
-        processes_personal_data:
-          type: boolean
-          title: Processes Personal Data
-          default: false
-        harmonised_standards:
-          items:
-            type: string
-          type: array
-          title: Harmonised Standards
-        notified_body:
-          anyOf:
-          - $ref: '#/components/schemas/NotifiedBodyInput'
-          - type: 'null'
-        place_of_issue:
+          title: Procedure
+        certificate:
           type: string
           maxLength: 255
-          title: Place Of Issue
-        signatory_name:
-          type: string
-          maxLength: 255
-          title: Signatory Name
-        signatory_function:
-          type: string
-          maxLength: 255
-          title: Signatory Function
-        on_behalf_of:
-          type: string
-          maxLength: 255
-          title: On Behalf Of
-        anchor:
-          type: boolean
-          title: Anchor
-          description: If true, return a content commitment (sha256) for later batch anchoring via /anchors/batch
-          default: false
+          title: Certificate
       type: object
       required:
-      - subject_did
-      - ai_system_name
-      - ai_system_reference
-      - provider_name
-      - provider_address
-      - place_of_issue
-      - signatory_name
-      - signatory_function
-      - on_behalf_of
-      title: ComplianceDeclarationRequest
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-        input:
-          title: Input
-        ctx:
-          type: object
-          title: Context
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
+      - name
+      - identification_number
+      - procedure
+      - certificate
+      title: NotifiedBodyInput
     ComplianceAssessRequest:
       properties:
         did:
@@ -333,31 +257,6 @@ components:
       - use_case
       - intended_purpose
       title: ComplianceAssessRequest
-    NotifiedBodyInput:
-      properties:
-        name:
-          type: string
-          maxLength: 255
-          title: Name
-        identification_number:
-          type: string
-          maxLength: 64
-          title: Identification Number
-        procedure:
-          type: string
-          maxLength: 500
-          title: Procedure
-        certificate:
-          type: string
-          maxLength: 255
-          title: Certificate
-      type: object
-      required:
-      - name
-      - identification_number
-      - procedure
-      - certificate
-      title: NotifiedBodyInput
     ComplianceIncidentRequest:
       properties:
         did:
@@ -389,6 +288,32 @@ components:
       - did
       - category
       title: ComplianceIncidentRequest
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
     HTTPValidationError:
       properties:
         detail:
@@ -398,3 +323,78 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
+    ComplianceDeclarationRequest:
+      properties:
+        subject_did:
+          type: string
+          maxLength: 128
+          title: Subject Did
+          description: DID of the AI system / agent
+        ai_system_name:
+          type: string
+          maxLength: 255
+          title: Ai System Name
+        ai_system_reference:
+          type: string
+          maxLength: 255
+          title: Ai System Reference
+        provider_name:
+          type: string
+          maxLength: 255
+          title: Provider Name
+        provider_address:
+          type: string
+          maxLength: 500
+          title: Provider Address
+        conformity_with_other_union_law:
+          anyOf:
+          - type: string
+            maxLength: 500
+          - type: 'null'
+          title: Conformity With Other Union Law
+        processes_personal_data:
+          type: boolean
+          title: Processes Personal Data
+          default: false
+        harmonised_standards:
+          items:
+            type: string
+          type: array
+          title: Harmonised Standards
+        notified_body:
+          anyOf:
+          - $ref: '#/components/schemas/NotifiedBodyInput'
+          - type: 'null'
+        place_of_issue:
+          type: string
+          maxLength: 255
+          title: Place Of Issue
+        signatory_name:
+          type: string
+          maxLength: 255
+          title: Signatory Name
+        signatory_function:
+          type: string
+          maxLength: 255
+          title: Signatory Function
+        on_behalf_of:
+          type: string
+          maxLength: 255
+          title: On Behalf Of
+        anchor:
+          type: boolean
+          title: Anchor
+          description: If true, return a content commitment (sha256) for later batch anchoring via /anchors/batch
+          default: false
+      type: object
+      required:
+      - subject_did
+      - ai_system_name
+      - ai_system_reference
+      - provider_name
+      - provider_address
+      - place_of_issue
+      - signatory_name
+      - signatory_function
+      - on_behalf_of
+      title: ComplianceDeclarationRequest

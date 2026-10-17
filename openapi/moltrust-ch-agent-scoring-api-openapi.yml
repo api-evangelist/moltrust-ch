@@ -147,9 +147,61 @@ paths:
                 $ref: '#/components/schemas/RateLimitError'
 components:
   schemas:
-    AgentDetail:
+    ScoreMeta:
       type: object
-      description: Paid full-detail response — score + breakdown + on-chain data + ERC-8004 + MolTrust profile.
+      properties:
+        service:
+          type: string
+          enum:
+          - moltguard
+        version:
+          type: string
+        chain:
+          type: string
+          example: base-<block-number>
+        dataSource:
+          type: string
+          example: blockscout+rpc+moltrust
+        timestamp:
+          type: string
+          format: date-time
+        pricingTier:
+          type: string
+          enum:
+          - paid
+          - free-limited
+          - sample
+        note:
+          type: string
+    AgentScoreSample:
+      type: object
+      description: Mock response for /api/agent/sample. Fixed wallet 0x000...000.
+      properties:
+        wallet:
+          type: string
+          example: '0x0000000000000000000000000000000000000000'
+        score:
+          type: integer
+          minimum: 0
+          maximum: 100
+        breakdown:
+          $ref: '#/components/schemas/ScoreBreakdown'
+        _meta:
+          $ref: '#/components/schemas/ScoreMeta'
+      required:
+      - wallet
+      - score
+      - breakdown
+      - _meta
+    RateLimitError:
+      type: object
+      properties:
+        message:
+          type: string
+          example: 'Free tier: max 1 request(s) per 10 minutes. Use x402 paid endpoints for unlimited access.'
+    AgentScoreFull:
+      type: object
+      description: Paid full-score response — includes breakdown.
       properties:
         wallet:
           type: string
@@ -161,43 +213,11 @@ components:
           $ref: '#/components/schemas/ScoreBreakdown'
         _meta:
           $ref: '#/components/schemas/ScoreMeta'
-        walletData:
-          $ref: '#/components/schemas/WalletData'
-        usdcBalance:
-          type: string
-        erc8004:
-          $ref: '#/components/schemas/ERC8004Data'
-        moltrust:
-          $ref: '#/components/schemas/MolTrustProfile'
-    InvalidAddressError:
-      type: object
-      properties:
-        error:
-          type: string
-          enum:
-          - invalid_address
-        message:
-          type: string
       required:
-      - error
-      - message
-    ERC8004Data:
-      type: object
-      properties:
-        registered:
-          type: boolean
-        agentId:
-          type: string
-        tokenURI:
-          type:
-          - string
-          - 'null'
-        reputationScore:
-          type:
-          - number
-          - 'null'
-        available:
-          type: boolean
+      - wallet
+      - score
+      - breakdown
+      - _meta
     ScoreBreakdown:
       type: object
       description: Component breakdown of AgentScore. Sum of components clamped to [0,100].
@@ -220,40 +240,74 @@ components:
         credentialBonus:
           type: integer
           description: Positive — bonus for held VCs
-    WalletData:
-      type: object
+    MolTrustProfile:
+      type:
+      - object
+      - 'null'
       properties:
-        balance:
+        did:
           type: string
-          description: ETH balance, decimal string
-        txCount:
+        displayName:
+          type: string
+        verified:
+          type: boolean
+        reputationScore:
+          type: number
+        totalRatings:
           type: integer
-        uniqueCounterparties:
-          type: integer
-        ageSeconds:
-          type: integer
-        firstTxTimestamp:
-          type: integer
-          description: Unix epoch seconds
-        recentTxCount30d:
-          type: integer
-        fundingSource:
-          type:
-          - string
-          - 'null'
-        fundingAmountEth:
-          type:
-          - string
-          - 'null'
-        latestBlock:
-          type: integer
-    AgentScoreSample:
+        hasCredentials:
+          type: boolean
+    AgentScoreFree:
       type: object
-      description: Mock response for /api/agent/sample. Fixed wallet 0x000...000.
+      description: Free-tier response — wallet + score only, no breakdown. Rate-limited 1/10min.
       properties:
         wallet:
           type: string
-          example: '0x0000000000000000000000000000000000000000'
+        score:
+          type: integer
+          minimum: 0
+          maximum: 100
+        _meta:
+          $ref: '#/components/schemas/ScoreMeta'
+      required:
+      - wallet
+      - score
+      - _meta
+    ERC8004Data:
+      type: object
+      properties:
+        registered:
+          type: boolean
+        agentId:
+          type: string
+        tokenURI:
+          type:
+          - string
+          - 'null'
+        reputationScore:
+          type:
+          - number
+          - 'null'
+        available:
+          type: boolean
+    InvalidAddressError:
+      type: object
+      properties:
+        error:
+          type: string
+          enum:
+          - invalid_address
+        message:
+          type: string
+      required:
+      - error
+      - message
+    AgentDetail:
+      type: object
+      description: Paid full-detail response — score + breakdown + on-chain data + ERC-8004 + MolTrust profile.
+      properties:
+        wallet:
+          type: string
         score:
           type: integer
           minimum: 0
@@ -262,11 +316,14 @@ components:
           $ref: '#/components/schemas/ScoreBreakdown'
         _meta:
           $ref: '#/components/schemas/ScoreMeta'
-      required:
-      - wallet
-      - score
-      - breakdown
-      - _meta
+        walletData:
+          $ref: '#/components/schemas/WalletData'
+        usdcBalance:
+          type: string
+        erc8004:
+          $ref: '#/components/schemas/ERC8004Data'
+        moltrust:
+          $ref: '#/components/schemas/MolTrustProfile'
     PaymentRequired:
       type: object
       description: x402 v2 challenge body. Returned with HTTP 402 when X-PAYMENT header is missing or invalid.
@@ -299,90 +356,33 @@ components:
                         description: USDC base units (6 decimals)
                   payTo:
                     type: string
-    MolTrustProfile:
-      type:
-      - object
-      - 'null'
+    WalletData:
+      type: object
       properties:
-        did:
+        balance:
           type: string
-        displayName:
-          type: string
-        verified:
-          type: boolean
-        reputationScore:
-          type: number
-        totalRatings:
+          description: ETH balance, decimal string
+        txCount:
           type: integer
-        hasCredentials:
-          type: boolean
-    ScoreMeta:
-      type: object
-      properties:
-        service:
-          type: string
-          enum:
-          - moltguard
-        version:
-          type: string
-        chain:
-          type: string
-          example: base-<block-number>
-        dataSource:
-          type: string
-          example: blockscout+rpc+moltrust
-        timestamp:
-          type: string
-          format: date-time
-        pricingTier:
-          type: string
-          enum:
-          - paid
-          - free-limited
-          - sample
-        note:
-          type: string
-    RateLimitError:
-      type: object
-      properties:
-        message:
-          type: string
-          example: 'Free tier: max 1 request(s) per 10 minutes. Use x402 paid endpoints for unlimited access.'
-    AgentScoreFree:
-      type: object
-      description: Free-tier response — wallet + score only, no breakdown. Rate-limited 1/10min.
-      properties:
-        wallet:
-          type: string
-        score:
+        uniqueCounterparties:
           type: integer
-          minimum: 0
-          maximum: 100
-        _meta:
-          $ref: '#/components/schemas/ScoreMeta'
-      required:
-      - wallet
-      - score
-      - _meta
-    AgentScoreFull:
-      type: object
-      description: Paid full-score response — includes breakdown.
-      properties:
-        wallet:
-          type: string
-        score:
+        ageSeconds:
           type: integer
-          minimum: 0
-          maximum: 100
-        breakdown:
-          $ref: '#/components/schemas/ScoreBreakdown'
-        _meta:
-          $ref: '#/components/schemas/ScoreMeta'
-      required:
-      - wallet
-      - score
-      - breakdown
-      - _meta
+        firstTxTimestamp:
+          type: integer
+          description: Unix epoch seconds
+        recentTxCount30d:
+          type: integer
+        fundingSource:
+          type:
+          - string
+          - 'null'
+        fundingAmountEth:
+          type:
+          - string
+          - 'null'
+        latestBlock:
+          type: integer
   securitySchemes:
     x402:
       type: apiKey

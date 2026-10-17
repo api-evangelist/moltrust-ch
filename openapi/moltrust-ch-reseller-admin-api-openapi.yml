@@ -211,6 +211,14 @@ components:
       required:
       - did
       title: AssignBody
+    InvoiceBody:
+      properties:
+        finalize:
+          type: boolean
+          title: Finalize
+          default: false
+      type: object
+      title: InvoiceBody
     CodeBody:
       properties:
         code:
@@ -287,11 +295,3 @@ components:
       - password
       - wholesale_price_cents
       title: CreateBody
-    InvoiceBody:
-      properties:
-        finalize:
-          type: boolean
-          title: Finalize
-          default: false
-      type: object
-      title: InvoiceBody

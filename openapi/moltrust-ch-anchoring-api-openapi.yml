@@ -43,23 +43,6 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    AnchorsBatchRequest:
-      properties:
-        hashes:
-          items:
-            type: string
-          type: array
-          title: Hashes
-          description: Hex sha256 leaf hashes (optionally 0x-prefixed)
-        submit_onchain:
-          type: boolean
-          title: Submit Onchain
-          description: Submit the Merkle root on-chain via the existing anchoring key
-          default: false
-      type: object
-      required:
-      - hashes
-      title: AnchorsBatchRequest
     ValidationError:
       properties:
         loc:
@@ -95,3 +78,20 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
+    AnchorsBatchRequest:
+      properties:
+        hashes:
+          items:
+            type: string
+          type: array
+          title: Hashes
+          description: Hex sha256 leaf hashes (optionally 0x-prefixed)
+        submit_onchain:
+          type: boolean
+          title: Submit Onchain
+          description: Submit the Merkle root on-chain via the existing anchoring key
+          default: false
+      type: object
+      required:
+      - hashes
+      title: AnchorsBatchRequest

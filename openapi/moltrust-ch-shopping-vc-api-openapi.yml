@@ -117,13 +117,46 @@ paths:
                 $ref: '#/components/schemas/PaymentRequired'
 components:
   schemas:
-    BuyerAgentCredential:
+    ShoppingVerifyResult:
       type: object
-      description: Issued BuyerAgentCredential (W3C VC).
+      description: 10-step buyer-agent VC verification result.
       additionalProperties: true
+      properties:
+        verified:
+          type: boolean
+        trustScore:
+          type: integer
+        decision:
+          type: string
+          enum:
+          - approve
+          - review
+          - reject
+        reasons:
+          type: array
+          items:
+            type: string
     VCIssueRequestBase:
       type: object
       description: Base body for a VC issuance request. Specific VC types extend with type-specific fields.
+      additionalProperties: true
+    ShoppingReceipt:
+      type: object
+      description: Issued BuyerAgentCredential receipt — public form (no PII).
+      additionalProperties: true
+      properties:
+        receiptId:
+          type: string
+        credential_type:
+          type: string
+          enum:
+          - BuyerAgentCredential
+        issuanceDate:
+          type: string
+          format: date-time
+    BuyerAgentCredential:
+      type: object
+      description: Issued BuyerAgentCredential (W3C VC).
       additionalProperties: true
     PaymentRequired:
       type: object
@@ -157,39 +190,6 @@ components:
                         description: USDC base units (6 decimals)
                   payTo:
                     type: string
-    ShoppingReceipt:
-      type: object
-      description: Issued BuyerAgentCredential receipt — public form (no PII).
-      additionalProperties: true
-      properties:
-        receiptId:
-          type: string
-        credential_type:
-          type: string
-          enum:
-          - BuyerAgentCredential
-        issuanceDate:
-          type: string
-          format: date-time
-    ShoppingVerifyResult:
-      type: object
-      description: 10-step buyer-agent VC verification result.
-      additionalProperties: true
-      properties:
-        verified:
-          type: boolean
-        trustScore:
-          type: integer
-        decision:
-          type: string
-          enum:
-          - approve
-          - review
-          - reject
-        reasons:
-          type: array
-          items:
-            type: string
   securitySchemes:
     x402:
       type: apiKey

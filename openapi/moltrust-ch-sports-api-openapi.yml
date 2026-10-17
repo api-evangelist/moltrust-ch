@@ -379,6 +379,60 @@ paths:
       - Sports
 components:
   schemas:
+    SignalProviderRegisterRequest:
+      properties:
+        agent_did:
+          type: string
+          maxLength: 128
+          title: Agent Did
+        provider_name:
+          type: string
+          maxLength: 128
+          title: Provider Name
+        provider_url:
+          anyOf:
+          - type: string
+            maxLength: 512
+          - type: 'null'
+          title: Provider Url
+        sport_focus:
+          items:
+            type: string
+          type: array
+          title: Sport Focus
+        description:
+          anyOf:
+          - type: string
+            maxLength: 500
+          - type: 'null'
+          title: Description
+      type: object
+      required:
+      - agent_did
+      - provider_name
+      title: SignalProviderRegisterRequest
+    ManualSettleRequest:
+      properties:
+        result:
+          type: string
+          maxLength: 64
+          title: Result
+        score:
+          anyOf:
+          - type: string
+            maxLength: 32
+          - type: 'null'
+          title: Score
+        detail:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Detail
+      type: object
+      required:
+      - result
+      title: ManualSettleRequest
     ValidationError:
       properties:
         loc:
@@ -405,6 +459,40 @@ components:
       - msg
       - type
       title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    PredictionCommitRequest:
+      properties:
+        agent_did:
+          type: string
+          maxLength: 128
+          title: Agent Did
+        event_id:
+          type: string
+          maxLength: 256
+          title: Event Id
+        prediction:
+          additionalProperties: true
+          type: object
+          title: Prediction
+        event_start:
+          type: string
+          maxLength: 30
+          title: Event Start
+      type: object
+      required:
+      - agent_did
+      - event_id
+      - prediction
+      - event_start
+      title: PredictionCommitRequest
     FantasyLineupCommitRequest:
       properties:
         agent_did:
@@ -464,91 +552,3 @@ components:
       - contest_start_iso
       - lineup
       title: FantasyLineupCommitRequest
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    ManualSettleRequest:
-      properties:
-        result:
-          type: string
-          maxLength: 64
-          title: Result
-        score:
-          anyOf:
-          - type: string
-            maxLength: 32
-          - type: 'null'
-          title: Score
-        detail:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Detail
-      type: object
-      required:
-      - result
-      title: ManualSettleRequest
-    PredictionCommitRequest:
-      properties:
-        agent_did:
-          type: string
-          maxLength: 128
-          title: Agent Did
-        event_id:
-          type: string
-          maxLength: 256
-          title: Event Id
-        prediction:
-          additionalProperties: true
-          type: object
-          title: Prediction
-        event_start:
-          type: string
-          maxLength: 30
-          title: Event Start
-      type: object
-      required:
-      - agent_did
-      - event_id
-      - prediction
-      - event_start
-      title: PredictionCommitRequest
-    SignalProviderRegisterRequest:
-      properties:
-        agent_did:
-          type: string
-          maxLength: 128
-          title: Agent Did
-        provider_name:
-          type: string
-          maxLength: 128
-          title: Provider Name
-        provider_url:
-          anyOf:
-          - type: string
-            maxLength: 512
-          - type: 'null'
-          title: Provider Url
-        sport_focus:
-          items:
-            type: string
-          type: array
-          title: Sport Focus
-        description:
-          anyOf:
-          - type: string
-            maxLength: 500
-          - type: 'null'
-          title: Description
-      type: object
-      required:
-      - agent_did
-      - provider_name
-      title: SignalProviderRegisterRequest

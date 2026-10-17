@@ -135,19 +135,6 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    PortalRequest:
-      properties:
-        customer_id:
-          type: string
-          title: Customer Id
-        return_url:
-          type: string
-          title: Return Url
-          default: https://moltrust.ch/dashboard
-      type: object
-      required:
-      - customer_id
-      title: PortalRequest
     ValidationError:
       properties:
         loc:
@@ -226,3 +213,16 @@ components:
       required:
       - tier
       title: CheckoutRequest
+    PortalRequest:
+      properties:
+        customer_id:
+          type: string
+          title: Customer Id
+        return_url:
+          type: string
+          title: Return Url
+          default: https://moltrust.ch/dashboard
+      type: object
+      required:
+      - customer_id
+      title: PortalRequest
