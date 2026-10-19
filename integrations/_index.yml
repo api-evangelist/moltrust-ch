@@ -22,3 +22,126 @@
     detected: '2026-10-15'
   status: not-a-workflow
   arazzo: null
+- slug: moltrust-ch-a2a-protocol-own-agent-card
+  label: A2A protocol (own Agent Card)
+  partner_name: A2A protocol (own Agent Card)
+  category: A2A agent
+  type: register
+  channel: provider-built
+  evidence: https://api.moltrust.ch/.well-known/agent-card.json
+  source: edge
+  relationship: compatible
+  contract_reference:
+    register: provider's own /.well-known/agent-card.json
+    spec_file: null
+    standard: A2A
+    role: a2a-agent-card
+    registered_name: MolTrust Trust Registry
+    organization: CryptoKRI GmbH
+    matched_domain: moltrust.ch
+    matched_by: own-domain
+    detected_by: sweep-ai-agents.py
+    detected: '2026-10-15'
+  status: not-a-workflow
+  arazzo: null
+- slug: moltrust-ch-a2aregistry-org
+  label: a2aregistry.org
+  partner_name: a2aregistry.org
+  category: A2A agent registry
+  type: register
+  channel: standard-directory
+  evidence: https://a2aregistry.org/api/agents/68673be8-e667-425f-9dcd-36ef150942e4
+  source: edge
+  relationship: compatible
+  contract_reference:
+    register: a2aregistry.org /api/agents
+    spec_file: null
+    standard: A2A
+    role: a2a-registry-listing
+    registered_name: CryptoKRI GmbH
+    matched_domain: moltrust.ch
+    matched_by: domain+repo-name
+    matched_via: card-host
+    listings_context: 1
+    sample_agents:
+    - MolTrust Trust Registry
+    detected_by: sweep-ai-agents.py
+    detected: '2026-10-15'
+  status: not-a-workflow
+  arazzo: null
+- slug: moltrust-ch-npm-registry
+  label: npm registry
+  partner: npm
+  partner_name: npm registry
+  category: official SDK (JavaScript/TypeScript)
+  type: register
+  channel: package-registry
+  evidence: https://www.npmjs.com/package/@moltrust/aae
+  source: edge
+  relationship: distribution-channel
+  contract_reference:
+    register: npm registry (public registry JSON)
+    spec_file: null
+    language: JavaScript/TypeScript
+    packages:
+    - name: '@moltrust/aae'
+      version: 1.1.0
+      released: '2026-03-26'
+      released_field: modified
+      lapsed: false
+      page: https://www.npmjs.com/package/@moltrust/aae
+      repo_leg: github-org:moltycel
+      publisher_leg: org:moltrust
+      matched_by: github-org
+    - name: '@moltrust/agent-firewall'
+      version: 1.0.0
+      released: '2026-05-12'
+      released_field: modified
+      lapsed: false
+      page: https://www.npmjs.com/package/@moltrust/agent-firewall
+      repo_leg: domain:moltrust.ch
+      publisher_leg: org:moltrust
+      matched_by: domain
+    - name: '@moltrust/mpp'
+      version: 1.0.3
+      released: '2026-04-10'
+      released_field: modified
+      lapsed: false
+      page: https://www.npmjs.com/package/@moltrust/mpp
+      repo_leg: domain:moltrust.ch
+      publisher_leg: org:moltrust
+      matched_by: domain
+    - name: '@moltrust/openclaw'
+      version: 1.0.1
+      released: '2026-04-26'
+      released_field: modified
+      lapsed: false
+      page: https://www.npmjs.com/package/@moltrust/openclaw
+      repo_leg: domain:moltrust.ch
+      publisher_leg: org:moltrust
+      matched_by: domain
+    - name: '@moltrust/sdk'
+      version: 1.1.0
+      released: '2026-03-27'
+      released_field: modified
+      lapsed: false
+      page: https://www.npmjs.com/package/@moltrust/sdk
+      repo_leg: github-org:moltycel
+      publisher_leg: org:moltrust
+      matched_by: github-org
+    - name: '@moltrust/verify'
+      version: 1.1.0
+      released: '2026-03-29'
+      released_field: modified
+      lapsed: false
+      page: https://www.npmjs.com/package/@moltrust/verify
+      repo_leg: github-org:moltycel
+      publisher_leg: org:moltrust
+      matched_by: github-org
+    current: true
+    signal_note: 'an official package on the registry: distribution, not an integration; lapsed = no release in
+      24 months'
+    detected_by: sweep-official-sdks.py
+    detected: '2026-10-18'
+  status: not-a-workflow
+  arazzo: null
