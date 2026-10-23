@@ -112,3 +112,9 @@ components:
         hidden, empty and out of the tab order. It is never echoed back and never
 
         appears in an error message.'
+x-provenance:
+  method: harvested
+  publisher: MolTrust
+  source: https://api.moltrust.ch/openapi.json
+  note: split by refine-openapis from the provider's own published document, verified by fetch (openapi/_original/*.fetch.json);
+    stamped by stamp-openapi-provenance.py (roadmap#793)

@@ -168,3 +168,9 @@ components:
       required:
       - monthly_cap_chf
       title: BudgetCapRequest
+x-provenance:
+  method: harvested
+  publisher: MolTrust
+  source: https://api.moltrust.ch/openapi.json
+  note: split by refine-openapis from the provider's own published document, verified by fetch (openapi/_original/*.fetch.json);
+    stamped by stamp-openapi-provenance.py (roadmap#793)
